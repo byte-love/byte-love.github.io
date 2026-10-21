@@ -1,90 +1,136 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 440" width="880" height="440" font-family="-apple-system, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
-  <rect width="880" height="440" fill="#f7f8fa"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 690" width="880" height="690" font-family="-apple-system, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <rect width="880" height="690" fill="#f7f8fa"/>
   <defs>
-    <marker id="ar" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#8b949e"/></marker>
-    <marker id="ar2" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#ffa94d"/></marker>
+    <marker id="a1" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#8b949e"/></marker>
+    <marker id="a2" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#1f6feb"/></marker>
   </defs>
 
-  <text x="120" y="30" text-anchor="middle" font-size="12" fill="#8b949e" letter-spacing="1">输入</text>
-  <text x="430" y="30" text-anchor="middle" font-size="12" fill="#8b949e" letter-spacing="1">导入管线（ExcelImportService）</text>
-  <text x="742" y="30" text-anchor="middle" font-size="12" fill="#8b949e" letter-spacing="1">输出</text>
+  <!-- ============ 上半：导入 ============ -->
+  <text x="120" y="24" text-anchor="middle" font-size="11.5" fill="#8b949e" letter-spacing="1">输入</text>
+  <text x="424" y="24" text-anchor="middle" font-size="11.5" fill="#8b949e" letter-spacing="1">导入管线（ExcelImportService）</text>
+  <text x="744" y="24" text-anchor="middle" font-size="11.5" fill="#8b949e" letter-spacing="1">MongoDB</text>
 
-  <!-- 输入 -->
-  <rect x="24" y="48" width="192" height="120" rx="8" fill="#fff" stroke="#d8dee6"/>
-  <text x="120" y="72" text-anchor="middle" font-size="13" fill="#1a1a1a" font-weight="600">中文期刊 Excel</text>
-  <text x="120" y="96" text-anchor="middle" font-size="11" fill="#5b6470">标题 / 作者 / 分类 / 期刊</text>
-  <text x="120" y="114" text-anchor="middle" font-size="11" fill="#5b6470">摘要 / 关键字 / URL / _id</text>
-  <text x="120" y="138" text-anchor="middle" font-size="10.5" fill="#8b949e">分类列含《》</text>
-  <text x="120" y="156" text-anchor="middle" font-size="10.5" fill="#8b949e">.xls 走 HSSF，.xlsx 走 XSSF</text>
+  <rect x="24" y="38" width="192" height="86" rx="8" fill="#fff" stroke="#d8dee6"/>
+  <text x="120" y="58" text-anchor="middle" font-size="12" fill="#1a1a1a" font-weight="600">中文期刊 Excel</text>
+  <text x="120" y="78" text-anchor="middle" font-size="10" fill="#5b6470">标题/作者/分类/期刊/摘要/关键字</text>
+  <text x="120" y="96" text-anchor="middle" font-size="10" fill="#5b6470">分类列含《》，.xls / .xlsx 分开读</text>
+  <text x="120" y="114" text-anchor="middle" font-size="9.5" fill="#8b949e">_id 作为 PaperID</text>
 
-  <rect x="24" y="184" width="192" height="120" rx="8" fill="#fff" stroke="#d8dee6"/>
-  <text x="120" y="208" text-anchor="middle" font-size="13" fill="#1a1a1a" font-weight="600">英文期刊 Excel</text>
-  <text x="120" y="232" text-anchor="middle" font-size="11" fill="#5b6470">多出 doi / 年月 两列</text>
-  <text x="120" y="250" text-anchor="middle" font-size="11" fill="#5b6470">期刊名为全名</text>
-  <text x="120" y="274" text-anchor="middle" font-size="10.5" fill="#8b949e">分类列不含《》</text>
-  <text x="120" y="292" text-anchor="middle" font-size="10.5" fill="#8b949e">兜底：看有无 doi 列</text>
+  <rect x="24" y="132" width="192" height="86" rx="8" fill="#fff" stroke="#d8dee6"/>
+  <text x="120" y="152" text-anchor="middle" font-size="12" fill="#1a1a1a" font-weight="600">英文期刊 Excel</text>
+  <text x="120" y="172" text-anchor="middle" font-size="10" fill="#5b6470">多出 doi / 年月 两列</text>
+  <text x="120" y="190" text-anchor="middle" font-size="10" fill="#5b6470">分类列不含《》</text>
+  <text x="120" y="208" text-anchor="middle" font-size="9.5" fill="#8b949e">兜底：看表头有无 doi 列</text>
 
-  <rect x="24" y="322" width="192" height="60" rx="8" fill="#fff" stroke="#d8dee6"/>
-  <text x="120" y="346" text-anchor="middle" font-size="12.5" fill="#1a1a1a" font-weight="600">目录批量导入</text>
-  <text x="120" y="366" text-anchor="middle" font-size="10.5" fill="#8b949e">扫描 .xls / .xlsx 逐个导入</text>
+  <rect x="24" y="226" width="192" height="54" rx="8" fill="#fff" stroke="#d8dee6"/>
+  <text x="120" y="246" text-anchor="middle" font-size="12" fill="#1a1a1a" font-weight="600">目录批量导入</text>
+  <text x="120" y="266" text-anchor="middle" font-size="9.5" fill="#8b949e">扫描 .xls / .xlsx 逐个导入</text>
 
-  <!-- 管线 -->
-  <rect x="252" y="48" width="356" height="334" rx="8" fill="#fff" stroke="#1f6feb" stroke-width="1.5"/>
-  <g font-size="11.5">
-    <rect x="270" y="64" width="320" height="44" rx="6" fill="#eef4ff" stroke="#c7dcff"/>
-    <text x="430" y="82" text-anchor="middle" font-size="12" fill="#1a1a1a">① 表头按名匹配</text>
-    <text x="430" y="99" text-anchor="middle" font-size="10" fill="#5b6470">标题/PaperTitle · 关键字/关键词/Keywords · _id/doi/PaperID</text>
+  <rect x="248" y="38" width="352" height="242" rx="8" fill="#fff" stroke="#1f6feb" stroke-width="1.5"/>
+  <rect x="264" y="52" width="320" height="36" rx="6" fill="#eef4ff" stroke="#c7dcff"/>
+  <text x="424" y="68" text-anchor="middle" font-size="11" fill="#1a1a1a">① 表头按名匹配，不按列序</text>
+  <text x="424" y="82" text-anchor="middle" font-size="9" fill="#5b6470">标题/PaperTitle · 关键字/关键词/Keywords · _id/doi/PaperID</text>
 
-    <rect x="270" y="116" width="320" height="44" rx="6" fill="#eef4ff" stroke="#c7dcff"/>
-    <text x="430" y="134" text-anchor="middle" font-size="12" fill="#1a1a1a">② 中英格式识别</text>
-    <text x="430" y="151" text-anchor="middle" font-size="10" fill="#5b6470">分类列含《》→ 中文；否则英文</text>
+  <rect x="264" y="94" width="320" height="36" rx="6" fill="#eef4ff" stroke="#c7dcff"/>
+  <text x="424" y="110" text-anchor="middle" font-size="11" fill="#1a1a1a">② 中英格式识别</text>
+  <text x="424" y="124" text-anchor="middle" font-size="9" fill="#5b6470">「分类」列含《》→ 中文；扫前 5 行找首个非空</text>
 
-    <rect x="270" y="168" width="320" height="44" rx="6" fill="#eef4ff" stroke="#c7dcff"/>
-    <text x="430" y="186" text-anchor="middle" font-size="12" fill="#1a1a1a">③ 行转 Paper + 生成 Content HTML</text>
-    <text x="430" y="203" text-anchor="middle" font-size="10" fill="#5b6470">数字单元格 DecimalFormat · 文本 escape · 期刊名去《》</text>
+  <rect x="264" y="136" width="320" height="36" rx="6" fill="#eef4ff" stroke="#c7dcff"/>
+  <text x="424" y="152" text-anchor="middle" font-size="11" fill="#1a1a1a">③ 行转 Paper + 生成 Content HTML</text>
+  <text x="424" y="166" text-anchor="middle" font-size="9" fill="#5b6470">数字走 DecimalFormat · 文本转义 · 期刊名去《》</text>
 
-    <rect x="270" y="220" width="320" height="60" rx="6" fill="#fff4e5" stroke="#ffd8a8"/>
-    <text x="430" y="238" text-anchor="middle" font-size="12" fill="#1a1a1a">④ 两层去重</text>
-    <text x="430" y="255" text-anchor="middle" font-size="10" fill="#5b6470">库内键按集合懒加载一次（投影 4 字段）</text>
-    <text x="430" y="270" text-anchor="middle" font-size="10" fill="#5b6470">＋ 批次内 seen（整批未落库，仅查库拦不住）</text>
+  <rect x="264" y="178" width="320" height="48" rx="6" fill="#fff4e5" stroke="#ffd8a8"/>
+  <text x="424" y="194" text-anchor="middle" font-size="11" fill="#1a1a1a">④ 两层去重</text>
+  <text x="424" y="208" text-anchor="middle" font-size="9" fill="#5b6470">库内键按集合懒加载一次（只投影 4 字段）</text>
+  <text x="424" y="221" text-anchor="middle" font-size="9" fill="#5b6470">＋ 批次内 seen（整批未落库，只查库拦不住）</text>
 
-    <rect x="270" y="288" width="320" height="44" rx="6" fill="#eef4ff" stroke="#c7dcff"/>
-    <text x="430" y="306" text-anchor="middle" font-size="12" fill="#1a1a1a">⑤ 按集合分组 → 批量写</text>
-    <text x="430" y="323" text-anchor="middle" font-size="10" fill="#5b6470">一个文件可拆进多个集合；单行失败带行号回显</text>
+  <rect x="264" y="232" width="320" height="36" rx="6" fill="#eef4ff" stroke="#c7dcff"/>
+  <text x="424" y="248" text-anchor="middle" font-size="11" fill="#1a1a1a">⑤ 分集合分组 → 批量写</text>
+  <text x="424" y="262" text-anchor="middle" font-size="9" fill="#5b6470">一个文件可拆进多个集合；单行失败带行号回显</text>
 
-    <rect x="270" y="340" width="320" height="32" rx="6" fill="#f1f8f2" stroke="#c9e6cd"/>
-    <text x="430" y="360" text-anchor="middle" font-size="10.5" fill="#2f7d32">判重键 = 标题 + 期刊 + 发表日期 + paperId（不靠 _id 唯一索引）</text>
-  </g>
+  <rect x="632" y="38" width="224" height="130" rx="8" fill="#fff" stroke="#d8dee6"/>
+  <text x="744" y="58" text-anchor="middle" font-size="12" fill="#1a1a1a" font-weight="600">5 个工作集合（小写）</text>
+  <text x="744" y="78" text-anchor="middle" font-size="9.5" fill="#5b6470">domestic_papers</text>
+  <text x="744" y="94" text-anchor="middle" font-size="9.5" fill="#5b6470">intl_chinese_accounting / _finance</text>
+  <text x="744" y="110" text-anchor="middle" font-size="9.5" fill="#5b6470">intl_accounting / intl_finance</text>
+  <text x="744" y="132" text-anchor="middle" font-size="9.5" fill="#8b949e">另有 5 个同名大写「归档集合」</text>
+  <text x="744" y="150" text-anchor="middle" font-size="9.5" fill="#8b949e">v3.0 遗留，只读兜底</text>
 
-  <!-- 输出 -->
-  <rect x="646" y="48" width="210" height="150" rx="8" fill="#fff" stroke="#d8dee6"/>
-  <text x="751" y="70" text-anchor="middle" font-size="13" fill="#1a1a1a" font-weight="600">MongoDB · 5 个集合</text>
-  <text x="751" y="92" text-anchor="middle" font-size="10.5" fill="#5b6470">domestic_papers</text>
-  <text x="751" y="110" text-anchor="middle" font-size="10.5" fill="#5b6470">intl_chinese_accounting</text>
-  <text x="751" y="128" text-anchor="middle" font-size="10.5" fill="#5b6470">intl_chinese_finance</text>
-  <text x="751" y="146" text-anchor="middle" font-size="10.5" fill="#5b6470">intl_accounting</text>
-  <text x="751" y="164" text-anchor="middle" font-size="10.5" fill="#5b6470">intl_finance</text>
-  <text x="751" y="186" text-anchor="middle" font-size="10" fill="#8b949e">会计 / 金融 × 是否中国相关</text>
+  <rect x="632" y="176" width="224" height="104" rx="8" fill="#fff" stroke="#d8dee6"/>
+  <text x="744" y="196" text-anchor="middle" font-size="12" fill="#1a1a1a" font-weight="600">在线标注</text>
+  <text x="744" y="216" text-anchor="middle" font-size="9.5" fill="#5b6470">论文 ↔ 数据库关联（relateDBs）</text>
+  <text x="744" y="232" text-anchor="middle" font-size="9.5" fill="#5b6470">确认无关联时打 noRelateDbs 标记</text>
+  <text x="744" y="252" text-anchor="middle" font-size="9.5" fill="#8b949e">正文 HTML 预览 / 源码对照</text>
+  <text x="744" y="270" text-anchor="middle" font-size="9.5" fill="#8b949e">软删除 = 打标记，不物理删</text>
 
-  <rect x="646" y="214" width="210" height="86" rx="8" fill="#fff" stroke="#d8dee6"/>
-  <text x="751" y="236" text-anchor="middle" font-size="13" fill="#1a1a1a" font-weight="600">在线标注</text>
-  <text x="751" y="258" text-anchor="middle" font-size="10.5" fill="#5b6470">论文 ↔ 数据库关联</text>
-  <text x="751" y="276" text-anchor="middle" font-size="10.5" fill="#5b6470">正文 HTML 预览 / 源码</text>
-  <text x="751" y="293" text-anchor="middle" font-size="10" fill="#8b949e">标注结果后补 RelateDBs</text>
+  <line x1="216" y1="80" x2="246" y2="80" stroke="#8b949e" stroke-width="1.4" marker-end="url(#a1)"/>
+  <line x1="216" y1="175" x2="246" y2="175" stroke="#8b949e" stroke-width="1.4" marker-end="url(#a1)"/>
+  <line x1="216" y1="253" x2="246" y2="253" stroke="#8b949e" stroke-width="1.4" marker-end="url(#a1)"/>
+  <line x1="600" y1="150" x2="630" y2="150" stroke="#8b949e" stroke-width="1.4" marker-end="url(#a1)"/>
 
-  <rect x="646" y="316" width="210" height="66" rx="8" fill="#fff" stroke="#d8dee6"/>
-  <text x="751" y="338" text-anchor="middle" font-size="13" fill="#1a1a1a" font-weight="600">推送外部 SQL Server</text>
-  <text x="751" y="358" text-anchor="middle" font-size="10.5" fill="#5b6470">jTDS · 合并写回</text>
-  <text x="751" y="374" text-anchor="middle" font-size="10" fill="#8b949e">有独立的合并测试</text>
+  <!-- ============ 下半：上传外网 ============ -->
+  <line x1="24" y1="300" x2="856" y2="300" stroke="#e3e6ea" stroke-width="1"/>
+  <text x="24" y="326" font-size="12" fill="#1a1a1a" font-weight="600">上传外网（POST /api/upload/execute）—— 整表重建，不是增量</text>
 
-  <!-- 箭头 -->
-  <line x1="216" y1="108" x2="250" y2="108" stroke="#8b949e" stroke-width="1.4" marker-end="url(#ar)"/>
-  <line x1="216" y1="244" x2="250" y2="244" stroke="#8b949e" stroke-width="1.4" marker-end="url(#ar)"/>
-  <line x1="216" y1="352" x2="250" y2="352" stroke="#8b949e" stroke-width="1.4" marker-end="url(#ar)"/>
-  <line x1="608" y1="150" x2="644" y2="150" stroke="#8b949e" stroke-width="1.4" marker-end="url(#ar)"/>
-  <path d="M751,214 L751,200" fill="none" stroke="#8b949e" stroke-width="1.4" marker-end="url(#ar)"/>
-  <path d="M751,316 L751,302" fill="none" stroke="#8b949e" stroke-width="1.4" marker-end="url(#ar)"/>
+  <rect x="24" y="342" width="176" height="62" rx="8" fill="#fff" stroke="#d8dee6"/>
+  <text x="112" y="362" text-anchor="middle" font-size="11" fill="#1a1a1a" font-weight="600">归档集合（大写）</text>
+  <text x="112" y="380" text-anchor="middle" font-size="9" fill="#5b6470">只读兜底</text>
+  <text x="112" y="395" text-anchor="middle" font-size="9" fill="#8b949e">补工作集合缺失的历史数据</text>
 
-  <text x="24" y="410" font-size="10.5" fill="#8b949e">脱敏示意图：集合名与字段名保留结构，公司名、域名、真实库名已替换</text>
-  <text x="24" y="428" font-size="10.5" fill="#8b949e">已删除记录（墓碑）同样参与判重：删掉的是抓错的数据，重新导入同一份 Excel 不应复活</text>
+  <rect x="24" y="414" width="176" height="62" rx="8" fill="#fff" stroke="#1f6feb" stroke-width="1.2"/>
+  <text x="112" y="434" text-anchor="middle" font-size="11" fill="#1a1a1a" font-weight="600">工作集合（小写）</text>
+  <text x="112" y="452" text-anchor="middle" font-size="9" fill="#5b6470">本次全量推送</text>
+  <text x="112" y="467" text-anchor="middle" font-size="9" fill="#8b949e">同键冲突时以此为准</text>
+
+  <rect x="24" y="486" width="176" height="62" rx="8" fill="#fff4e5" stroke="#ffd8a8"/>
+  <text x="112" y="506" text-anchor="middle" font-size="11" fill="#1a1a1a" font-weight="600">墓碑（已删除键）</text>
+  <text x="112" y="524" text-anchor="middle" font-size="9" fill="#5b6470">从软删除记录里取去重键</text>
+  <text x="112" y="539" text-anchor="middle" font-size="9" fill="#d08428">否则归档副本会让删除失效</text>
+
+  <rect x="228" y="342" width="212" height="206" rx="8" fill="#fff" stroke="#d8dee6"/>
+  <text x="334" y="364" text-anchor="middle" font-size="11.5" fill="#1a1a1a" font-weight="600">mergeAndSort()</text>
+  <text x="334" y="386" text-anchor="middle" font-size="9.5" fill="#5b6470">工作集合全收（同源不去重）</text>
+  <text x="334" y="404" text-anchor="middle" font-size="9.5" fill="#5b6470">归档只补「工作集合没有且非墓碑」的</text>
+  <text x="334" y="430" text-anchor="middle" font-size="9.5" fill="#5b6470">排序：PublishDate 降序（按年月解析）</text>
+  <text x="334" y="448" text-anchor="middle" font-size="9.5" fill="#5b6470">　　　有关联数据库的排前面</text>
+  <text x="334" y="474" text-anchor="middle" font-size="9.5" fill="#5b6470">重新分配 ID = 1..N</text>
+  <text x="334" y="496" text-anchor="middle" font-size="9" fill="#8b949e">纯静态函数，不碰数据库</text>
+  <text x="334" y="512" text-anchor="middle" font-size="9" fill="#2f7d32">有独立单元测试（合并/墓碑/排序）</text>
+  <text x="334" y="532" text-anchor="middle" font-size="9" fill="#8b949e">camelCase → PascalCase 同步转换</text>
+
+  <rect x="468" y="342" width="220" height="206" rx="8" fill="#fff" stroke="#1f6feb" stroke-width="1.5"/>
+  <text x="578" y="364" text-anchor="middle" font-size="11.5" fill="#1a1a1a" font-weight="600">uploadToSqlServer() 一个事务</text>
+  <text x="578" y="386" text-anchor="middle" font-size="9.5" fill="#5b6470">setAutoCommit(false)</text>
+  <text x="578" y="408" text-anchor="middle" font-size="9.5" fill="#5b6470">① DROP TABLE [表名00]（若存在）</text>
+  <text x="578" y="426" text-anchor="middle" font-size="9.5" fill="#5b6470">② sp_rename 现表 → 表名00</text>
+  <text x="578" y="444" text-anchor="middle" font-size="9.5" fill="#5b6470">③ CREATE TABLE 新表（8 列）</text>
+  <text x="578" y="462" text-anchor="middle" font-size="9.5" fill="#5b6470">④ INSERT，每 200 条一批</text>
+  <text x="578" y="486" text-anchor="middle" font-size="9" fill="#2f7d32">失败 rollback：SQL Server 的 DDL 可回滚</text>
+  <text x="578" y="502" text-anchor="middle" font-size="9" fill="#8b949e">所以不会出现「表改名了、新表没建成」</text>
+  <text x="578" y="524" text-anchor="middle" font-size="9" fill="#d08428">备份只留一份：下次上传会先删掉它</text>
+  <text x="578" y="540" text-anchor="middle" font-size="9" fill="#8b949e">字段按列宽截断，避免整批因超长失败</text>
+
+  <rect x="716" y="342" width="140" height="206" rx="8" fill="#fff" stroke="#c9e6cd" stroke-width="1.5"/>
+  <text x="786" y="364" text-anchor="middle" font-size="11.5" fill="#1a1a1a" font-weight="600">外网 SQL Server</text>
+  <text x="786" y="388" text-anchor="middle" font-size="9.5" fill="#5b6470">5 张表</text>
+  <text x="786" y="406" text-anchor="middle" font-size="9.5" fill="#5b6470">＋ 5 张 00 备份表</text>
+  <text x="786" y="428" text-anchor="middle" font-size="9" fill="#8b949e">DomesticPaper</text>
+  <text x="786" y="444" text-anchor="middle" font-size="9" fill="#8b949e">Internationalpaper_*</text>
+  <text x="786" y="460" text-anchor="middle" font-size="9" fill="#8b949e">InternationalChinesePaper_*</text>
+  <text x="786" y="486" text-anchor="middle" font-size="9" fill="#5b6470">上传后回写 Mongo 标记</text>
+  <text x="786" y="502" text-anchor="middle" font-size="9" fill="#5b6470">uploaded / uploadedAt</text>
+  <text x="786" y="518" text-anchor="middle" font-size="9" fill="#5b6470">uploadDirty = false</text>
+  <text x="786" y="538" text-anchor="middle" font-size="9" fill="#8b949e">论文不迁走，留在列表里</text>
+
+  <line x1="200" y1="373" x2="226" y2="373" stroke="#8b949e" stroke-width="1.4" marker-end="url(#a1)"/>
+  <line x1="200" y1="445" x2="226" y2="445" stroke="#8b949e" stroke-width="1.4" marker-end="url(#a1)"/>
+  <line x1="200" y1="517" x2="226" y2="517" stroke="#8b949e" stroke-width="1.4" marker-end="url(#a1)"/>
+  <line x1="440" y1="445" x2="466" y2="445" stroke="#1f6feb" stroke-width="1.6" marker-end="url(#a2)"/>
+  <line x1="688" y1="445" x2="714" y2="445" stroke="#1f6feb" stroke-width="1.6" marker-end="url(#a2)"/>
+
+  <text x="24" y="580" font-size="10" fill="#8b949e">脱敏示意图：库名、表名按结构保留，公司名、域名、真实主机与账号已替换</text>
+  <text x="24" y="598" font-size="10" fill="#8b949e">「预览」只列出本次新增/变更的论文用于回显，但真正写入时是整表重建 —— 这两件事容易混</text>
+  <text x="24" y="616" font-size="10" fill="#8b949e">被删论文要等下一次点上传才会从外网消失；它同时被墓碑拦在合并阶段</text>
+  <text x="24" y="634" font-size="10" fill="#8b949e">回补工具（POST /backfill）把 v3.0 迁走的论文找回工作集合，回补后归档数据自然全部跳过</text>
+  <text x="24" y="660" font-size="10" fill="#5b6470">关键文件：ExternalUploadService.java（上传 412-487 / 合并 329-373 / 墓碑 308-311）· ExternalUploadMergeTest</text>
 </svg>

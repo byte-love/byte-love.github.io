@@ -89,6 +89,8 @@ export const projects: Project[] = [
         '判重键用「标题 + 期刊 + 发表日期 + paperId」四项，paperId 为空时靠其余三项照样能拦',
         '已删除记录（墓碑）参与判重：删掉的是抓错的数据，不该重新导进来，要恢复走回收站',
         '单行转换失败带行号收集，不影响整批；数字单元格用 DecimalFormat 处理，避免长 id 被转成科学计数',
+        '上传外网走「整表重建」：先在事务里 DROP 旧备份 → sp_rename 现表为 ××00 → 建新表 → 每 200 条批量插入；失败整体回滚',
+        '推送前把归档集合、工作集合、已删除键（墓碑）三方合并：工作集合优先，归档只补缺失、且被墓碑拦掉的那部分不补',
       ],
       en: [
         'Resolved fields by column name rather than position, so upstream column reordering does not break imports',
@@ -97,6 +99,8 @@ export const projects: Project[] = [
         'Dedupe key = title + journal + publish date + paperId, so an empty paperId still gets caught by the other three',
         'Deleted records (tombstones) participate in dedupe: deletions mean bad scrapes, they should not reappear; restore from the recycle bin instead',
         'Per-row failures are collected with row numbers without aborting the batch; numeric cells go through DecimalFormat so long ids are not turned into scientific notation',
+        'External upload rebuilds whole tables inside one transaction: drop the previous backup, sp_rename the live table to ××00, create the new table, insert in 200-row batches — any failure rolls the whole thing back',
+        'Before pushing, three sources are merged: archive collections, working collections, and deleted-key tombstones — working copies win, archive only fills gaps, tombstoned rows are excluded',
       ],
     },
     result: {
