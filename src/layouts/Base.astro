@@ -1,0 +1,52 @@
+---
+import '../styles/global.css'
+import type { Lang } from '../i18n/ui'
+import { t } from '../i18n/ui'
+
+interface Props {
+  lang: Lang
+  title: string
+  langSwitchHref: string
+  showDiy?: boolean
+}
+
+const { lang, title, langSwitchHref, showDiy = true } = Astro.props
+const copy = t(lang)
+const home = copy.homeHref
+---
+
+<!doctype html>
+<html lang={lang === 'zh' ? 'zh-CN' : 'en'}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={copy.heroLead} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <header class="site">
+      <div class="wrap">
+        <a class="brand" href={home}>{copy.name}</a>
+        <nav class="top">
+          <a href={`${home}#projects`}>{copy.navProjects}</a>
+          {showDiy && <a href={`${home}#diy`}>{copy.navDiy}</a>}
+          <a href={`${home}#about`}>{copy.navAbout}</a>
+          <a class="lang-switch" href={langSwitchHref}>{copy.langSwitch}</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <slot />
+    </main>
+
+    <footer class="site">
+      <div class="wrap">
+        {copy.footerNote}
+        <br />
+        <a href="https://github.com/byte-love">github.com/byte-love</a>
+      </div>
+    </footer>
+  </body>
+</html>

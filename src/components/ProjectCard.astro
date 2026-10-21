@@ -1,0 +1,22 @@
+---
+import type { Lang } from '../i18n/ui'
+import type { Project } from '../data/projects'
+
+interface Props {
+  project: Project
+  lang: Lang
+}
+
+const { project, lang } = Astro.props
+const href = lang === 'zh' ? `/projects/${project.slug}/` : `/en/projects/${project.slug}/`
+---
+
+<a class="card" href={href}>
+  <div class="row1">
+    <h3>{project.title[lang]}</h3>
+    <span class="role">{project.role[lang]}</span>
+  </div>
+  <p class="problem">{project.subtitle[lang]}</p>
+  <p class="result">{project.result[lang][0]}</p>
+  <p class="stack">{project.stack.join(' · ')}</p>
+</a>

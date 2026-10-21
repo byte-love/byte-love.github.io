@@ -1,0 +1,52 @@
+---
+import Base from '../layouts/Base.astro'
+import type { Project } from '../data/projects'
+import type { Lang } from '../i18n/ui'
+import { t } from '../i18n/ui'
+
+interface Props {
+  project: Project
+  lang: Lang
+}
+
+const { project, lang } = Astro.props
+const copy = t(lang)
+const back = lang === 'zh' ? '/' : '/en/'
+const langSwitchHref = lang === 'zh' ? `/en/projects/${project.slug}/` : `/projects/${project.slug}/`
+---
+
+<Base lang={lang} title={`${project.title[lang]} · ${copy.name}`} langSwitchHref={langSwitchHref}>
+  <article class="project">
+    <div class="wrap">
+      <p><a href={back}>{copy.detailBack}</a></p>
+      <h1>{project.title[lang]}</h1>
+      <p class="sub">{project.subtitle[lang]}</p>
+
+      <dl class="dl">
+        <dt>{copy.roleLabel}</dt>
+        <dd>{project.role[lang]}</dd>
+        <dt>{copy.periodLabel}</dt>
+        <dd>{project.period}</dd>
+        <dt>{copy.stackLabel}</dt>
+        <dd>{project.stack.join(' · ')}</dd>
+        <dt>{copy.repoLabel}</dt>
+        <dd><a href={project.repo}>{project.repo.replace('https://', '')}</a></dd>
+      </dl>
+
+      <h2>{copy.problemLabel}</h2>
+      <p>{project.problem[lang]}</p>
+
+      <h2>{copy.actionLabel}</h2>
+      <ul>
+        {project.action[lang].map((a) => <li set:html={a.replace(/`([^`]+)`/g, '<code>$1</code>')} />)}
+      </ul>
+
+      <h2>{copy.resultLabel}</h2>
+      <ul>
+        {project.result[lang].map((r) => <li set:html={r.replace(/`([^`]+)`/g, '<code>$1</code>')} />)}
+      </ul>
+
+      <p style="margin-top:32px"><a href={project.repo}>{copy.repoLink}</a></p>
+    </div>
+  </article>
+</Base>

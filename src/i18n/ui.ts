@@ -1,0 +1,72 @@
+export type Lang = 'zh' | 'en'
+
+export const ui = {
+  zh: {
+    name: '李杰',
+    email: '2941075434@qq.com',
+    langSwitch: 'English',
+    langSwitchHref: '/en/',
+    homeHref: '/',
+    navProjects: '项目',
+    navDiy: '动手做的',
+    navAbout: '关于',
+    heroTitle: '后端 / 全栈开发，做过数据管线、运维后台和桌面客户端。',
+    heroLead:
+      '企业级开发：Spring Boot 后台、Vue 前端、跨库数据同步、桌面端 AI 能力接入，也写过跑上千万行的数据处理流水线。这里放的是我自己能讲清设计取舍的那几个。',
+    heroMeta: ['Java / Spring Boot', 'Vue 3', 'Python 数据工程', '.NET / WPF'],
+    sectionProjects: '代表项目',
+    sectionDiy: '动手做的',
+    sectionAbout: '关于',
+    aboutText:
+      '做后端为主，也做前端和桌面端。习惯先把约束搞清楚再动手：能不能改上游、数据有多少行、失败会怎样。下面每个项目都写了当时的约束和踩过的坑。',
+    aboutContact: '联系方式',
+    emailLabel: '邮箱',
+    repoLink: '看代码 →',
+    detailBack: '← 返回项目列表',
+    problemLabel: '问题',
+    actionLabel: '我做的',
+    resultLabel: '结果',
+    stackLabel: '技术栈',
+    periodLabel: '时间',
+    roleLabel: '角色',
+    repoLabel: '仓库',
+    diyPlaceholder: '待补：一张照片 / 一段 15 秒视频 + 一句话说明 + 踩到的坑',
+    footerNote: '本项目源码在 GitHub，文案与数字均可在对应仓库核对。',
+  },
+  en: {
+    name: 'Jie Li',
+    email: '2941075434@qq.com',
+    langSwitch: '中文',
+    langSwitchHref: '/',
+    homeHref: '/en/',
+    navProjects: 'Projects',
+    navDiy: 'Things I built',
+    navAbout: 'About',
+    heroTitle: 'Backend / full-stack developer. Data pipelines, ops consoles, desktop clients.',
+    heroLead:
+      'Enterprise development: Spring Boot services, Vue front-ends, cross-database sync, AI features in desktop apps, and data pipelines processing tens of millions of rows. This site collects the pieces I can explain design trade-offs for.',
+    heroMeta: ['Java / Spring Boot', 'Vue 3', 'Python data', '.NET / WPF'],
+    sectionProjects: 'Selected work',
+    sectionDiy: 'Things I built',
+    sectionAbout: 'About',
+    aboutText:
+      'Backend-first, with front-end and desktop work. I try to pin down the constraints before writing code: can upstream be changed, how many rows are there, what happens when it fails. Each project below records the constraints and the traps.',
+    aboutContact: 'Contact',
+    emailLabel: 'Email',
+    repoLink: 'Code →',
+    detailBack: '← All projects',
+    problemLabel: 'Problem',
+    actionLabel: 'What I did',
+    resultLabel: 'Result',
+    stackLabel: 'Stack',
+    periodLabel: 'Period',
+    roleLabel: 'Role',
+    repoLabel: 'Repo',
+    diyPlaceholder: 'TODO: a photo / 15s clip + one sentence + the trap you hit',
+    footerNote: 'Source on GitHub. Every claim here can be checked against the repos.',
+  },
+} as const
+
+export function t(lang: Lang) {
+  return ui[lang]
+}

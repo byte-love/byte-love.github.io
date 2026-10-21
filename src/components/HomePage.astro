@@ -1,0 +1,74 @@
+---
+import Base from '../layouts/Base.astro'
+import ProjectCard from './ProjectCard.astro'
+import { projects } from '../data/projects'
+import { diy } from '../data/diy'
+import type { Lang } from '../i18n/ui'
+import { t } from '../i18n/ui'
+
+interface Props {
+  lang: Lang
+  langSwitchHref: string
+}
+
+const { lang, langSwitchHref } = Astro.props
+const copy = t(lang)
+// 只渲染真正的 DIY 条目；占位（slug 以 todo- 开头）算没有内容，整块连同导航一起隐藏
+const diyItems = diy.filter((d) => !d.slug.startsWith('todo-'))
+---
+
+<Base
+  lang={lang}
+  title={lang === 'zh' ? `${copy.name} · 后端 / 全栈开发` : `${copy.name} · Backend / Full-stack`}
+  langSwitchHref={langSwitchHref}
+  showDiy={diyItems.length > 0}
+>
+  <div class="wrap">
+    <section class="hero">
+      <h1>{copy.heroTitle}</h1>
+      <p class="lead">{copy.heroLead}</p>
+      <p class="meta">
+        {copy.heroMeta.map((m) => <span>{m}</span>)}
+      </p>
+    </section>
+  </div>
+
+  <section class="block" id="projects">
+    <div class="wrap">
+      <h2>{copy.sectionProjects}</h2>
+      <div class="list">
+        {projects.map((p) => <ProjectCard project={p} lang={lang} />)}
+      </div>
+    </div>
+  </section>
+
+  {diyItems.length > 0 && (
+  <section class="block" id="diy">
+    <div class="wrap">
+      <h2>{copy.sectionDiy}</h2>
+      <div class="diy-grid">
+        {
+          diyItems.map((d) => (
+            <article class="diy">
+              {d.image ? <img class="shot-img" src={d.image} alt={d.title[lang]} /> : null}
+              <h3>{d.title[lang]}</h3>
+              <p>{d.desc[lang]}</p>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+  )}
+
+  <section class="block" id="about">
+    <div class="wrap">
+      <h2>{copy.sectionAbout}</h2>
+      <p class="lead">{copy.aboutText}</p>
+      <p class="meta">
+        <span><a href={`mailto:${copy.email}`}>{copy.email}</a></span>
+        <span><a href="https://github.com/byte-love">GitHub</a></span>
+      </p>
+    </div>
+  </section>
+</Base>
