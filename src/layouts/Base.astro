@@ -43,8 +43,8 @@ const home = copy.homeHref
 
     <footer class="site">
       <div class="wrap">
-        {copy.footerNote}
-        <br />
+        <a href={`mailto:${copy.email}`}>{copy.email}</a>
+        &nbsp;·&nbsp;
         <a href="https://github.com/byte-love">github.com/byte-love</a>
       </div>
     </footer>
