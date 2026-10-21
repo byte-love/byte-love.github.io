@@ -16,6 +16,8 @@ export type Project = {
   featured: boolean
   /** 架构图，放 public/diagrams/ 下，例：/diagrams/logs-manage-system.svg */
   diagram?: string
+  /** 界面截图，放 public/shots/ 下 */
+  shots?: { src: string; caption: L }[]
 }
 
 export const projects: Project[] = [
@@ -118,6 +120,13 @@ export const projects: Project[] = [
     repo: 'https://github.com/byte-love/paper-annotation-system',
     featured: true,
     diagram: '/diagrams/paper-annotation-system.svg',
+    shots: [
+      { src: '/shots/paper/01-import.png', caption: { zh: 'Excel 批量导入：单文件上传 + 服务器目录批量导入', en: 'Batch import: single file or a server-side directory' } },
+      { src: '/shots/paper/02-list.png', caption: { zh: '论文浏览：分类筛选、批量打回标注、回收站', en: 'Paper list: category filter, bulk send-back, recycle bin' } },
+      { src: '/shots/paper/03-annotate.png', caption: { zh: '数据库标注工作台：左文右库，单篇标注、候选库搜索、每篇最多关联 4 个', en: 'Annotation workbench: paper on the left, candidate databases on the right' } },
+      { src: '/shots/paper/04-export.png', caption: { zh: '导出 Excel：按分类导出，列名与目标表一致', en: 'Export: per-category, column names aligned with the target table' } },
+      { src: '/shots/paper/05-upload.png', caption: { zh: '上传外网：全量覆盖推送 + 历史数据回补', en: 'External push: full replacement plus historical backfill' } },
+    ],
   },  {
     slug: 'wechat-register-miniprogram',
     title: { zh: '微信小程序用户注册流程', en: 'WeChat Mini-Program Registration' },

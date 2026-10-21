@@ -52,6 +52,22 @@ const langSwitchHref = lang === 'zh' ? `/en/projects/${project.slug}/` : `/proje
         {project.result[lang].map((r) => <li set:html={r.replace(/`([^`]+)`/g, '<code>$1</code>')} />)}
       </ul>
 
+      {project.shots && (
+        <>
+          <h2>{copy.shotsLabel}</h2>
+          <div class="gallery">
+            {project.shots.map((s) => (
+              <figure>
+                <a href={s.src} target="_blank" rel="noopener">
+                  <img src={s.src} alt={s.caption[lang]} loading="lazy" />
+                </a>
+                <figcaption>{s.caption[lang]}</figcaption>
+              </figure>
+            ))}
+          </div>
+        </>
+      )}
+
       <p style="margin-top:32px"><a href={project.repo}>{copy.repoLink}</a></p>
     </div>
   </article>
