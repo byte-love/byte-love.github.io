@@ -36,6 +36,7 @@ const diyItems = diy.filter((d) => !d.slug.startsWith('todo-'))
   <section class="block" id="projects">
     <div class="wrap">
       <h2>{copy.sectionProjects}</h2>
+      <p class="section-note">{copy.projectsNote}</p>
       <div class="list">
         {projects.map((p) => <ProjectCard project={p} lang={lang} />)}
       </div>
