@@ -13,7 +13,7 @@ export const ui = {
     heroTitle: '后端 / 全栈开发，做过数据管线、运维后台和桌面客户端。',
     heroLead:
       '企业级开发：Spring Boot 后台、Vue 前端、跨库数据同步、桌面端 AI 能力接入，也写过跑上千万行的数据处理流水线。',
-    heroMeta: ['Java / Spring Boot', 'Vue 3', 'Python 数据工程', '.NET / WPF'],
+    heroMeta: ['Java / Spring Boot', 'Vue 3', 'Python 数据工程', '.NET / WPF', '微信小程序'],
     sectionProjects: '代表项目',
     sectionDiy: '动手做的',
     sectionAbout: '关于',
@@ -44,7 +44,7 @@ export const ui = {
     heroTitle: 'Backend / full-stack developer. Data pipelines, ops consoles, desktop clients.',
     heroLead:
       'Enterprise development: Spring Boot services, Vue front-ends, cross-database sync, AI features in desktop apps, and data pipelines processing tens of millions of rows.',
-    heroMeta: ['Java / Spring Boot', 'Vue 3', 'Python data', '.NET / WPF'],
+    heroMeta: ['Java / Spring Boot', 'Vue 3', 'Python data', '.NET / WPF', 'WeChat mini-program'],
     sectionProjects: 'Selected work',
     sectionDiy: 'Things I built',
     sectionAbout: 'About',
