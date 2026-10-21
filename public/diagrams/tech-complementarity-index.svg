@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 380" width="880" height="380" font-family="-apple-system, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <rect width="880" height="380" fill="#f7f8fa"/>
+  <defs>
+    <marker id="t1" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#8b949e"/></marker>
+  </defs>
+
+  <text x="120" y="30" text-anchor="middle" font-size="12" fill="#8b949e" letter-spacing="1">输入</text>
+  <text x="430" y="30" text-anchor="middle" font-size="12" fill="#8b949e" letter-spacing="1">tacd 包</text>
+  <text x="740" y="30" text-anchor="middle" font-size="12" fill="#8b949e" letter-spacing="1">输出</text>
+
+  <rect x="24" y="48" width="192" height="150" rx="8" fill="#fff" stroke="#d8dee6"/>
+  <text x="120" y="72" text-anchor="middle" font-size="13" fill="#1a1a1a" font-weight="600">专利分类号 Excel</text>
+  <text x="120" y="96" text-anchor="middle" font-size="10.5" fill="#5b6470">省级 18 个 + 上市公司 5 个</text>
+  <text x="120" y="116" text-anchor="middle" font-size="10.5" fill="#5b6470">全量约 2,207 万行</text>
+  <text x="120" y="136" text-anchor="middle" font-size="10.5" fill="#5b6470">1985 — 2025</text>
+  <text x="120" y="158" text-anchor="middle" font-size="10.5" fill="#5b6470">700 个 IPC 小类</text>
+  <text x="120" y="180" text-anchor="middle" font-size="10" fill="#8b949e">平均每条专利 1.58 个 IPC</text>
+
+  <rect x="24" y="216" width="192" height="66" rx="8" fill="#fff" stroke="#d8dee6"/>
+  <text x="120" y="240" text-anchor="middle" font-size="12.5" fill="#1a1a1a" font-weight="600">不依赖 MongoDB</text>
+  <text x="120" y="262" text-anchor="middle" font-size="10" fill="#8b949e">旧实现读的是过期快照，直接改读 Excel</text>
+
+  <rect x="248" y="48" width="356" height="260" rx="8" fill="#fff" stroke="#1f6feb" stroke-width="1.5"/>
+  <g font-size="11">
+    <rect x="266" y="64" width="320" height="44" rx="6" fill="#eef4ff" stroke="#c7dcff"/>
+    <text x="426" y="82" text-anchor="middle" font-size="12" fill="#1a1a1a">ipc.py — 分类号归一化</text>
+    <text x="426" y="99" text-anchor="middle" font-size="10" fill="#5b6470">截到 IPC 小类；校验格式，挡住 //(C、∴(A0 这类脏值</text>
+
+    <rect x="266" y="116" width="320" height="44" rx="6" fill="#eef4ff" stroke="#c7dcff"/>
+    <text x="426" y="134" text-anchor="middle" font-size="12" fill="#1a1a1a">aggregate.py — 计数与共现</text>
+    <text x="426" y="151" text-anchor="middle" font-size="10" fill="#5b6470">按 (地区/公司, 年, IPC) 累计；同时统计 C(n,2) 共现对</text>
+
+    <rect x="266" y="168" width="320" height="44" rx="6" fill="#eef4ff" stroke="#c7dcff"/>
+    <text x="426" y="186" text-anchor="middle" font-size="12" fill="#1a1a1a">compute.py — 两个指数</text>
+    <text x="426" y="203" text-anchor="middle" font-size="10" fill="#5b6470">RPCA = (a/c)/(b/d)；Φ 归一化到 [0,1]</text>
+
+    <rect x="266" y="220" width="320" height="44" rx="6" fill="#fff4e5" stroke="#ffd8a8"/>
+    <text x="426" y="238" text-anchor="middle" font-size="12" fill="#1a1a1a">parallel.py — 进程池 + 兜底</text>
+    <text x="426" y="255" text-anchor="middle" font-size="10" fill="#5b6470">进程池被禁（WinError 5）时降级为子进程 + 临时文件</text>
+
+    <rect x="266" y="272" width="320" height="26" rx="6" fill="#eef4ff" stroke="#c7dcff"/>
+    <text x="426" y="290" text-anchor="middle" font-size="10" fill="#1a1a1a">fastxlsx / xlsxwriter — 自研写出</text>
+  </g>
+
+  <rect x="624" y="48" width="232" height="120" rx="8" fill="#fff" stroke="#c9e6cd" stroke-width="1.5"/>
+  <text x="740" y="72" text-anchor="middle" font-size="13" fill="#1a1a1a" font-weight="600">selftest.py 全量对账</text>
+  <text x="740" y="96" text-anchor="middle" font-size="10.5" fill="#5b6470">各地区之和 = 当年总数</text>
+  <text x="740" y="116" text-anchor="middle" font-size="10.5" fill="#5b6470">IPC 计数 = Σ 每条专利的 IPC 数</text>
+  <text x="740" y="136" text-anchor="middle" font-size="10.5" fill="#5b6470">共现对数 = ΣC(k,2)</text>
+  <text x="740" y="158" text-anchor="middle" font-size="10" fill="#8b949e">三项全过才认为结果可信</text>
+
+  <rect x="624" y="184" width="232" height="124" rx="8" fill="#fff" stroke="#d8dee6"/>
+  <text x="740" y="208" text-anchor="middle" font-size="13" fill="#1a1a1a" font-weight="600">5 个输出变量</text>
+  <text x="740" y="230" text-anchor="middle" font-size="10.5" fill="#5b6470">变量 1 省级 RPCA</text>
+  <text x="740" y="250" text-anchor="middle" font-size="10.5" fill="#5b6470">变量 2 城市级 · 变量 3 技术联系指数</text>
+  <text x="740" y="270" text-anchor="middle" font-size="10.5" fill="#5b6470">变量 4/5 上市公司本身 / 集团合计</text>
+  <text x="740" y="292" text-anchor="middle" font-size="10" fill="#8b949e">100~125 秒 · 约 14 万行/秒</text>
+
+  <line x1="216" y1="120" x2="246" y2="120" stroke="#8b949e" stroke-width="1.4" marker-end="url(#t1)"/>
+  <line x1="216" y1="249" x2="246" y2="249" stroke="#8b949e" stroke-width="1.4" marker-end="url(#t1)"/>
+  <line x1="604" y1="110" x2="622" y2="110" stroke="#8b949e" stroke-width="1.4" marker-end="url(#t1)"/>
+  <line x1="604" y1="246" x2="622" y2="246" stroke="#8b949e" stroke-width="1.4" marker-end="url(#t1)"/>
+
+  <text x="24" y="322" font-size="10.5" fill="#8b949e">脱敏示意图：指标定义来自公开的显性比较优势方法，实现与自检为自研</text>
+  <text x="24" y="344" font-size="10.5" fill="#8b949e">旧实现的问题清单（NPE、脏 IPC、逐条 println、无 pom）不在本仓库，此处不展开</text>
+</svg>

@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 400" width="880" height="400" font-family="-apple-system, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <rect width="880" height="400" fill="#f7f8fa"/>
+  <defs>
+    <marker id="m1" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#8b949e"/></marker>
+    <marker id="m2" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#ffa94d"/></marker>
+  </defs>
+
+  <text x="140" y="30" text-anchor="middle" font-size="12" fill="#8b949e" letter-spacing="1">页面</text>
+  <text x="440" y="30" text-anchor="middle" font-size="12" fill="#8b949e" letter-spacing="1">utils/request.js</text>
+  <text x="760" y="30" text-anchor="middle" font-size="12" fill="#8b949e" letter-spacing="1">后端</text>
+
+  <rect x="24" y="52" width="232" height="264" rx="8" fill="#fff" stroke="#1f6feb" stroke-width="1.5"/>
+  <text x="140" y="76" text-anchor="middle" font-size="13" fill="#1a1a1a" font-weight="600">九步注册流程</text>
+  <g font-size="11" fill="#5b6470" text-anchor="middle">
+    <text x="140" y="102">① 身份选择（教师 / 博士生 / 其他）</text>
+    <text x="140" y="124">② 学校搜索 + 资格校验</text>
+    <text x="140" y="146">③ 手机号验证码</text>
+    <text x="140" y="168">④ 资料字段（按身份动态）</text>
+    <text x="140" y="190">⑤ 材料上传</text>
+    <text x="140" y="212">⑥ 提交 wechatAddUser</text>
+    <text x="140" y="234">⑦ 激活邮件 + 状态轮询</text>
+    <text x="140" y="256">⑧ 修改邮箱重发</text>
+    <text x="140" y="278">⑨ 协议 / 隐私页</text>
+  </g>
+  <text x="140" y="302" text-anchor="middle" font-size="10" fill="#8b949e">原生小程序，零构建零依赖</text>
+
+  <rect x="288" y="52" width="304" height="120" rx="8" fill="#fff" stroke="#d8dee6"/>
+  <text x="440" y="76" text-anchor="middle" font-size="13" fill="#1a1a1a" font-weight="600">Cookie 跨请求维护</text>
+  <text x="440" y="100" text-anchor="middle" font-size="10.5" fill="#5b6470">响应头 Set-Cookie → 解析键值对</text>
+  <text x="440" y="120" text-anchor="middle" font-size="10.5" fill="#5b6470">按 key 合并进 globalData.cookie</text>
+  <text x="440" y="140" text-anchor="middle" font-size="10.5" fill="#5b6470">下次请求放进 header.Cookie</text>
+  <text x="440" y="162" text-anchor="middle" font-size="10" fill="#8b949e">小程序没有 cookie jar，只能手工维护</text>
+
+  <rect x="288" y="188" width="304" height="128" rx="8" fill="#fff" stroke="#d8dee6"/>
+  <text x="440" y="212" text-anchor="middle" font-size="13" fill="#1a1a1a" font-weight="600">按前缀路由</text>
+  <text x="440" y="236" text-anchor="middle" font-size="10.5" fill="#5b6470">/api/* → 正式环境</text>
+  <text x="440" y="256" text-anchor="middle" font-size="10.5" fill="#5b6470">/api/delivery/* · /test-api/* → 测试环境</text>
+  <text x="440" y="276" text-anchor="middle" font-size="10.5" fill="#5b6470">本地 127.0.0.1 时截掉 api/ 前缀</text>
+  <text x="440" y="298" text-anchor="middle" font-size="10" fill="#8b949e">直连 Spring Boot 不走 Nginx 代理</text>
+
+  <rect x="624" y="52" width="232" height="120" rx="8" fill="#fff" stroke="#d8dee6"/>
+  <text x="740" y="76" text-anchor="middle" font-size="13" fill="#1a1a1a" font-weight="600">身份字段映射</text>
+  <text x="740" y="100" text-anchor="middle" font-size="10.5" fill="#5b6470">bo / bos / isotheruser（0/1 互斥）</text>
+  <text x="740" y="120" text-anchor="middle" font-size="10.5" fill="#5b6470">Other 才带 OtherUserIdentity</text>
+  <text x="740" y="140" text-anchor="middle" font-size="10.5" fill="#5b6470">不传 isdoctor / isdoctorteach</text>
+  <text x="740" y="162" text-anchor="middle" font-size="10" fill="#d08428">bos=1 是教师，写过 0 会全存成 false</text>
+
+  <rect x="624" y="188" width="232" height="128" rx="8" fill="#fff" stroke="#d8dee6"/>
+  <text x="740" y="212" text-anchor="middle" font-size="13" fill="#1a1a1a" font-weight="600">离线回归测试</text>
+  <text x="740" y="236" text-anchor="middle" font-size="10.5" fill="#5b6470">tests/register-identity.test.js</text>
+  <text x="740" y="256" text-anchor="middle" font-size="10.5" fill="#5b6470">mock wx.request</text>
+  <text x="740" y="276" text-anchor="middle" font-size="10.5" fill="#5b6470">五种身份组合 + 旧缓存禁重发</text>
+  <text x="740" y="298" text-anchor="middle" font-size="10" fill="#8b949e">node 直接跑，无需安装依赖</text>
+
+  <line x1="256" y1="112" x2="286" y2="112" stroke="#8b949e" stroke-width="1.4" marker-end="url(#m1)"/>
+  <line x1="256" y1="250" x2="286" y2="250" stroke="#8b949e" stroke-width="1.4" marker-end="url(#m1)"/>
+  <path d="M592,112 L620,112" fill="none" stroke="#8b949e" stroke-width="1.4" marker-end="url(#m1)"/>
+  <path d="M592,250 L620,250" fill="none" stroke="#8b949e" stroke-width="1.4" marker-end="url(#m1)"/>
+
+  <path d="M740,52 L740,40 L440,40" fill="none" stroke="#ffa94d" stroke-width="1.3" stroke-dasharray="5 4"/>
+  <text x="556" y="36" text-anchor="middle" font-size="10" fill="#d08428">Session 由服务端下发</text>
+
+  <text x="24" y="356" font-size="10.5" fill="#8b949e">脱敏示意图：域名、AppID、后端地址已替换，仅表达请求链路与字段契约</text>
+  <text x="24" y="378" font-size="10.5" fill="#8b949e">小程序没有网页链接，只能扫码或在开发者工具中运行</text>
+</svg>

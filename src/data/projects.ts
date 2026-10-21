@@ -68,6 +68,53 @@ export const projects: Project[] = [
     diagram: '/diagrams/logs-manage-system.svg',
   },
   {
+    slug: 'paper-annotation-system',
+    title: { zh: '期刊论文标注与导入系统', en: 'Journal Paper Annotation & Import' },
+    subtitle: {
+      zh: '把爬虫给的 Excel 转成结构化论文：自动识别中英格式与学科、分集合入库、在线标注论文与数据库的关联，再推送外部 SQL Server。',
+      en: 'Turns crawler-supplied spreadsheets into structured papers: format and discipline detection, multi-collection import, online annotation of paper-to-database links, then push to an external SQL Server.',
+    },
+    role: { zh: '全栈（个人，13 次提交）', en: 'Full-stack (solo, 13 commits)' },
+    period: '2026.07 – 2026.08',
+    stack: ['Spring Boot 2.7', 'Vue 3', 'MongoDB', 'Apache POI', 'jsoup', 'jTDS'],
+    problem: {
+      zh: '上游给的 Excel 并不规整：中文和英文是两套表头，列名写法也各不相同（标题/PaperTitle、关键字/关键词/Keywords、_id/doi/PaperID）；同一份文件的数据还要按学科和「是否与中国相关」拆进 5 个集合；重复导入和同批次内的重复都必须拦住，否则数据越导越脏。还有一类隐蔽情况：人工删掉的记录（判定为抓错的数据）不能在下次导入同一份文件时复活。',
+      en: 'The incoming spreadsheets were not regular: Chinese and English use different header sets, and column names vary (标题/PaperTitle, 关键字/关键词/Keywords, _id/doi/PaperID). One file had to be split across five collections by discipline and China-relatedness. Duplicates — both against the database and within the same batch — had to be blocked, or the dataset degrades with every import. There was also a subtle case: records a human had deleted (judged as bad scrapes) must not come back on the next import of the same file.',
+    },
+    action: {
+      zh: [
+        '按列名取字段而不是按列序，上游调整列顺序不影响导入',
+        '用「分类」列含不含《》区分中英文格式；扫前 5 行找第一行有值的判断，兜底看表头有没有 doi 列',
+        '两层去重：目标集合的判重键只投影 4 个字段、按集合懒加载一次，避免逐行查库；再加一层批次内 seen',
+        '判重键用「标题 + 期刊 + 发表日期 + paperId」四项，paperId 为空时靠其余三项照样能拦',
+        '已删除记录（墓碑）参与判重：删掉的是抓错的数据，不该重新导进来，要恢复走回收站',
+        '单行转换失败带行号收集，不影响整批；数字单元格用 DecimalFormat 处理，避免长 id 被转成科学计数',
+      ],
+      en: [
+        'Resolved fields by column name rather than position, so upstream column reordering does not break imports',
+        'Distinguished Chinese/English formats by whether the 「分类」 column contains 《》; scanned the first five rows for the first non-empty value, falling back to the presence of a doi column',
+        'Two-layer dedupe: per-collection keys projected to only four fields and loaded lazily once, plus an in-batch seen set',
+        'Dedupe key = title + journal + publish date + paperId, so an empty paperId still gets caught by the other three',
+        'Deleted records (tombstones) participate in dedupe: deletions mean bad scrapes, they should not reappear; restore from the recycle bin instead',
+        'Per-row failures are collected with row numbers without aborting the batch; numeric cells go through DecimalFormat so long ids are not turned into scientific notation',
+      ],
+    },
+    result: {
+      zh: [
+        '一个文件可分流到 5 个集合（国内 / 国际 × 会计·金融 × 是否中国相关），按集合批量写入',
+        '同一份 Excel 重复导入：新增 0 条，全部按原因逐条跳过',
+        '生成的 Content HTML 可直接渲染，作者 / 摘要 / 关键词均做转义',
+      ],
+      en: [
+        'One file can fan out into five collections (domestic/international × accounting/finance × China-related or not), written in batches',
+        'Re-importing the same spreadsheet: 0 inserted, every row skipped with a stated reason',
+        'Generated Content HTML renders directly; authors, abstract and keywords are escaped',
+      ],
+    },
+    repo: 'https://github.com/byte-love/paper-annotation-system',
+    featured: true,
+    diagram: '/diagrams/paper-annotation-system.svg',
+  },  {
     slug: 'wechat-register-miniprogram',
     title: { zh: '微信小程序用户注册流程', en: 'WeChat Mini-Program Registration' },
     subtitle: {
@@ -106,6 +153,7 @@ export const projects: Project[] = [
       ],
     },
     repo: 'https://github.com/byte-love/wechat-register-miniprogram',
+    diagram: '/diagrams/wechat-register-miniprogram.svg',
     featured: true,
   },
   {
@@ -153,6 +201,7 @@ export const projects: Project[] = [
       ],
     },
     repo: 'https://github.com/byte-love/data-split-cv',
+    diagram: '/diagrams/data-split-cv.svg',
     featured: true,
   },
   {
@@ -194,6 +243,7 @@ export const projects: Project[] = [
       ],
     },
     repo: 'https://github.com/byte-love/patent-quality-pipeline',
+    diagram: '/diagrams/patent-quality-pipeline.svg',
     featured: true,
   },
   {
@@ -237,6 +287,7 @@ export const projects: Project[] = [
       ],
     },
     repo: 'https://github.com/byte-love/tech-complementarity-index',
+    diagram: '/diagrams/tech-complementarity-index.svg',
     featured: false,
   },
   {
@@ -272,6 +323,7 @@ export const projects: Project[] = [
       en: ['240 pages in 45 seconds, coverage 0.9707', 'Quality-gated extraction, suitable for unattended batches'],
     },
     repo: 'https://github.com/byte-love/pdf-batch-extractor',
+    diagram: '/diagrams/pdf-batch-extractor.svg',
     featured: false,
   },
 ]

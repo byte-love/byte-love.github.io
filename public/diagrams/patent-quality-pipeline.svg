@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 400" width="880" height="400" font-family="-apple-system, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <rect width="880" height="400" fill="#f7f8fa"/>
+  <defs>
+    <marker id="p1" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#8b949e"/></marker>
+  </defs>
+
+  <text x="120" y="30" text-anchor="middle" font-size="12" fill="#8b949e" letter-spacing="1">源数据</text>
+  <text x="420" y="30" text-anchor="middle" font-size="12" fill="#8b949e" letter-spacing="1">处理（8 分区并行）</text>
+  <text x="740" y="30" text-anchor="middle" font-size="12" fill="#8b949e" letter-spacing="1">校验与输出</text>
+
+  <rect x="24" y="50" width="192" height="130" rx="8" fill="#fff" stroke="#d8dee6"/>
+  <text x="120" y="74" text-anchor="middle" font-size="13" fill="#1a1a1a" font-weight="600">60 个 xlsx</text>
+  <text x="120" y="98" text-anchor="middle" font-size="10.5" fill="#5b6470">读取 7,945 万行</text>
+  <text x="120" y="118" text-anchor="middle" font-size="10.5" fill="#5b6470">单文件最大 37 MB</text>
+  <text x="120" y="138" text-anchor="middle" font-size="10.5" fill="#d08428">max_row 常被写成假的 100 万</text>
+  <text x="120" y="160" text-anchor="middle" font-size="10" fill="#8b949e">禁用 pandas / openpyxl</text>
+
+  <rect x="24" y="196" width="192" height="86" rx="8" fill="#fff" stroke="#d8dee6"/>
+  <text x="120" y="220" text-anchor="middle" font-size="12.5" fill="#1a1a1a" font-weight="600">列映射</text>
+  <text x="120" y="242" text-anchor="middle" font-size="10.5" fill="#5b6470">省市版 6 列 / 企业版 4 列</text>
+  <text x="120" y="262" text-anchor="middle" font-size="10" fill="#8b949e">实用新型按申请/授权两口径各读一次</text>
+
+  <rect x="248" y="50" width="344" height="232" rx="8" fill="#fff" stroke="#1f6feb" stroke-width="1.5"/>
+  <g font-size="11">
+    <rect x="266" y="66" width="308" height="44" rx="6" fill="#eef4ff" stroke="#c7dcff"/>
+    <text x="420" y="84" text-anchor="middle" font-size="12" fill="#1a1a1a">① iterparse 流式解析</text>
+    <text x="420" y="101" text-anchor="middle" font-size="10" fill="#5b6470">只在 &lt;/row&gt; 清理节点，不能在 &lt;/c&gt; 清（会清掉单元格值）</text>
+
+    <rect x="266" y="118" width="308" height="44" rx="6" fill="#eef4ff" stroke="#c7dcff"/>
+    <text x="420" y="136" text-anchor="middle" font-size="12" fill="#1a1a1a">② 边解析边按（主体, 年份）预聚合</text>
+    <text x="420" y="153" text-anchor="middle" font-size="10" fill="#5b6470">子进程只回传聚合结果，跨进程传输降几个量级</text>
+
+    <rect x="266" y="170" width="308" height="44" rx="6" fill="#eef4ff" stroke="#c7dcff"/>
+    <text x="420" y="188" text-anchor="middle" font-size="12" fill="#1a1a1a">③ 中间文件用定点整数</text>
+    <text x="420" y="205" text-anchor="middle" font-size="10" fill="#5b6470">1e-6 为单位存 int32，避免浮点精度争议</text>
+
+    <rect x="266" y="222" width="308" height="48" rx="6" fill="#eef4ff" stroke="#c7dcff"/>
+    <text x="420" y="240" text-anchor="middle" font-size="12" fill="#1a1a1a">④ 父进程全局聚合 → 两套口径</text>
+    <text x="420" y="257" text-anchor="middle" font-size="10" fill="#5b6470">方法一按专利层面 / 方法二按主体层面</text>
+  </g>
+  <text x="420" y="272" text-anchor="middle" font-size="10" fill="#8b949e">解析 3.9 分钟 · 方法一 1.5 分钟</text>
+
+  <rect x="624" y="50" width="232" height="112" rx="8" fill="#fff" stroke="#c9e6cd" stroke-width="1.5"/>
+  <text x="740" y="74" text-anchor="middle" font-size="13" fill="#1a1a1a" font-weight="600">独立校验链</text>
+  <text x="740" y="98" text-anchor="middle" font-size="10.5" fill="#5b6470">绕开全部中间文件</text>
+  <text x="740" y="118" text-anchor="middle" font-size="10.5" fill="#5b6470">直接从原始 xlsx 重算</text>
+  <text x="740" y="138" text-anchor="middle" font-size="10.5" fill="#2f7d32">47,926 + 168,194 格逐格一致</text>
+  <text x="740" y="156" text-anchor="middle" font-size="10" fill="#8b949e">误差 &lt; 1e-9</text>
+
+  <rect x="624" y="180" width="232" height="102" rx="8" fill="#fff" stroke="#d8dee6"/>
+  <text x="740" y="204" text-anchor="middle" font-size="13" fill="#1a1a1a" font-weight="600">4 个输出 CSV</text>
+  <text x="740" y="226" text-anchor="middle" font-size="10.5" fill="#5b6470">省市版（市级 / 区县级两版）</text>
+  <text x="740" y="246" text-anchor="middle" font-size="10.5" fill="#5b6470">企业版方法一 / 方法二</text>
+  <text x="740" y="266" text-anchor="middle" font-size="10" fill="#8b949e">列名与历史交付保持一致</text>
+
+  <line x1="216" y1="115" x2="246" y2="115" stroke="#8b949e" stroke-width="1.4" marker-end="url(#p1)"/>
+  <line x1="216" y1="239" x2="246" y2="239" stroke="#8b949e" stroke-width="1.4" marker-end="url(#p1)"/>
+  <line x1="592" y1="120" x2="622" y2="120" stroke="#8b949e" stroke-width="1.4" marker-end="url(#p1)"/>
+  <line x1="592" y1="240" x2="622" y2="240" stroke="#8b949e" stroke-width="1.4" marker-end="url(#p1)"/>
+
+  <text x="24" y="342" font-size="10.5" fill="#8b949e">脱敏示意图：源数据不随仓库提供，路径与连接均为占位</text>
+  <text x="24" y="364" font-size="10.5" fill="#8b949e">校验脚本刻意不复用主流程的中间产物——共用中间文件就只能验证「算得一致」，验证不了「算得对」</text>
+</svg>

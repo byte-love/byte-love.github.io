@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 410" width="880" height="410" font-family="-apple-system, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <rect width="880" height="410" fill="#f7f8fa"/>
+  <defs>
+    <marker id="c1" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#8b949e"/></marker>
+    <marker id="c2" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#ffa94d"/></marker>
+  </defs>
+
+  <text x="130" y="30" text-anchor="middle" font-size="12" fill="#8b949e" letter-spacing="1">WPF 客户端</text>
+  <text x="440" y="30" text-anchor="middle" font-size="12" fill="#8b949e" letter-spacing="1">交换介质：临时 SQLite</text>
+  <text x="750" y="30" text-anchor="middle" font-size="12" fill="#8b949e" letter-spacing="1">训练内核（不可改）</text>
+
+  <rect x="24" y="50" width="214" height="300" rx="8" fill="#fff" stroke="#1f6feb" stroke-width="1.5"/>
+  <text x="131" y="74" text-anchor="middle" font-size="13" fill="#1a1a1a" font-weight="600">评估编排</text>
+  <g font-size="10.5" fill="#5b6470" text-anchor="middle">
+    <text x="131" y="98">① 快照全量数据</text>
+    <text x="131" y="122">② 按标签分层生成折映射</text>
+    <text x="131" y="144">③ 每折重建训练/测试集</text>
+    <text x="131" y="166">④ 串行拉起内核 N 次</text>
+    <text x="131" y="188">⑤ 读回逐折报告</text>
+    <text x="131" y="210">⑥ 汇总均值 ± 波动</text>
+    <text x="131" y="232">⑦ 用 100% 数据训最终模型</text>
+  </g>
+  <rect x="40" y="248" width="182" height="88" rx="6" fill="#fff4e5" stroke="#ffd8a8"/>
+  <text x="131" y="268" text-anchor="middle" font-size="10.5" fill="#1a1a1a">折状态机</text>
+  <text x="131" y="286" text-anchor="middle" font-size="9.5" fill="#5b6470">串行运行号判定「这次进程属于哪一折」</text>
+  <text x="131" y="302" text-anchor="middle" font-size="9.5" fill="#5b6470">参数在 UI 线程读出再传后台</text>
+  <text x="131" y="320" text-anchor="middle" font-size="9.5" fill="#d08428">后台线程读下拉框会被 catch{} 吞掉</text>
+
+  <rect x="272" y="50" width="336" height="150" rx="8" fill="#fff" stroke="#d8dee6"/>
+  <text x="440" y="74" text-anchor="middle" font-size="13" fill="#1a1a1a" font-weight="600">三张表分工</text>
+  <rect x="290" y="88" width="300" height="30" rx="5" fill="#eef4ff" stroke="#c7dcff"/>
+  <text x="440" y="108" text-anchor="middle" font-size="10.5" fill="#1a1a1a">cv_source — 全量快照（不越跑越少）</text>
+  <rect x="290" y="124" width="300" height="30" rx="5" fill="#eef4ff" stroke="#c7dcff"/>
+  <text x="440" y="144" text-anchor="middle" font-size="10.5" fill="#1a1a1a">cv_fold_map — 样本 → 折号</text>
+  <rect x="290" y="160" width="300" height="30" rx="5" fill="#eef4ff" stroke="#c7dcff"/>
+  <text x="440" y="180" text-anchor="middle" font-size="10.5" fill="#1a1a1a">training_set / testing_set — 每折重建</text>
+
+  <rect x="272" y="216" width="336" height="134" rx="8" fill="#fff" stroke="#d8dee6"/>
+  <text x="440" y="240" text-anchor="middle" font-size="13" fill="#1a1a1a" font-weight="600">两个静默契约</text>
+  <text x="440" y="264" text-anchor="middle" font-size="10.5" fill="#5b6470">LabelEncoder 只吃训练集标签</text>
+  <text x="440" y="282" text-anchor="middle" font-size="10.5" fill="#d08428">→ 测试集有未见标签：返回 0 分且不报错</text>
+  <text x="440" y="306" text-anchor="middle" font-size="10.5" fill="#5b6470">classification_report 要求类别数匹配</text>
+  <text x="440" y="324" text-anchor="middle" font-size="10.5" fill="#d08428">→ 留一只有 1 条考卷：干脆不写报告</text>
+  <text x="440" y="342" text-anchor="middle" font-size="10" fill="#8b949e">对策：分层切分 / 折外预测汇总</text>
+
+  <rect x="630" y="50" width="226" height="150" rx="8" fill="#fff" stroke="#d8dee6"/>
+  <text x="743" y="74" text-anchor="middle" font-size="13" fill="#1a1a1a" font-weight="600">PyInstaller 内核</text>
+  <text x="743" y="98" text-anchor="middle" font-size="10.5" fill="#5b6470">6 GB / 41,216 个文件</text>
+  <text x="743" y="118" text-anchor="middle" font-size="10.5" fill="#5b6470">19 个命令行参数</text>
+  <text x="743" y="138" text-anchor="middle" font-size="10.5" fill="#d08428">没有任何按折 / 循环参数</text>
+  <text x="743" y="162" text-anchor="middle" font-size="10" fill="#8b949e">改一行要重打包 + 传 OSS</text>
+  <text x="743" y="182" text-anchor="middle" font-size="10" fill="#8b949e">→ 所以选择「内核零改动」</text>
+
+  <rect x="630" y="216" width="226" height="134" rx="8" fill="#fff" stroke="#d8dee6"/>
+  <text x="743" y="240" text-anchor="middle" font-size="13" fill="#1a1a1a" font-weight="600">实测结果</text>
+  <text x="743" y="264" text-anchor="middle" font-size="10.5" fill="#5b6470">十折×5（50 折）27 分钟</text>
+  <text x="743" y="284" text-anchor="middle" font-size="10.5" fill="#5b6470">留一 24 条 14 分钟</text>
+  <text x="743" y="304" text-anchor="middle" font-size="10.5" fill="#5b6470">折模型 21.3 GB → 0.16 MB</text>
+  <text x="743" y="324" text-anchor="middle" font-size="10.5" fill="#5b6470">Macro F1 0.4583 → 0.3143</text>
+  <text x="743" y="342" text-anchor="middle" font-size="10" fill="#8b949e">正面召回 0.4583 → 0.9167</text>
+
+  <line x1="238" y1="120" x2="270" y2="120" stroke="#8b949e" stroke-width="1.4" marker-end="url(#c1)"/>
+  <line x1="238" y1="280" x2="270" y2="280" stroke="#8b949e" stroke-width="1.4" marker-end="url(#c1)"/>
+  <path d="M610,120 L628,120" fill="none" stroke="#8b949e" stroke-width="1.4" marker-end="url(#c1)"/>
+  <path d="M743,50 L743,38 L440,38" fill="none" stroke="#ffa94d" stroke-width="1.3" stroke-dasharray="5 4"/>
+  <text x="596" y="34" text-anchor="middle" font-size="10" fill="#d08428">Process 串行调用 · 读回报告文本</text>
+
+  <text x="24" y="376" font-size="10.5" fill="#8b949e">脱敏示意图：训练内核为外部程序，本项目实现的是客户端侧编排与指标汇总</text>
+  <text x="24" y="396" font-size="10.5" fill="#8b949e">注意：测试数据仅 10~24 条、训练 2 epoch，模型效果本身不是成果，成果是流程打通与口径修正</text>
+</svg>
