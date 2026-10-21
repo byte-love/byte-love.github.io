@@ -218,7 +218,7 @@ article.project code {
   max-width: 92vw;
   max-height: 88vh;
   border-radius: 6px;
-  cursor: default;
+  cursor: zoom-out;
 }
 .lb-close {
   position: fixed;
