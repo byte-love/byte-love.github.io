@@ -59,7 +59,7 @@ const langSwitchHref = lang === 'zh' ? `/en/projects/${project.slug}/` : `/proje
             {project.shots.map((s) => (
               <figure>
                 <a href={s.src} target="_blank" rel="noopener">
-                  <img src={s.src} alt={s.caption[lang]} loading="lazy" />
+                  <img src={s.src} alt={s.caption[lang]} decoding="async" />
                 </a>
                 <figcaption>{s.caption[lang]}</figcaption>
               </figure>
