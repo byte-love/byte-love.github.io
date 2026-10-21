@@ -125,7 +125,8 @@ export const projects: Project[] = [
       { src: '/shots/paper/02-list.png', caption: { zh: '论文浏览：分类筛选、批量打回标注、回收站', en: 'Paper list: category filter, bulk send-back, recycle bin' } },
       { src: '/shots/paper/03-annotate.png', caption: { zh: '数据库标注工作台：左文右库，单篇标注、候选库搜索、每篇最多关联 4 个', en: 'Annotation workbench: paper on the left, candidate databases on the right' } },
       { src: '/shots/paper/04-export.png', caption: { zh: '导出 Excel：按分类导出，列名与目标表一致', en: 'Export: per-category, column names aligned with the target table' } },
-      { src: '/shots/paper/05-upload.png', caption: { zh: '上传外网：全量覆盖推送 + 历史数据回补', en: 'External push: full replacement plus historical backfill' } },
+      { src: '/shots/paper/06-push.png', caption: { zh: '上传外网：按分类分表推送，待上传 / 已上传 / 待移除一眼可见', en: 'External push: per-category tables with pending, uploaded and to-remove states' } },
+      { src: '/shots/paper/05-upload.png', caption: { zh: '上传外网：加载前的空状态与历史数据回补入口', en: 'External push: empty state and the historical backfill entry' } },
     ],
   },  {
     slug: 'wechat-register-miniprogram',

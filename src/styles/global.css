@@ -203,7 +203,38 @@ article.project code {
 }
 .gallery { display: grid; gap: 22px; }
 .gallery figure { margin: 0; }
-.gallery a { display: block; }
+.gallery a { display: block; cursor: zoom-in; }
+.lightbox {
+  border: none;
+  padding: 0;
+  background: transparent;
+  max-width: none;
+  max-height: none;
+  overflow: visible;
+}
+.lightbox::backdrop { background: rgba(0, 0, 0, 0.85); }
+.lightbox img {
+  display: block;
+  max-width: 92vw;
+  max-height: 88vh;
+  border-radius: 6px;
+  cursor: default;
+}
+.lb-close {
+  position: fixed;
+  top: 14px;
+  right: 18px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+}
+.lb-close:hover { background: rgba(255, 255, 255, 0.3); }
 .gallery img {
   width: 100%;
   height: auto;

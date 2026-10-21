@@ -58,13 +58,37 @@ const langSwitchHref = lang === 'zh' ? `/en/projects/${project.slug}/` : `/proje
           <div class="gallery">
             {project.shots.map((s) => (
               <figure>
-                <a href={s.src} target="_blank" rel="noopener">
+                <a class="shot-link" href={s.src}>
                   <img src={s.src} alt={s.caption[lang]} decoding="async" />
                 </a>
                 <figcaption>{s.caption[lang]}</figcaption>
               </figure>
             ))}
           </div>
+
+          <dialog id="lightbox" class="lightbox">
+            <button class="lb-close" type="button" aria-label={copy.lightboxClose}>×</button>
+            <img alt="" />
+          </dialog>
+
+          <script is:inline>
+            (() => {
+              const lb = document.getElementById('lightbox')
+              if (!lb) return
+              const img = lb.querySelector('img')
+              document.querySelectorAll('.shot-link').forEach((a) => {
+                a.addEventListener('click', (e) => {
+                  e.preventDefault()
+                  img.src = a.getAttribute('href')
+                  lb.showModal()
+                })
+              })
+              lb.addEventListener('click', (e) => {
+                if (e.target === lb) lb.close()
+              })
+              lb.querySelector('.lb-close').addEventListener('click', () => lb.close())
+            })()
+          </script>
         </>
       )}
 
