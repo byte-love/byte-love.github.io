@@ -22,6 +22,12 @@ const langSwitchHref = lang === 'zh' ? `/en/projects/${project.slug}/` : `/proje
       <h1>{project.title[lang]}</h1>
       <p class="sub">{project.subtitle[lang]}</p>
 
+      {project.diagram && (
+        <figure class="figure">
+          <img src={project.diagram} alt={`${project.title[lang]} 架构示意`} loading="lazy" />
+        </figure>
+      )}
+
       <dl class="dl">
         <dt>{copy.roleLabel}</dt>
         <dd>{project.role[lang]}</dd>

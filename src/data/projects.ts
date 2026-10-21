@@ -14,6 +14,8 @@ export type Project = {
   result: Record<Lang, string[]>
   repo: string
   featured: boolean
+  /** 架构图，放 public/diagrams/ 下，例：/diagrams/logs-manage-system.svg */
+  diagram?: string
 }
 
 export const projects: Project[] = [
@@ -63,6 +65,7 @@ export const projects: Project[] = [
     },
     repo: 'https://github.com/byte-love/logs-manage-system',
     featured: true,
+    diagram: '/diagrams/logs-manage-system.svg',
   },
   {
     slug: 'wechat-register-miniprogram',

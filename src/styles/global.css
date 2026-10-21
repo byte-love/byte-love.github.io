@@ -173,6 +173,15 @@ section.block > .wrap > h2 {
 article.project { padding: 44px 0 64px; }
 article.project h1 { font-size: 26px; margin: 0 0 6px; }
 article.project .sub { color: var(--fg-2); margin: 0 0 26px; }
+.figure { margin: 0 0 26px; }
+.figure img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #f7f8fa;
+}
 article.project h2 {
   font-size: 13px;
   font-family: var(--mono);

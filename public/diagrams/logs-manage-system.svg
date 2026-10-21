@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 430" width="880" height="430" font-family="-apple-system, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <rect width="880" height="430" fill="#f7f8fa"/>
+
+  <!-- 列标题 -->
+  <text x="126" y="34" text-anchor="middle" font-size="12" fill="#8b949e" letter-spacing="1">数据源</text>
+  <text x="440" y="34" text-anchor="middle" font-size="12" fill="#8b949e" letter-spacing="1">Spring Boot 2.7 · Java 8</text>
+  <text x="754" y="34" text-anchor="middle" font-size="12" fill="#8b949e" letter-spacing="1">前端</text>
+
+  <!-- 数据源框 -->
+  <rect x="24" y="52" width="204" height="150" rx="8" fill="#ffffff" stroke="#d8dee6"/>
+  <text x="126" y="76" text-anchor="middle" font-size="13" fill="#1a1a1a" font-weight="600">MongoDB × 4</text>
+  <text x="126" y="100" text-anchor="middle" font-size="11.5" fill="#5b6470">主库（读写）</text>
+  <text x="126" y="120" text-anchor="middle" font-size="11.5" fill="#5b6470">只读辅助库 A</text>
+  <text x="126" y="140" text-anchor="middle" font-size="11.5" fill="#5b6470">只读辅助库 B</text>
+  <text x="126" y="160" text-anchor="middle" font-size="11.5" fill="#5b6470">公告备份库（只写）</text>
+  <text x="126" y="186" text-anchor="middle" font-size="11" fill="#8b949e">4 个独立 @Bean</text>
+
+  <rect x="24" y="222" width="204" height="120" rx="8" fill="#ffffff" stroke="#d8dee6"/>
+  <text x="126" y="246" text-anchor="middle" font-size="13" fill="#1a1a1a" font-weight="600">SQL Server × 3</text>
+  <text x="126" y="270" text-anchor="middle" font-size="11.5" fill="#5b6470">核心业务库</text>
+  <text x="126" y="290" text-anchor="middle" font-size="11.5" fill="#5b6470">日志源库</text>
+  <text x="126" y="310" text-anchor="middle" font-size="11.5" fill="#5b6470">注册申请表库</text>
+  <text x="126" y="332" text-anchor="middle" font-size="11" fill="#8b949e">jTDS / mssql-jdbc</text>
+
+  <!-- 后端框 -->
+  <rect x="268" y="52" width="344" height="290" rx="8" fill="#ffffff" stroke="#1f6feb" stroke-width="1.5"/>
+  <text x="440" y="80" text-anchor="middle" font-size="13.5" fill="#1a1a1a" font-weight="600">日志管理与账号运维后台</text>
+
+  <rect x="288" y="96" width="304" height="46" rx="6" fill="#eef4ff" stroke="#c7dcff"/>
+  <text x="440" y="115" text-anchor="middle" font-size="12" fill="#1a1a1a">Controller</text>
+  <text x="440" y="132" text-anchor="middle" font-size="10.5" fill="#5b6470">账号 · 日志 · 导出 · 学校 · 公告 · 审计</text>
+
+  <rect x="288" y="152" width="304" height="46" rx="6" fill="#eef4ff" stroke="#c7dcff"/>
+  <text x="440" y="171" text-anchor="middle" font-size="12" fill="#1a1a1a">Service</text>
+  <text x="440" y="188" text-anchor="middle" font-size="10.5" fill="#5b6470">跨库合并 · 派生列 · 断点自愈 · 流式导出</text>
+
+  <rect x="288" y="208" width="304" height="46" rx="6" fill="#eef4ff" stroke="#c7dcff"/>
+  <text x="440" y="227" text-anchor="middle" font-size="12" fill="#1a1a1a">MultipleMongoConfig</text>
+  <text x="440" y="244" text-anchor="middle" font-size="10.5" fill="#5b6470">4 个无参 @Bean（带 @Value 会注入失败）</text>
+
+  <rect x="288" y="264" width="304" height="58" rx="6" fill="#fff4e5" stroke="#ffd8a8"/>
+  <text x="440" y="284" text-anchor="middle" font-size="12" fill="#1a1a1a">WebSocket 同步端点</text>
+  <text x="440" y="301" text-anchor="middle" font-size="10.5" fill="#5b6470">一条连接同步一张表 · 断点落库</text>
+  <text x="440" y="316" text-anchor="middle" font-size="10.5" fill="#5b6470">重跑按 _id 去重</text>
+
+  <!-- 前端框 -->
+  <rect x="652" y="52" width="204" height="150" rx="8" fill="#ffffff" stroke="#d8dee6"/>
+  <text x="754" y="76" text-anchor="middle" font-size="13" fill="#1a1a1a" font-weight="600">Vue 3 + Vite 5</text>
+  <text x="754" y="100" text-anchor="middle" font-size="11.5" fill="#5b6470">账号数据 / 日志数据</text>
+  <text x="754" y="120" text-anchor="middle" font-size="11.5" fill="#5b6470">学校列表 / 审核记录</text>
+  <text x="754" y="140" text-anchor="middle" font-size="11.5" fill="#5b6470">异常情况 / 实用工具</text>
+  <text x="754" y="160" text-anchor="middle" font-size="11.5" fill="#5b6470">数据同步</text>
+  <text x="754" y="186" text-anchor="middle" font-size="11" fill="#8b949e">同源部署，单个 jar</text>
+
+  <rect x="652" y="222" width="204" height="120" rx="8" fill="#ffffff" stroke="#d8dee6"/>
+  <text x="754" y="246" text-anchor="middle" font-size="13" fill="#1a1a1a" font-weight="600">导出 / 报表</text>
+  <text x="754" y="270" text-anchor="middle" font-size="11.5" fill="#5b6470">SXSSF 流式写出</text>
+  <text x="754" y="290" text-anchor="middle" font-size="11.5" fill="#5b6470">200 行滑窗</text>
+  <text x="754" y="310" text-anchor="middle" font-size="11.5" fill="#5b6470">12.98 万行 / 24 秒</text>
+  <text x="754" y="332" text-anchor="middle" font-size="11" fill="#8b949e">约 11 MB</text>
+
+  <!-- 箭头 -->
+  <defs>
+    <marker id="a" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+      <path d="M0,0 L9,4.5 L0,9 z" fill="#8b949e"/>
+    </marker>
+    <marker id="b" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+      <path d="M0,0 L9,4.5 L0,9 z" fill="#ffa94d"/>
+    </marker>
+  </defs>
+
+  <line x1="228" y1="127" x2="266" y2="127" stroke="#8b949e" stroke-width="1.4" marker-end="url(#a)"/>
+  <line x1="228" y1="282" x2="266" y2="282" stroke="#8b949e" stroke-width="1.4" marker-end="url(#a)"/>
+  <line x1="612" y1="127" x2="650" y2="127" stroke="#8b949e" stroke-width="1.4" marker-end="url(#a)"/>
+  <line x1="612" y1="282" x2="650" y2="282" stroke="#8b949e" stroke-width="1.4" marker-end="url(#a)"/>
+
+  <path d="M126,352 L126,392 L440,392 L440,326" fill="none" stroke="#ffa94d" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#b)"/>
+  <text x="284" y="386" font-size="10.5" fill="#d08428">增量同步（WebSocket）</text>
+
+  <text x="24" y="418" font-size="10.5" fill="#8b949e">脱敏示意图：公司名、域名、真实主机与库名已替换，仅表达结构关系</text>
+</svg>
