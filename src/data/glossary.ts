@@ -64,4 +64,12 @@ export const glossary: Record<string, L> = {
     zh: '已接受的行：已经通过判重检查、被放进待写入队列的那一行。它的判重键会被加进 seen，因此这一批里再出现同一篇就会被判为重复跳过。',
     en: 'An accepted row: one that passed the dedupe check and was put into the pending-write queue. Its key goes into seen, so the same paper appearing later in the same batch is skipped.',
   },
+  trim: {
+    zh: 'trim()：去掉字符串首尾的空白字符（空格、Tab、换行），中间的空白保留。Excel 里「标题」和「标题 」（带尾随空格）看起来一样、字符不同，不 trim 就会把它们算成两篇不同论文，判重直接失效。',
+    en: 'trim(): strips leading and trailing whitespace (spaces, tabs, newlines) while keeping inner spaces. In Excel “标题” and “标题 ” look identical but differ as strings; without trim they would count as two different papers and dedupe would fail.',
+  },
+  '\\001': {
+    zh: '不可见分隔符：\\001 是 ASCII 控制字符 SOH，正常文本里几乎不会出现，所以用它标出字段边界。必须要有它 —— 否则 "ab"+"c" 和 "a"+"bc" 都拼成 "abc"，两篇不同论文撞成同一个键，后一篇会被当成重复丢掉。也不用 -、|、, 这类常见字符，因为标题里本身就有。',
+    en: 'Invisible separator: \\001 is the ASCII SOH control character, practically absent from normal text, so it marks field boundaries. It is required — otherwise "ab"+"c" and "a"+"bc" both become "abc" and two different papers collide, discarding a real record. Common characters like - or | would not work because titles contain them.',
+  },
 }
