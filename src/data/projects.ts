@@ -240,6 +240,15 @@ export const projects: Project[] = [
       ],
     },
     repo: 'https://github.com/byte-love/data-split-cv',
+    notes: {
+      zh: {
+        0: '内核只认两张表：training_set 和 testing_set，它没有任何「折」的概念。所以每跑一折，客户端就得把该折的数据摆进这两张表里。\n做法：先 SnapshotSource() 把全量数据复制成快照表 cv_source，再建一张 cv_fold_map(Id, FoldIndex)。每折用 ApplyFold() 从快照重建两张表（测试集 = 该折的 Id，训练集 = 其余），跑完 RestoreAllToTraining() 把全量放回训练集。\n为什么是「从快照重建」而不是「把数据搬走再搬回」：搬来搬去只要中途失败或取消就会丢数据、越跑越少；从快照重建可反复、可自愈。\n一个细节：两表的列要取交集，因为历史版本里 testing_set 可能少 FolderName 这类列，直接 INSERT 会因列不匹配失败。',
+        1: '分层是为了让每一折的训练集都含全部标签。步骤：把样本按标签分组 → 组内 Fisher-Yates 洗牌 → 轮流发牌（i % foldCount）。\n光发牌有个坑：每个标签的余数会全堆到前几折，所以给每个标签加一个随机起始偏移 offset，让余数分散开。\n再加一层兜底：RebalanceEmptyFolds 专门处理「某折一条样本都没有」——从样本最多的折挪一条过来。空折会让 ApplyFold 直接抛异常，整轮中断。\n前置校验：GetMinLabelCount() 取「每个标签样本数的最小值」，折数不能超过它。为什么必须卡住：内核的 LabelEncoder 只用训练集标签构建，某一折的训练集缺了某个标签，测试集里出现它时内核会判 0 分且不报错——不是训练失败，而是「没见过这个标签」。所以 GetSingleSampleLabels() 还会把「只有 1 条样本的标签」提前列给用户看。',
+        2: '留一法每折只有 1 条测试样本，内核给出的是「1 条样本的准确率」——非 0 即 1，逐类 precision/recall 根本算不出来（分母是 0）。\n所以留一不走内核的报告，改成两步：每折先把 testing_set 复制进 dev_set（CopyTestingToDevSet），再用「应用模型」模式调一次内核，让它把每条样本的预测标签 PreLabel 写回 dev_set；客户端读回 id → 预测（ReadDevPredictions），再和 cv_source 里的真实标签对齐，由客户端自己用混淆矩阵算指标（BuildFoldMetricFromPredictions，macro/weighted F1 与 sklearn 口径一致）。\n边界：dev_set 是用户自己的预测集，会被这次操作覆盖，所以开跑前 SnapshotDevSet() 备份、结束时 RestoreDevSet() 还原——正常结束、取消、报错三条路径都得还原。',
+        3: '两种口径：\n· K 折/十折：每折都能算出完整指标，所以是「各折指标取平均」，逐类指标跨折平均、support 各折求和（= 该类真实总条数）。\n· 留一：先收集 N 次折外预测，汇总成一个混淆矩阵再算指标。\n为什么留一必须换口径：每折只有 1 条样本，逐折算出来的分数非 0 即 1，平均之后看似正常，但逐类的 precision/recall 会因为每折 support 只有 1 而失真。汇总口径才是教科书写法（等价于 sklearn 的 cross_val_predict + classification_report）。\n结果也印证了这点：改成汇总口径后 Macro F1 从 0.4583 变成 0.3143、正面召回从 0.4583 变成 0.9167——旧口径是虚高且失真的。',
+        4: '两个都是资源问题。\n① 模型：每折训练都会产出一个模型目录，十折×5 轮就是 50 个，磁盘直接爆（实测 21.3 GB）。所以折指标一解析完就删掉该折模型；只有最后用 100% 数据训练的那一次模型保留下来交付给用户。改完占用 0.16 MB。\n② 日志：内核每处理一篇文档就打一行日志，N 篇就是 N 次 UI 刷新，界面会被刷到卡死。改成定时器节流——按时间窗合并刷新，日志照样完整，只是刷新次数从 N 次降到几十次。',
+      },
+    },
     diagram: '/diagrams/data-split-cv.svg',
     featured: true,
   },
