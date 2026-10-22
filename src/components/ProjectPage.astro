@@ -98,14 +98,7 @@ const tipify = (raw: string) => {
           </>
         )}
         <dt>{copy.stackLabel}</dt>
-        <dd>
-          {project.stack.map((s, i) => (
-            <>
-              {i > 0 && ' · '}
-              <span set:html={tipifyText(s)} />
-            </>
-          ))}
-        </dd>
+        <dd>{project.stack.join(' · ')}</dd>
         {project.repo && (
           <>
             <dt>{copy.repoLabel}</dt>
@@ -123,7 +116,7 @@ const tipify = (raw: string) => {
           const note = project.notes?.[lang]?.[i]
           return (
             <li>
-              <span set:html={tipify(a)} />
+              <span set:html={a.replace(/`([^`]+)`/g, '<code>$1</code>')} />
               {note && (
                 <button class="note-btn" type="button" data-note={tipify(note)} aria-label={copy.noteLabel}>i</button>
               )}
@@ -134,7 +127,7 @@ const tipify = (raw: string) => {
 
       <h2>{copy.resultLabel}</h2>
       <ul>
-        {project.result[lang].map((r) => <li set:html={tipify(r)} />)}
+        {project.result[lang].map((r) => <li set:html={r.replace(/`([^`]+)`/g, '<code>$1</code>')} />)}
       </ul>
 
       {project.shots && (
