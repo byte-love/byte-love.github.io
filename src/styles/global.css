@@ -221,7 +221,12 @@ article.project code {
   border-radius: 6px;
   cursor: zoom-out;
   transform-origin: center center;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-drag: none;
 }
+.lightbox img.zoomed { cursor: grab; }
+.lightbox img.grabbing { cursor: grabbing; }
 .lightbox img[src$=".svg"] {
   width: 92vw;
   height: 88vh;

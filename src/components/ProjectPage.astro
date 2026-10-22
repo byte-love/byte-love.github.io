@@ -164,20 +164,38 @@ const tipify = (raw: string) => {
             const lb = document.getElementById('lightbox')
             if (!lb) return
             const big = lb.querySelector('img')
-            // 滚轮二次缩放：以鼠标位置为锚点，1 倍 = 铺满视口的初始尺寸
+            // 滚轮缩放 + 拖拽平移：1 倍 = 铺满视口的初始尺寸
             let zoom = 1
             let tx = 0
             let ty = 0
             let cx = 0
             let cy = 0
+            let dragging = false
+            let dragMoved = false
+            let suppressClick = false
+            let lastX = 0
+            let lastY = 0
+            const MIN_ZOOM = 0.4
+            const MAX_ZOOM = 6
             const applyZoom = () => {
               big.style.transform = zoom === 1 && tx === 0 && ty === 0 ? '' : `translate(${tx}px, ${ty}px) scale(${zoom})`
+              big.classList.toggle('zoomed', zoom > 1.001)
             }
             const resetZoom = () => {
               zoom = 1
               tx = 0
               ty = 0
+              dragging = false
+              big.classList.remove('grabbing')
               applyZoom()
+            }
+            const clampPan = () => {
+              const w = big.offsetWidth * zoom
+              const h = big.offsetHeight * zoom
+              const boundX = Math.max(0, w / 2 + innerWidth / 2 - 80)
+              const boundY = Math.max(0, h / 2 + innerHeight / 2 - 80)
+              tx = Math.min(boundX, Math.max(-boundX, tx))
+              ty = Math.min(boundY, Math.max(-boundY, ty))
             }
             lb.addEventListener('close', resetZoom)
             big.addEventListener(
@@ -190,7 +208,7 @@ const tipify = (raw: string) => {
                   cy = r.top + r.height / 2
                 }
                 const step = e.deltaY < 0 ? 1.15 : 1 / 1.15
-                const next = Math.min(6, Math.max(1, zoom * step))
+                const next = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, zoom * step))
                 if (next === zoom) return
                 const ux = e.clientX - cx
                 const uy = e.clientY - cy
@@ -198,7 +216,7 @@ const tipify = (raw: string) => {
                 tx = ux - k * (ux - tx)
                 ty = uy - k * (uy - ty)
                 zoom = next
-                if (zoom === 1) {
+                if (zoom <= 1.001) {
                   tx = 0
                   ty = 0
                 }
@@ -206,6 +224,37 @@ const tipify = (raw: string) => {
               },
               { passive: false },
             )
+            big.addEventListener('pointerdown', (e) => {
+              suppressClick = false
+              if (zoom <= 1.001) return
+              dragging = true
+              dragMoved = false
+              lastX = e.clientX
+              lastY = e.clientY
+              big.classList.add('grabbing')
+            })
+            big.addEventListener('pointermove', (e) => {
+              if (!dragging) return
+              const dx = e.clientX - lastX
+              const dy = e.clientY - lastY
+              if (!dx && !dy) return
+              tx += dx
+              ty += dy
+              lastX = e.clientX
+              lastY = e.clientY
+              if (Math.abs(dx) > 1 || Math.abs(dy) > 1) dragMoved = true
+              clampPan()
+              applyZoom()
+            })
+            const endDrag = () => {
+              if (!dragging) return
+              dragging = false
+              big.classList.remove('grabbing')
+              suppressClick = dragMoved
+            }
+            big.addEventListener('pointerup', endDrag)
+            big.addEventListener('pointercancel', endDrag)
+            big.addEventListener('dragstart', (e) => e.preventDefault())
             const note = document.getElementById('note')
             const noteBody = note && note.querySelector('.note-body')
             const tip = document.createElement('div')
@@ -292,6 +341,10 @@ const tipify = (raw: string) => {
                 return
               }
               if (e.detail > 1) return
+              if (t === big && suppressClick) {
+                suppressClick = false
+                return
+              }
               if (t === lb || t === big) lb.close()
             })
             // 遮罩点击关闭：只有 target 是 dialog 本身、且落点在其矩形之外才算点到了遮罩。
