@@ -94,7 +94,9 @@ const langSwitchHref = lang === 'zh' ? `/en/projects/${project.slug}/` : `/proje
       </dialog>
 
       <dialog id="note" class="note-dialog">
-        <button class="note-close" type="button" aria-label={copy.lightboxClose}>×</button>
+        <div class="note-head">
+          <button class="note-close" type="button" aria-label={copy.lightboxClose}>×</button>
+        </div>
         <p class="note-body"></p>
       </dialog>
 

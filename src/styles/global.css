@@ -249,27 +249,28 @@ article.project code {
   color: var(--fg);
 }
 .note-dialog {
-  position: relative;
   border: 1px solid var(--line);
-  border-radius: 10px;
-  padding: 26px 28px 24px;
-  width: min(620px, 92vw);
-  max-height: 80vh;
+  border-radius: 12px;
+  padding: 14px 26px 24px;
+  width: min(640px, 92vw);
+  max-height: 78vh;
   overflow: auto;
   background: var(--bg);
   color: var(--fg);
 }
 .note-dialog::backdrop { background: rgba(0, 0, 0, 0.55); }
+.note-head {
+  display: flex;
+  justify-content: flex-end;
+  margin: 0 0 2px;
+}
 .note-body {
   margin: 0;
-  font-size: 14px;
-  line-height: 1.85;
+  font-size: 14.5px;
+  line-height: 1.9;
   white-space: pre-line;
 }
 .note-close {
-  position: absolute;
-  top: 8px;
-  right: 10px;
   width: 26px;
   height: 26px;
   border: none;
