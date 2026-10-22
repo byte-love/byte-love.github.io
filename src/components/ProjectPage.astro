@@ -33,12 +33,20 @@ const langSwitchHref = lang === 'zh' ? `/en/projects/${project.slug}/` : `/proje
       <dl class="dl">
         <dt>{copy.roleLabel}</dt>
         <dd>{project.role[lang]}</dd>
-        <dt>{copy.periodLabel}</dt>
-        <dd>{project.period}</dd>
+        {project.period && (
+          <>
+            <dt>{copy.periodLabel}</dt>
+            <dd>{project.period}</dd>
+          </>
+        )}
         <dt>{copy.stackLabel}</dt>
         <dd>{project.stack.join(' · ')}</dd>
-        <dt>{copy.repoLabel}</dt>
-        <dd><a href={project.repo}>{project.repo.replace('https://', '')}</a></dd>
+        {project.repo && (
+          <>
+            <dt>{copy.repoLabel}</dt>
+            <dd><a href={project.repo}>{project.repo.replace('https://', '')}</a></dd>
+          </>
+        )}
       </dl>
 
       <h2>{copy.problemLabel}</h2>
@@ -107,7 +115,9 @@ const langSwitchHref = lang === 'zh' ? `/en/projects/${project.slug}/` : `/proje
         })()
       </script>
 
-      <p style="margin-top:32px"><a href={project.repo}>{copy.repoLink}</a></p>
+      {project.repo && (
+        <p style="margin-top:32px"><a href={project.repo}>{copy.repoLink}</a></p>
+      )}
     </div>
   </article>
 </Base>

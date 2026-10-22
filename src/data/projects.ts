@@ -7,12 +7,14 @@ export type Project = {
   title: L
   subtitle: L
   role: L
-  period: string
+  /** 起止时间，缺省则不显示该行 */
+  period?: string
   stack: string[]
   problem: L
   action: Record<Lang, string[]>
   result: Record<Lang, string[]>
-  repo: string
+  /** 公开仓库地址，缺省则不显示仓库链接 */
+  repo?: string
   featured: boolean
   /** 架构图，放 public/diagrams/ 下，例：/diagrams/logs-manage-system.svg */
   diagram?: string
@@ -338,6 +340,51 @@ export const projects: Project[] = [
     },
     repo: 'https://github.com/byte-love/pdf-batch-extractor',
     diagram: '/diagrams/pdf-batch-extractor.svg',
+    featured: false,
+  },
+  {
+    slug: 'home-service-coupon',
+    title: { zh: '家政平台 · 优惠券模块', en: 'Home-services Platform · Coupon Module' },
+    subtitle: {
+      zh: '面向江西 3 个城市的家政平台（注册约 12 万、日活约 400、日均单 150~200）。抢券在 Redis 里由 Lua 原子完成，再异步落 MySQL。',
+      en: 'A home-services platform across three cities in Jiangxi (≈120k registered users, ≈400 DAU, 150–200 orders/day). Voucher grabbing runs atomically in Redis via Lua, then lands in MySQL asynchronously.',
+    },
+    role: {
+      zh: '后端 · 优惠券模块（团队 6 人，有资深同事带教）',
+      en: 'Backend · coupon module (6-person team, mentored)',
+    },
+    stack: ['Spring Cloud', 'Redis', 'Lua', 'MySQL', 'XXL-JOB', 'Redisson'],
+    problem: {
+      zh: '家政是低频业务，用户靠营销活动召回，于是形成脉冲流量：无门槛立减券开抢时抢券接口峰值约 1.1k QPS，而券只发数千张、几秒抢空——请求量远大于券量，绝大多数请求注定失败。若直接打库，每次抢券要 3~5 次数据库操作，MySQL 会被查询和行锁拖垮；同时还要防超发、防同一用户重复领，并保证 Redis 与 MySQL 最终一致。',
+      en: 'Housekeeping is a low-frequency business: users come back for promotions, so traffic arrives in bursts. During a no-threshold voucher release the grab endpoint peaked near 1.1k QPS while only a few thousand vouchers existed — gone in seconds, with far more requests than vouchers. Hitting MySQL directly (3–5 statements per grab) would have flattened it, and overselling, duplicate claims per user, plus Redis/MySQL eventual consistency all had to be handled.',
+    },
+    action: {
+      zh: [
+        '抢券整体在 Redis 内完成，Lua 脚本串起五步：限领校验 → 库存校验 → 记录已抢 → 原子扣减 → 写同步队列，用 -1~-5 区分限领、抢光与写入失败',
+        '库存用 Hash 按活动 ID 取模 10 拆成 10 个大 Key 避免单 Key 过大；抢券相关 Key 统一打 {活动id%10} 哈希标签，保证集群下同一活动的 Key 落在同一槽位，Lua 才能执行',
+        '抢券结果只进同步队列，由 XXL-JOB 每分钟用 10 线程池 + Redisson 分布式锁异步落库，把慢 IO 从请求链路里摘出去',
+        '落库时插入领券记录与扣减库存放在同一事务，扣减 SQL 追加 stock_num > 0 条件，库存为 0 时更新 0 行、事务回滚',
+        '同步失败不删队列数据，改为累加失败次数留待下一轮重试，超次则告警；每日凌晨全量对账，以 MySQL 为准修正 Redis 库存',
+      ],
+      en: [
+        'Kept the whole grab path inside Redis: one Lua script chains limit check → stock check → mark claimed → atomic decrement → enqueue for sync, returning -1 to -5 to distinguish "already claimed", "sold out" and write failures',
+        'Sharded stock into 10 Hash keys by activity id modulo 10 to avoid oversized keys; every grab-related key carries a {id%10} hash tag so all keys of one activity land in the same cluster slot, which Lua requires',
+        'Grab results only enter a sync queue; XXL-JOB then flushes them every minute with a 10-thread pool plus per-queue Redisson locks, keeping slow IO off the request path',
+        'Inserting the user-voucher row and decrementing stock share one transaction, and the decrement carries a stock_num > 0 guard so a zero-stock row updates 0 rows and the transaction rolls back',
+        'Failed syncs keep their queue entry and bump a retry counter for the next round, escalating to an alert past the limit; a nightly full reconciliation corrects Redis against MySQL',
+      ],
+    },
+    result: {
+      zh: [
+        '抢券请求基本在 Redis 层终结，MySQL 只承接每分钟一次的异步批量写入',
+        '发券数千张、数秒内抢空，活动期内未发生超发',
+      ],
+      en: [
+        'Grab traffic terminated at Redis; MySQL only saw one asynchronous batch write per minute',
+        'A few thousand vouchers sold out within seconds, with no overselling during the programme',
+      ],
+    },
+    diagram: '/diagrams/home-service-coupon.svg',
     featured: false,
   },
 ]

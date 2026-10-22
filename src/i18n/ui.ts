@@ -16,7 +16,7 @@ export const ui = {
     heroMeta: ['Java / Spring Boot', 'Vue 3', 'Python 数据工程', '.NET / WPF', '微信小程序'],
     sectionProjects: '实习项目',
     projectsNote:
-      '2026 年实习期间的项目，均已脱敏：公司名、域名、内网地址、真实凭据已替换。涉及商业机密的项目不在其中，只保留本人全栈负责的，或参与项目中本人所写的部分。',
+      '两段实习期间的项目（2025–2026），均已脱敏：公司名、域名、内网地址、真实凭据已替换。涉及商业机密的项目不在其中，只保留本人负责的，或参与项目中本人所写的部分。',
     sectionDiy: '动手做的',
     sectionAbout: '关于',
     aboutText:
@@ -51,7 +51,7 @@ export const ui = {
     heroMeta: ['Java / Spring Boot', 'Vue 3', 'Python data', '.NET / WPF', 'WeChat mini-program'],
     sectionProjects: 'Internship work',
     projectsNote:
-      'Internship projects, 2026. Sanitized: company names, domains, internal hosts and credentials replaced. Commercially sensitive work is omitted — only what I owned end-to-end, or the parts I wrote myself.',
+      'Projects from two internships, 2025–2026. Sanitized: company names, domains, internal hosts and credentials replaced. Commercially sensitive work is omitted — only what I owned, or the parts I wrote myself.',
     sectionDiy: 'Things I built',
     sectionAbout: 'About',
     aboutText:

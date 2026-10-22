@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 580" width="880" height="580" font-family="-apple-system, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <rect width="880" height="580" fill="#f7f8fa"/>
+
+  <!-- 列标题 -->
+  <text x="114" y="34" text-anchor="middle" font-size="12" fill="#8b949e" letter-spacing="1">用户端</text>
+  <text x="374" y="34" text-anchor="middle" font-size="12" fill="#8b949e" letter-spacing="1">Spring Cloud · 抢券服务</text>
+  <text x="700" y="34" text-anchor="middle" font-size="12" fill="#8b949e" letter-spacing="1">Redis（抢券主战场）</text>
+
+  <!-- 用户端 -->
+  <rect x="24" y="52" width="180" height="178" rx="8" fill="#ffffff" stroke="#d8dee6"/>
+  <text x="114" y="76" text-anchor="middle" font-size="13" fill="#1a1a1a" font-weight="600">小程序 / H5</text>
+  <text x="114" y="102" text-anchor="middle" font-size="11.5" fill="#5b6470">活动列表（读）</text>
+  <text x="114" y="126" text-anchor="middle" font-size="11.5" fill="#5b6470">立即领取（写）</text>
+  <text x="114" y="150" text-anchor="middle" font-size="11.5" fill="#5b6470">下单核销</text>
+  <text x="114" y="174" text-anchor="middle" font-size="11.5" fill="#5b6470">取消退回</text>
+  <text x="114" y="206" text-anchor="middle" font-size="11" fill="#8b949e">开抢峰值 1.1k QPS</text>
+
+  <!-- 抢券服务 -->
+  <rect x="232" y="52" width="284" height="178" rx="8" fill="#ffffff" stroke="#1f6feb" stroke-width="1.5"/>
+  <text x="374" y="76" text-anchor="middle" font-size="13.5" fill="#1a1a1a" font-weight="600">抢券接口 与 Lua 脚本</text>
+  <text x="252" y="102" font-size="11.5" fill="#5b6470">① 限领校验（已抢队列 HGET）</text>
+  <text x="252" y="124" font-size="11.5" fill="#5b6470">② 库存校验（库存 Hash HGET）</text>
+  <text x="252" y="146" font-size="11.5" fill="#5b6470">③ 记录已抢（HSET）</text>
+  <text x="252" y="168" font-size="11.5" fill="#5b6470">④ 原子扣减（HINCRBY）</text>
+  <text x="252" y="190" font-size="11.5" fill="#5b6470">⑤ 写同步队列（HSETNX）</text>
+  <text x="374" y="216" text-anchor="middle" font-size="11" fill="#8b949e">错误码 -1~-5：限领 / 抢光 / 写入失败</text>
+
+  <!-- Redis -->
+  <rect x="544" y="52" width="312" height="178" rx="8" fill="#ffffff" stroke="#d8dee6"/>
+  <text x="700" y="76" text-anchor="middle" font-size="13" fill="#1a1a1a" font-weight="600">四个结构</text>
+  <text x="564" y="102" font-size="11" fill="#5b6470">ACTIVITY:LIST · String · 活动列表预热</text>
+  <text x="564" y="124" font-size="11" fill="#5b6470">STOCK:{id%10} · Hash × 10 · 库存</text>
+  <text x="564" y="146" font-size="11" fill="#5b6470">SEIZE:{活动} · Hash · 用户已抢标记</text>
+  <text x="564" y="168" font-size="11" fill="#5b6470">SYNC:{id%10} · Hash × 10 · 待落库</text>
+  <text x="564" y="194" font-size="10.5" fill="#8b949e">哈希标签 {id%10} → 同一活动同槽位</text>
+  <text x="564" y="214" font-size="10.5" fill="#8b949e">Lua 中途 return 不回滚已写命令</text>
+
+  <!-- XXL-JOB 异步同步 -->
+  <rect x="232" y="278" width="284" height="118" rx="8" fill="#ffffff" stroke="#d8dee6"/>
+  <text x="374" y="302" text-anchor="middle" font-size="13" fill="#1a1a1a" font-weight="600">XXL-JOB 异步同步</text>
+  <text x="374" y="326" text-anchor="middle" font-size="11.5" fill="#5b6470">10 线程池 × 10 分片队列</text>
+  <text x="374" y="346" text-anchor="middle" font-size="11.5" fill="#5b6470">Redisson 锁：每队列一把</text>
+  <text x="374" y="366" text-anchor="middle" font-size="11.5" fill="#5b6470">失败加次数重试 → 超次告警</text>
+  <text x="374" y="386" text-anchor="middle" font-size="11" fill="#8b949e">每分钟一轮</text>
+
+  <!-- MySQL -->
+  <rect x="544" y="278" width="312" height="118" rx="8" fill="#ffffff" stroke="#d8dee6"/>
+  <text x="700" y="302" text-anchor="middle" font-size="13" fill="#1a1a1a" font-weight="600">MySQL</text>
+  <text x="564" y="326" font-size="11" fill="#5b6470">activity · coupon</text>
+  <text x="564" y="346" font-size="11" fill="#5b6470">coupon_write_off · coupon_use_back</text>
+  <text x="564" y="366" font-size="11" fill="#5b6470">领券记录与扣库存同一事务</text>
+  <text x="564" y="386" font-size="10.5" fill="#8b949e">update … where stock_num &gt; 0</text>
+
+  <!-- 对账 -->
+  <rect x="232" y="428" width="624" height="58" rx="8" fill="#fff4e5" stroke="#ffd8a8"/>
+  <text x="544" y="452" text-anchor="middle" font-size="12" fill="#1a1a1a">每日凌晨全量对账</text>
+  <text x="544" y="472" text-anchor="middle" font-size="10.5" fill="#5b6470">以 MySQL 为准修正 Redis 库存 · 补做同步失败的领券记录 · 异常留痕告警</text>
+
+  <!-- 箭头 -->
+  <defs>
+    <marker id="a" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+      <path d="M0,0 L9,4.5 L0,9 z" fill="#8b949e"/>
+    </marker>
+    <marker id="b" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+      <path d="M0,0 L9,4.5 L0,9 z" fill="#ffa94d"/>
+    </marker>
+  </defs>
+
+  <line x1="204" y1="140" x2="230" y2="140" stroke="#8b949e" stroke-width="1.4" marker-end="url(#a)"/>
+  <line x1="516" y1="140" x2="542" y2="140" stroke="#8b949e" stroke-width="1.4" marker-end="url(#a)"/>
+  <path d="M700,230 L700,254 L374,254 L374,276" fill="none" stroke="#8b949e" stroke-width="1.4" marker-end="url(#a)"/>
+  <line x1="516" y1="337" x2="542" y2="337" stroke="#8b949e" stroke-width="1.4" marker-end="url(#a)"/>
+  <line x1="374" y1="396" x2="374" y2="426" stroke="#ffa94d" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#b)"/>
+  <line x1="700" y1="396" x2="700" y2="426" stroke="#ffa94d" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#b)"/>
+
+  <text x="24" y="524" font-size="10.5" fill="#8b949e">脱敏示意图：公司名、域名、库表名已替换。业务量为实习期实际观测：注册约 12 万 · 月活约 1 万 · 日活约 400 · 日均订单 150~200</text>
+  <text x="24" y="544" font-size="10.5" fill="#8b949e">发券量数千张、开抢后数秒抢空，请求远多于券量，抢券全程在 Redis 完成，MySQL 只承接每分钟一次的异步写入</text>
+</svg>
