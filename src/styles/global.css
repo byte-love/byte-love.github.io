@@ -236,6 +236,12 @@ article.project code {
 .gallery { display: grid; gap: 22px; }
 .gallery figure { margin: 0; }
 .gallery a { display: block; cursor: zoom-in; }
+/* 不依赖浏览器对 dialog 的默认隐藏：未 open 时显式 display:none，
+   否则不支持 <dialog> 的浏览器（部分 App 内置 WebView）会把里面那个空 <img> 显示成破图 */
+dialog.lightbox,
+dialog.note-dialog { display: none; }
+dialog.lightbox[open],
+dialog.note-dialog[open] { display: block; }
 .lightbox {
   border: none;
   padding: 0;
