@@ -299,6 +299,11 @@ article.project code {
   vertical-align: 1px;
 }
 .gl-i:hover { border-color: var(--fg-2); color: var(--fg); }
+.p-i {
+  border-bottom: 1px dotted var(--fg-3);
+  cursor: help;
+}
+.p-i:hover { border-bottom-color: var(--fg); }
 .gl-tip {
   position: fixed;
   z-index: 100;

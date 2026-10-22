@@ -4,6 +4,7 @@ import type { Project } from '../data/projects'
 import type { Lang } from '../i18n/ui'
 import { t } from '../i18n/ui'
 import { glossary } from '../data/glossary'
+import { params } from '../data/params'
 
 interface Props {
   project: Project
@@ -42,10 +43,27 @@ const tipifyText = (text: string) => {
   return out.join('')
 }
 
-/** 含 `code` 的条目：code 段原样保留，不往里插角标 */
+/** 给函数调用的实参挂可悬停解释；不认识的实参保持原样 */
+const decorateCode = (codeHtml: string) =>
+  codeHtml.replace(/<code>([\s\S]*?)<\/code>/g, (whole, inner: string) => {
+    const call = /^([A-Za-z_$][\w$]*)\s*\(([\s\S]*)\)$/.exec(inner)
+    if (!call) return whole
+    const args = call[2].split(',').map((a) => {
+      const name = a.trim()
+      const tip = params[name]?.[lang]
+      if (!tip) return esc(a)
+      const at = a.indexOf(name)
+      const lead = esc(a.slice(0, at))
+      const tail = esc(a.slice(at + name.length))
+      return `${lead}<span class="p-i" data-tip="${esc(tip).replace(/"/g, '&quot;')}">${esc(name)}</span>${tail}`
+    })
+    return `<code>${esc(call[1])}(${args.join(',')})</code>`
+  })
+
+/** 含 `code` 的条目：code 段原样保留，不往里插术语角标；但实参可以挂参数解释 */
 const tipify = (raw: string) => {
   const parts = raw.replace(/`([^`]+)`/g, '<code>$1</code>').split(/(<code>[\s\S]*?<\/code>)/)
-  return parts.map((p, i) => (i % 2 === 1 ? p : tipifyText(p))).join('')
+  return parts.map((p, i) => (i % 2 === 1 ? decorateCode(p) : tipifyText(p))).join('')
 }
 ---
 
@@ -101,7 +119,7 @@ const tipify = (raw: string) => {
             <li>
               <span set:html={tipify(a)} />
               {note && (
-                <button class="note-btn" type="button" data-note={tipifyText(note)} aria-label={copy.noteLabel}>i</button>
+                <button class="note-btn" type="button" data-note={tipify(note)} aria-label={copy.noteLabel}>i</button>
               )}
             </li>
           )
@@ -195,7 +213,7 @@ const tipify = (raw: string) => {
                 cancelHide()
                 return
               }
-              const el = t2 instanceof Element ? t2.closest('.gl-i') : null
+              const el = t2 instanceof Element ? t2.closest('[data-tip]') : null
               if (el) {
                 cancelHide()
                 if (el !== tipTarget) showTip(el)
@@ -203,7 +221,7 @@ const tipify = (raw: string) => {
             })
             document.addEventListener('mouseout', (e) => {
               const t2 = e.target
-              const el = t2 instanceof Element ? t2.closest('.gl-i') : null
+              const el = t2 instanceof Element ? t2.closest('[data-tip]') : null
               if ((el && el === tipTarget) || t2 === tip) scheduleHide()
             })
             document.addEventListener('click', (e) => {
