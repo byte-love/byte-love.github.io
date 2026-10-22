@@ -347,19 +347,27 @@ export const projects: Project[] = [
       zh: [
         '正文用 PyMuPDF、表格用 pdfplumber，分别取长再合并',
         '按 bbox 去重，处理两个引擎重复命中的区域',
-        '三项质量门禁：覆盖率、字符密度、异常值检查（一次拦下 152 个「0.00」假值）',
+        '三项质量门禁：表格文本不变量（网格里的非空文本必须与 pdfplumber 原始抽取逐项一致）、列数守恒（每行 colspan 之和 = 原始列数）、整页字符覆盖率 ≥ 0.90',
         '支持 Markdown / TSV / 纯文本多种表格形态，以及页码锚点便于回溯原文',
       ],
       en: [
         'Used PyMuPDF for prose and pdfplumber for tables, then merged the two results',
         'Deduplicated overlapping regions by bounding box',
-        'Three quality gates: coverage ratio, character density, and outlier checks (caught 152 bogus "0.00" values in one run)',
+        'Three quality gates: table-text invariant (grid text must match pdfplumber raw extraction item by item), column-count conservation (sum of colspan per row = original column count), and page character coverage ≥ 0.90',
         'Multiple table renderings (Markdown / TSV / plain) plus page anchors for tracing back to the source',
       ],
     },
     result: {
       zh: ['240 页 45 秒，覆盖率 0.9707', '带质检环节的抽取，比只做转换的脚本更适合无人值守'],
       en: ['240 pages in 45 seconds, coverage 0.9707', 'Quality-gated extraction, suitable for unattended batches'],
+    },
+    notes: {
+      zh: {
+        0: '两个引擎各取所长：PyMuPDF 抽正文 —— 速度快、字符覆盖最全、保留标点和间距，但它不懂表格结构；pdfplumber 能识别表格、还原合并单元格，但它抽正文会碎。所以正文走 PyMuPDF、表格走 pdfplumber，最后合并。\n合并的关键是「以表格的 bbox 为准」：表格区域内的文字已经由 pdfplumber 产出了，正文里落在同一块区域的文本块必须丢掉，否则同一段内容会出现两次（一次是表格、一次是正文）。\n边界：无框线表格 pdfplumber 识别不出来，会退化正文——这类页就会被覆盖率门禁盯上。',
+        1: '两处去重，都是用 bbox 判断重叠：\n① 正文 vs 表格：拿表格的 bbox 反查 PyMuPDF 的文本块，重叠比例超过阈值才丢弃（阈值设高一点，避免把紧贴表格的正文误删）。\n② 表格 vs 表格：pdfplumber 有时把同一块区域反复识别成多个表（实测有一页把一段文字识别成表），所以按 bbox 面积从大到小处理，若一个表超过 80% 的面积已被保留的表覆盖，就丢掉它。\n边界：阈值都是经验值；真正兜底的是质量门禁的「表格文本不变量」——一旦误删就会报丢失。',
+        2: '三项门禁，任何一项变差就说明抽取质量退化（改代码或升级 PyMuPDF/pdfplumber 之后都要跑）：\n① 表格文本不变量：把网格里所有非空格子的文本拼起来，必须与 pdfplumber 原始抽取的非空文本完全一致 —— 守「绝不丢数字」。曾经因为「按值合并 + 纵向合并」的启发式，一次吞掉 152 个 0.00，就是这项抓出来的。\n② 列数守恒：每行 colspan 之和必须等于原始列数 —— 守「表格不错位」。\n③ 整页字符覆盖率 ≥ 0.90，且缺失必须只能由页眉/页码解释 —— 守「不成片丢内容」。覆盖率不能设成 1.0，因为每页顶部的报告名和页码是被有意剔除的，短页剔完天然偏低。',
+        3: '输出层可切换：表格形态支持 markdown（默认）/ tsv / plain / kv，换形态不用重跑第一步 —— 因为 HTML 是中间产物，第二步只读它。\n--with-page-anchor 会在文本里插入 <!-- page N -->，出问题时能从文本反查回 PDF 的第几页。\n最实用的一点：中间产物 HTML 可以直接在浏览器里打开、逐页对照原文，相当于给人留了一条对账通道。',
+      },
     },
     repo: 'https://github.com/byte-love/pdf-batch-extractor',
     diagram: '/diagrams/pdf-batch-extractor.svg',
