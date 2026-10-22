@@ -282,6 +282,40 @@ article.project code {
   cursor: pointer;
 }
 .note-close:hover { color: var(--fg); }
+.gl-i {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 13px;
+  height: 13px;
+  margin-left: 3px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  color: var(--fg-3);
+  font-family: var(--mono);
+  font-size: 9px;
+  line-height: 1;
+  cursor: help;
+  vertical-align: 1px;
+}
+.gl-i:hover { border-color: var(--fg-2); color: var(--fg); }
+.gl-tip {
+  position: fixed;
+  z-index: 100;
+  max-width: 320px;
+  padding: 9px 11px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--bg-2);
+  color: var(--fg);
+  font-size: 12.5px;
+  line-height: 1.65;
+  white-space: pre-line;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
+  opacity: 0;
+  pointer-events: none;
+}
+.gl-tip.on { opacity: 1; }
 .lb-close {
   position: fixed;
   top: 14px;

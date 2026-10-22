@@ -3,6 +3,7 @@ import Base from '../layouts/Base.astro'
 import type { Project } from '../data/projects'
 import type { Lang } from '../i18n/ui'
 import { t } from '../i18n/ui'
+import { glossary } from '../data/glossary'
 
 interface Props {
   project: Project
@@ -13,6 +14,39 @@ const { project, lang } = Astro.props
 const copy = t(lang)
 const back = lang === 'zh' ? '/' : '/en/'
 const langSwitchHref = lang === 'zh' ? `/en/projects/${project.slug}/` : `/projects/${project.slug}/`
+
+const esc = (s: string) =>
+  s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+
+const terms = Object.keys(glossary).sort((a, b) => b.length - a.length)
+
+const badge = (term: string) =>
+  `${esc(term)}<span class="gl-i" role="note" aria-label="${esc(glossary[term][lang]).replace(/"/g, '&quot;')}" data-tip="${esc(glossary[term][lang]).replace(/"/g, '&quot;')}">?</span>`
+
+/** 纯文本：术语首次出现处挂角标，其余字符转义 */
+const tipifyText = (text: string) => {
+  const out: string[] = []
+  const used = new Set<string>()
+  let i = 0
+  while (i < text.length) {
+    const hit = terms.find((t) => !used.has(t) && text.startsWith(t, i))
+    if (hit) {
+      out.push(badge(hit))
+      used.add(hit)
+      i += hit.length
+    } else {
+      out.push(esc(text[i]))
+      i += 1
+    }
+  }
+  return out.join('')
+}
+
+/** 含 `code` 的条目：code 段原样保留，不往里插角标 */
+const tipify = (raw: string) => {
+  const parts = raw.replace(/`([^`]+)`/g, '<code>$1</code>').split(/(<code>[\s\S]*?<\/code>)/)
+  return parts.map((p, i) => (i % 2 === 1 ? p : tipifyText(p))).join('')
+}
 ---
 
 <Base lang={lang} title={`${project.title[lang]} · ${copy.name}`} langSwitchHref={langSwitchHref}>
@@ -40,7 +74,14 @@ const langSwitchHref = lang === 'zh' ? `/en/projects/${project.slug}/` : `/proje
           </>
         )}
         <dt>{copy.stackLabel}</dt>
-        <dd>{project.stack.join(' · ')}</dd>
+        <dd>
+          {project.stack.map((s, i) => (
+            <>
+              {i > 0 && ' · '}
+              <span set:html={tipifyText(s)} />
+            </>
+          ))}
+        </dd>
         {project.repo && (
           <>
             <dt>{copy.repoLabel}</dt>
@@ -58,9 +99,9 @@ const langSwitchHref = lang === 'zh' ? `/en/projects/${project.slug}/` : `/proje
           const note = project.notes?.[lang]?.[i]
           return (
             <li>
-              <span set:html={a.replace(/`([^`]+)`/g, '<code>$1</code>')} />
+              <span set:html={tipify(a)} />
               {note && (
-                <button class="note-btn" type="button" data-note={note} aria-label={copy.noteLabel}>i</button>
+                <button class="note-btn" type="button" data-note={tipifyText(note)} aria-label={copy.noteLabel}>i</button>
               )}
             </li>
           )
@@ -69,7 +110,7 @@ const langSwitchHref = lang === 'zh' ? `/en/projects/${project.slug}/` : `/proje
 
       <h2>{copy.resultLabel}</h2>
       <ul>
-        {project.result[lang].map((r) => <li set:html={r.replace(/`([^`]+)`/g, '<code>$1</code>')} />)}
+        {project.result[lang].map((r) => <li set:html={tipify(r)} />)}
       </ul>
 
       {project.shots && (
@@ -108,12 +149,47 @@ const langSwitchHref = lang === 'zh' ? `/en/projects/${project.slug}/` : `/proje
             const big = lb.querySelector('img')
             const note = document.getElementById('note')
             const noteBody = note && note.querySelector('.note-body')
+            const tip = document.createElement('div')
+            tip.className = 'gl-tip'
+            document.body.appendChild(tip)
+            let tipTarget = null
+            const showTip = (el) => {
+              const text = el.getAttribute('data-tip')
+              if (!text) return
+              // 对话框在 top layer，body 里的浮层会被盖住，所以打开时把浮层挂进对话框内
+              const host = note && note.open ? note : lb.open ? lb : document.body
+              if (tip.parentElement !== host) host.appendChild(tip)
+              tip.textContent = text
+              tip.style.left = '0px'
+              tip.style.top = '0px'
+              tip.classList.add('on')
+              const r = el.getBoundingClientRect()
+              const tr = tip.getBoundingClientRect()
+              const x = Math.max(10, Math.min(r.left + r.width / 2 - tr.width / 2, innerWidth - tr.width - 10))
+              let y = r.top - tr.height - 8
+              if (y < 8) y = r.bottom + 8
+              tip.style.left = `${Math.round(x)}px`
+              tip.style.top = `${Math.round(y)}px`
+              tipTarget = el
+            }
+            const hideTip = () => {
+              tip.classList.remove('on')
+              tipTarget = null
+            }
+            document.addEventListener('mouseover', (e) => {
+              const el = e.target instanceof Element ? e.target.closest('.gl-i') : null
+              if (el && el !== tipTarget) showTip(el)
+            })
+            document.addEventListener('mouseout', (e) => {
+              const el = e.target instanceof Element ? e.target.closest('.gl-i') : null
+              if (el && el === tipTarget) hideTip()
+            })
             document.addEventListener('click', (e) => {
               const t = e.target
               const btn = t instanceof Element ? t.closest('.note-btn') : null
               if (btn && note && noteBody) {
                 e.preventDefault()
-                noteBody.textContent = btn.getAttribute('data-note') || ''
+                noteBody.innerHTML = btn.getAttribute('data-note') || ''
                 if (!note.open) note.showModal()
                 return
               }
