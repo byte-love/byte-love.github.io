@@ -54,7 +54,17 @@ const langSwitchHref = lang === 'zh' ? `/en/projects/${project.slug}/` : `/proje
 
       <h2>{copy.actionLabel}</h2>
       <ul>
-        {project.action[lang].map((a) => <li set:html={a.replace(/`([^`]+)`/g, '<code>$1</code>')} />)}
+        {project.action[lang].map((a, i) => {
+          const note = project.notes?.[lang]?.[i]
+          return (
+            <li>
+              <span set:html={a.replace(/`([^`]+)`/g, '<code>$1</code>')} />
+              {note && (
+                <button class="note-btn" type="button" data-note={note} aria-label={copy.noteLabel}>i</button>
+              )}
+            </li>
+          )
+        })}
       </ul>
 
       <h2>{copy.resultLabel}</h2>
@@ -83,19 +93,42 @@ const langSwitchHref = lang === 'zh' ? `/en/projects/${project.slug}/` : `/proje
         <img alt="" />
       </dialog>
 
+      <dialog id="note" class="note-dialog">
+        <button class="note-close" type="button" aria-label={copy.lightboxClose}>×</button>
+        <p class="note-body"></p>
+      </dialog>
+
       <script is:inline>
         (() => {
           const init = () => {
             const lb = document.getElementById('lightbox')
             if (!lb) return
             const big = lb.querySelector('img')
+            const note = document.getElementById('note')
+            const noteBody = note && note.querySelector('.note-body')
             document.addEventListener('click', (e) => {
               const t = e.target
+              const btn = t instanceof Element ? t.closest('.note-btn') : null
+              if (btn && note && noteBody) {
+                e.preventDefault()
+                noteBody.textContent = btn.getAttribute('data-note') || ''
+                if (!note.open) note.showModal()
+                return
+              }
               const link = t instanceof Element ? t.closest('.shot-link') : null
               if (link) {
                 e.preventDefault()
                 big.src = link.getAttribute('href')
                 if (!lb.open) lb.showModal()
+                return
+              }
+              if (note && note.open) {
+                if (t instanceof Element && t.closest('.note-close')) {
+                  note.close()
+                  return
+                }
+                if (e.detail > 1) return
+                if (t === note || t === noteBody) note.close()
                 return
               }
               if (!lb.open) return

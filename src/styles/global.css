@@ -226,6 +226,61 @@ article.project code {
   height: 88vh;
   object-fit: contain;
 }
+.note-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 15px;
+  height: 15px;
+  margin-left: 7px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: none;
+  color: var(--fg-3);
+  font-family: var(--mono);
+  font-size: 10px;
+  line-height: 1;
+  cursor: pointer;
+  vertical-align: 2px;
+}
+.note-btn:hover {
+  border-color: var(--fg-2);
+  color: var(--fg);
+}
+.note-dialog {
+  position: relative;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 26px 28px 24px;
+  width: min(620px, 92vw);
+  max-height: 80vh;
+  overflow: auto;
+  background: var(--bg);
+  color: var(--fg);
+}
+.note-dialog::backdrop { background: rgba(0, 0, 0, 0.55); }
+.note-body {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.85;
+  white-space: pre-line;
+}
+.note-close {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  width: 26px;
+  height: 26px;
+  border: none;
+  border-radius: 50%;
+  background: none;
+  color: var(--fg-3);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+}
+.note-close:hover { color: var(--fg); }
 .lb-close {
   position: fixed;
   top: 14px;
