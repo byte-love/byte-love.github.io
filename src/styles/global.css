@@ -23,6 +23,26 @@
   }
 }
 
+/* 手动切换优先于系统偏好 */
+html[data-theme='light'] {
+  --fg: #1a1a1a;
+  --fg-2: #5b6470;
+  --fg-3: #8b949e;
+  --bg: #ffffff;
+  --bg-2: #f7f8fa;
+  --line: #e3e6ea;
+  --accent: #1f6feb;
+}
+html[data-theme='dark'] {
+  --fg: #e6edf3;
+  --fg-2: #9aa4b2;
+  --fg-3: #6e7681;
+  --bg: #0d1117;
+  --bg-2: #151b23;
+  --line: #232b36;
+  --accent: #58a6ff;
+}
+
 * { box-sizing: border-box; }
 
 html {
@@ -76,6 +96,17 @@ nav.top a:hover { color: var(--fg); text-decoration: none; }
   color: var(--fg-2);
 }
 .lang-switch:hover { color: var(--fg); text-decoration: none; border-color: var(--fg-3); }
+.theme-toggle {
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 2px 7px 3px;
+  background: none;
+  color: var(--fg-2);
+  font-size: 13px;
+  line-height: 1.4;
+  cursor: pointer;
+}
+.theme-toggle:hover { color: var(--fg); border-color: var(--fg-3); }
 
 /* ---------- hero ---------- */
 .hero { padding: 64px 0 40px; }

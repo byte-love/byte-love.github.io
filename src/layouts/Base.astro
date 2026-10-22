@@ -23,6 +23,14 @@ const home = copy.homeHref
     <title>{title}</title>
     <meta name="description" content={copy.heroLead} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script is:inline>
+      (() => {
+        try {
+          const saved = localStorage.getItem('theme')
+          if (saved === 'light' || saved === 'dark') document.documentElement.dataset.theme = saved
+        } catch (e) {}
+      })()
+    </script>
   </head>
   <body>
     <header class="site">
@@ -33,9 +41,32 @@ const home = copy.homeHref
           {showDiy && <a href={`${home}#diy`}>{copy.navDiy}</a>}
           <a href={`${home}#about`}>{copy.navAbout}</a>
           <a class="lang-switch" href={langSwitchHref}>{copy.langSwitch}</a>
+          <button class="theme-toggle" type="button" aria-label={copy.themeToggle}>☀</button>
         </nav>
       </div>
     </header>
+
+    <script is:inline>
+      (() => {
+        const btn = document.querySelector('.theme-toggle')
+        if (!btn) return
+        const mq = window.matchMedia('(prefers-color-scheme: dark)')
+        const current = () => document.documentElement.dataset.theme || (mq.matches ? 'dark' : 'light')
+        const sync = () => {
+          btn.textContent = current() === 'dark' ? '☀' : '☾'
+        }
+        sync()
+        btn.addEventListener('click', () => {
+          const next = current() === 'dark' ? 'light' : 'dark'
+          document.documentElement.dataset.theme = next
+          try {
+            localStorage.setItem('theme', next)
+          } catch (e) {}
+          sync()
+        })
+        mq.addEventListener('change', sync)
+      })()
+    </script>
 
     <main>
       <slot />
