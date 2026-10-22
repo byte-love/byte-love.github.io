@@ -124,13 +124,8 @@ const langSwitchHref = lang === 'zh' ? `/en/projects/${project.slug}/` : `/proje
                 if (!lb.open) lb.showModal()
                 return
               }
-              if (note && note.open) {
-                if (t instanceof Element && t.closest('.note-close')) {
-                  note.close()
-                  return
-                }
-                if (e.detail > 1) return
-                if (t === note || t === noteBody) note.close()
+              if (note && note.open && t instanceof Element && t.closest('.note-close')) {
+                note.close()
                 return
               }
               if (!lb.open) return
@@ -141,6 +136,17 @@ const langSwitchHref = lang === 'zh' ? `/en/projects/${project.slug}/` : `/proje
               if (e.detail > 1) return
               if (t === lb || t === big) lb.close()
             })
+            // 遮罩点击关闭：只有 target 是 dialog 本身、且落点在其矩形之外才算点到了遮罩。
+            // 不能用「点正文就关」——拖选文字结束时浏览器也会派发一次 click，会误关。
+            if (note) {
+              note.addEventListener('click', (e) => {
+                if (e.target !== note) return
+                const r = note.getBoundingClientRect()
+                if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) {
+                  note.close()
+                }
+              })
+            }
           }
           if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', init)
