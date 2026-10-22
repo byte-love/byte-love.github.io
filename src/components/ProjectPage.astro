@@ -24,7 +24,9 @@ const langSwitchHref = lang === 'zh' ? `/en/projects/${project.slug}/` : `/proje
 
       {project.diagram && (
         <figure class="figure">
-          <img src={project.diagram} alt={`${project.title[lang]} 架构示意`} loading="lazy" />
+          <a class="shot-link" href={project.diagram}>
+            <img src={project.diagram} alt={`${project.title[lang]} 架构示意`} loading="lazy" />
+          </a>
         </figure>
       )}
 
@@ -65,45 +67,45 @@ const langSwitchHref = lang === 'zh' ? `/en/projects/${project.slug}/` : `/proje
               </figure>
             ))}
           </div>
-
-          <dialog id="lightbox" class="lightbox">
-            <button class="lb-close" type="button" aria-label={copy.lightboxClose}>×</button>
-            <img alt="" />
-          </dialog>
-
-          <script is:inline>
-            (() => {
-              const init = () => {
-                const lb = document.getElementById('lightbox')
-                if (!lb) return
-                const big = lb.querySelector('img')
-                document.addEventListener('click', (e) => {
-                  const t = e.target
-                  const link = t instanceof Element ? t.closest('.shot-link') : null
-                  if (link) {
-                    e.preventDefault()
-                    big.src = link.getAttribute('href')
-                    lb.showModal()
-                    return
-                  }
-                  if (!lb.open) return
-                  if (t instanceof Element && t.closest('.lb-close')) {
-                    lb.close()
-                    return
-                  }
-                  if (e.detail > 1) return
-                  if (t === lb || t === big) lb.close()
-                })
-              }
-              if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', init)
-              } else {
-                init()
-              }
-            })()
-          </script>
         </>
       )}
+
+      <dialog id="lightbox" class="lightbox">
+        <button class="lb-close" type="button" aria-label={copy.lightboxClose}>×</button>
+        <img alt="" />
+      </dialog>
+
+      <script is:inline>
+        (() => {
+          const init = () => {
+            const lb = document.getElementById('lightbox')
+            if (!lb) return
+            const big = lb.querySelector('img')
+            document.addEventListener('click', (e) => {
+              const t = e.target
+              const link = t instanceof Element ? t.closest('.shot-link') : null
+              if (link) {
+                e.preventDefault()
+                big.src = link.getAttribute('href')
+                if (!lb.open) lb.showModal()
+                return
+              }
+              if (!lb.open) return
+              if (t instanceof Element && t.closest('.lb-close')) {
+                lb.close()
+                return
+              }
+              if (e.detail > 1) return
+              if (t === lb || t === big) lb.close()
+            })
+          }
+          if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init)
+          } else {
+            init()
+          }
+        })()
+      </script>
 
       <p style="margin-top:32px"><a href={project.repo}>{copy.repoLink}</a></p>
     </div>

@@ -174,6 +174,7 @@ article.project { padding: 44px 0 64px; }
 article.project h1 { font-size: 26px; margin: 0 0 6px; }
 article.project .sub { color: var(--fg-2); margin: 0 0 26px; }
 .figure { margin: 0 0 26px; }
+.figure a { display: block; cursor: zoom-in; }
 .figure img {
   width: 100%;
   height: auto;
@@ -219,6 +220,11 @@ article.project code {
   max-height: 88vh;
   border-radius: 6px;
   cursor: zoom-out;
+}
+.lightbox img[src$=".svg"] {
+  width: 92vw;
+  height: 88vh;
+  object-fit: contain;
 }
 .lb-close {
   position: fixed;
