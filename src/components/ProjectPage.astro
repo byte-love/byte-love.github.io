@@ -164,6 +164,48 @@ const tipify = (raw: string) => {
             const lb = document.getElementById('lightbox')
             if (!lb) return
             const big = lb.querySelector('img')
+            // 滚轮二次缩放：以鼠标位置为锚点，1 倍 = 铺满视口的初始尺寸
+            let zoom = 1
+            let tx = 0
+            let ty = 0
+            let cx = 0
+            let cy = 0
+            const applyZoom = () => {
+              big.style.transform = zoom === 1 && tx === 0 && ty === 0 ? '' : `translate(${tx}px, ${ty}px) scale(${zoom})`
+            }
+            const resetZoom = () => {
+              zoom = 1
+              tx = 0
+              ty = 0
+              applyZoom()
+            }
+            lb.addEventListener('close', resetZoom)
+            big.addEventListener(
+              'wheel',
+              (e) => {
+                e.preventDefault()
+                if (zoom === 1) {
+                  const r = big.getBoundingClientRect()
+                  cx = r.left + r.width / 2
+                  cy = r.top + r.height / 2
+                }
+                const step = e.deltaY < 0 ? 1.15 : 1 / 1.15
+                const next = Math.min(6, Math.max(1, zoom * step))
+                if (next === zoom) return
+                const ux = e.clientX - cx
+                const uy = e.clientY - cy
+                const k = next / zoom
+                tx = ux - k * (ux - tx)
+                ty = uy - k * (uy - ty)
+                zoom = next
+                if (zoom === 1) {
+                  tx = 0
+                  ty = 0
+                }
+                applyZoom()
+              },
+              { passive: false },
+            )
             const note = document.getElementById('note')
             const noteBody = note && note.querySelector('.note-body')
             const tip = document.createElement('div')
@@ -236,6 +278,7 @@ const tipify = (raw: string) => {
               if (link) {
                 e.preventDefault()
                 big.src = link.getAttribute('href')
+                resetZoom()
                 if (!lb.open) lb.showModal()
                 return
               }

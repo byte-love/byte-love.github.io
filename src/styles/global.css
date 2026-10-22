@@ -220,6 +220,7 @@ article.project code {
   max-height: 88vh;
   border-radius: 6px;
   cursor: zoom-out;
+  transform-origin: center center;
 }
 .lightbox img[src$=".svg"] {
   width: 92vw;
