@@ -326,9 +326,10 @@ const tipify = (raw: string) => {
               const link = t instanceof Element ? t.closest('.shot-link') : null
               if (link) {
                 e.preventDefault()
+                // 先显示再设 src：隐藏状态（display:none）下赋 src 时浏览器可能不发起请求
+                if (!lb.open) lb.showModal()
                 big.src = link.getAttribute('href')
                 resetZoom()
-                if (!lb.open) lb.showModal()
                 return
               }
               if (note && note.open && t instanceof Element && t.closest('.note-close')) {
