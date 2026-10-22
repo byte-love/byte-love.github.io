@@ -73,21 +73,33 @@ const langSwitchHref = lang === 'zh' ? `/en/projects/${project.slug}/` : `/proje
 
           <script is:inline>
             (() => {
-              const lb = document.getElementById('lightbox')
-              if (!lb) return
-              const img = lb.querySelector('img')
-              document.querySelectorAll('.shot-link').forEach((a) => {
-                a.addEventListener('click', (e) => {
-                  e.preventDefault()
-                  img.src = a.getAttribute('href')
-                  lb.showModal()
+              const init = () => {
+                const lb = document.getElementById('lightbox')
+                if (!lb) return
+                const big = lb.querySelector('img')
+                document.addEventListener('click', (e) => {
+                  const t = e.target
+                  const link = t instanceof Element ? t.closest('.shot-link') : null
+                  if (link) {
+                    e.preventDefault()
+                    big.src = link.getAttribute('href')
+                    lb.showModal()
+                    return
+                  }
+                  if (!lb.open) return
+                  if (t instanceof Element && t.closest('.lb-close')) {
+                    lb.close()
+                    return
+                  }
+                  if (e.detail > 1) return
+                  if (t === lb || t === big) lb.close()
                 })
-              })
-              lb.addEventListener('click', (e) => {
-                if (e.target === lb) lb.close()
-              })
-              img.addEventListener('click', () => lb.close())
-              lb.querySelector('.lb-close').addEventListener('click', () => lb.close())
+              }
+              if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init)
+              } else {
+                init()
+              }
             })()
           </script>
         </>
