@@ -153,6 +153,18 @@ const tipify = (raw: string) => {
             tip.className = 'gl-tip'
             document.body.appendChild(tip)
             let tipTarget = null
+            let hideTimer = null
+            const cancelHide = () => {
+              if (hideTimer) {
+                clearTimeout(hideTimer)
+                hideTimer = null
+              }
+            }
+            const scheduleHide = () => {
+              cancelHide()
+              // 问号和浮窗之间有几像素空隙，留一点时间让指针走过去
+              hideTimer = setTimeout(() => hideTip(), 160)
+            }
             const showTip = (el) => {
               const text = el.getAttribute('data-tip')
               if (!text) return
@@ -173,16 +185,26 @@ const tipify = (raw: string) => {
               tipTarget = el
             }
             const hideTip = () => {
+              cancelHide()
               tip.classList.remove('on')
               tipTarget = null
             }
             document.addEventListener('mouseover', (e) => {
-              const el = e.target instanceof Element ? e.target.closest('.gl-i') : null
-              if (el && el !== tipTarget) showTip(el)
+              const t2 = e.target
+              if (t2 === tip) {
+                cancelHide()
+                return
+              }
+              const el = t2 instanceof Element ? t2.closest('.gl-i') : null
+              if (el) {
+                cancelHide()
+                if (el !== tipTarget) showTip(el)
+              }
             })
             document.addEventListener('mouseout', (e) => {
-              const el = e.target instanceof Element ? e.target.closest('.gl-i') : null
-              if (el && el === tipTarget) hideTip()
+              const t2 = e.target
+              const el = t2 instanceof Element ? t2.closest('.gl-i') : null
+              if ((el && el === tipTarget) || t2 === tip) scheduleHide()
             })
             document.addEventListener('click', (e) => {
               const t = e.target

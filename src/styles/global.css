@@ -315,7 +315,11 @@ article.project code {
   opacity: 0;
   pointer-events: none;
 }
-.gl-tip.on { opacity: 1; }
+.gl-tip.on {
+  opacity: 1;
+  /* 可悬停：鼠标从问号移到浮窗上时不会消失 */
+  pointer-events: auto;
+}
 .lb-close {
   position: fixed;
   top: 14px;
