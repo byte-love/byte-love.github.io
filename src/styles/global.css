@@ -304,6 +304,10 @@ article.project code {
   cursor: help;
 }
 .p-i:hover { border-bottom-color: var(--fg); }
+.m-i {
+  border-bottom-style: dashed;
+  border-bottom-color: var(--fg-2);
+}
 .gl-tip {
   position: fixed;
   z-index: 100;
