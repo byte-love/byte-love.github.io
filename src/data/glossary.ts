@@ -40,4 +40,28 @@ export const glossary: Record<string, L> = {
     zh: 'WebSocket：一条全双工长连接，服务端可以主动推数据，不像 HTTP 只能等客户端请求。这里用它做日志增量同步，并把断点落在库里，重连后从断点继续。',
     en: 'WebSocket: a full-duplex persistent connection where the server can push. Used here for incremental log sync, with the bookmark persisted so a reconnect resumes where it stopped.',
   },
+  判重键: {
+    zh: '判重键：把「是不是同一篇论文」变成「字符串是不是相等」。用 标题 + 期刊 + 发表日期 + paperId 四段拼成一个字符串（用不可见字符分隔），同一篇算出同一个键，不同篇算出不同的键。于是判重就退化成一次字符串比较。',
+    en: 'Dedupe key: turns “is this the same paper” into “are these strings equal”. Title + journal + publish date + paperId are concatenated (with an invisible separator); the same paper yields the same string. Dedupe then becomes a plain string comparison.',
+  },
+  已有判重键: {
+    zh: '已有判重键：库里那些论文各自算出来的键的集合。因为库里存着 title / journalName / publishDate / paperId，所以能反算出每条记录的键；把它们一次性取进内存 HashSet，每行只需要 contains(key) 判断，不用逐行查库。',
+    en: 'Existing keys: the set of keys computed from records already in the database. Those four fields are stored, so each record’s key can be derived; pulling them into an in-memory HashSet once lets each row be checked with contains(key) instead of a query per row.',
+  },
+  懒加载: {
+    zh: '懒加载：不是一进方法就把 5 个集合全查一遍，而是第一次真的要用某个集合的名单时才去查那一个集合，并且只查一次、结果缓存复用（computeIfAbsent）。因为一个文件可能被分到 5 个集合，这次实际只涉及其中 2 个。',
+    en: 'Lazy loading: instead of querying all five collections up front, a collection’s key set is fetched the first time it is actually needed, once, then reused (computeIfAbsent). One file may fan out into five collections while only two are involved this run.',
+  },
+  投影: {
+    zh: '投影（projection）：查询时指定只返回哪几个字段，而不是把整条文档传回来。判重只需要 4 个小字段，但一条论文文档里还有整篇正文 HTML、摘要、关键词等几十 KB；不投影的话，一万条就是几百 MB 的传输和内存。',
+    en: 'Projection: telling the query which fields to return instead of shipping the whole document. Dedupe needs only four small fields, while a paper document also carries the full-text HTML, abstract and keywords. Without projection, ten thousand records means hundreds of MB moved and held.',
+  },
+  seen: {
+    zh: 'seen 集合：一个内存 HashSet，记录「本次导入已经接受过哪些判重键」。因为这一批数据要循环结束才统一写库，解析第 500 行时第 10 行还没进库、查库查不到，只能靠这个内存集合拦住同一个文件内部的重复行。',
+    en: 'The seen set: an in-memory HashSet of dedupe keys already accepted in this run. The batch is only written after the loop finishes, so while parsing row 500 the row 10 record is not in the database yet — an in-memory set is the only way to catch duplicates inside the same file.',
+  },
+  已接受的行: {
+    zh: '已接受的行：已经通过判重检查、被放进待写入队列的那一行。它的判重键会被加进 seen，因此这一批里再出现同一篇就会被判为重复跳过。',
+    en: 'An accepted row: one that passed the dedupe check and was put into the pending-write queue. Its key goes into seen, so the same paper appearing later in the same batch is skipped.',
+  },
 }
