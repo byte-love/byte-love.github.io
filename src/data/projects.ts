@@ -258,6 +258,15 @@ export const projects: Project[] = [
       },
     },
     diagram: '/diagrams/data-split-cv.svg',
+    shots: [
+      {
+        src: '/shots/cv/01-method.png',
+        caption: {
+          zh: '第四步 选择数据划分方法：留出法 / K 折 / 留一 / 十倍交叉验证四选一。选中「留一交叉验证」时右侧给出说明 —— 折数 = 样本数 N、每条样本当一次考卷；折数输入框随之置灰（自动等于 N、不可调）',
+          en: 'Step 4: pick a split method — hold-out, K-fold, leave-one-out or repeated 10-fold. With leave-one-out selected, the panel states folds = sample count N and the fold field becomes read-only',
+        },
+      },
+    ],
     featured: true,
   },
   {
