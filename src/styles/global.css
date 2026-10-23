@@ -255,7 +255,7 @@ article.project code {
 }
 .gallery { display: grid; gap: 22px; }
 .gallery figure { margin: 0; }
-.gallery a { display: block; cursor: zoom-in; }
+.gallery a { display: block; cursor: zoom-in; text-align: center; }
 /* 不依赖浏览器对 dialog 的默认隐藏：未 open 时显式 display:none，
    否则不支持 <dialog> 的浏览器（部分 App 内置 WebView）会把里面那个空 <img> 显示成破图 */
 dialog.lightbox,
@@ -408,9 +408,12 @@ dialog.note-dialog[open] { display: block; }
 }
 .lb-close:hover { background: rgba(255, 255, 255, 0.3); }
 .gallery img {
-  width: 100%;
+  width: auto;
   height: auto;
+  max-width: 100%;
+  max-height: 640px;
   display: block;
+  margin: 0 auto;
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--bg-2);
@@ -420,6 +423,10 @@ dialog.note-dialog[open] { display: block; }
   color: var(--fg-3);
   margin-top: 8px;
   line-height: 1.6;
+  text-align: center;
+}
+@media (max-width: 620px) {
+  .gallery img { max-height: 70vh; }
 }
 .dl { display: grid; grid-template-columns: 96px 1fr; gap: 6px 16px; font-size: 14.5px; }
 .dl dt { color: var(--fg-3); font-family: var(--mono); font-size: 12.5px; padding-top: 2px; }
