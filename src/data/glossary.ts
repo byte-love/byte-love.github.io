@@ -316,4 +316,32 @@ export const glossary: Record<string, L> = {
     zh: 'TSV（Tab-Separated Values）：用制表符分隔的纯文本表格。比 CSV 更不容易和内容里的逗号打架，程序解析也更简单，所以除了 Markdown 表格，还提供这种输出形态。',
     en: 'TSV (tab-separated values): a plain-text table separated by tabs. Less likely than CSV to collide with commas inside content and simpler for programs to parse — hence offered alongside Markdown tables.',
   },
+  Cookie: {
+    zh: 'Cookie：服务器发给浏览器的一小段键值数据，浏览器自动保存、并在下次请求时自动带回，服务器靠它认出「你是谁」。微信小程序的 wx.request 没有这套自动机制 —— 不自动存、不自动带，所以只能自己存、自己放进请求头。',
+    en: 'Cookie: a small key-value blob the server sends and the browser stores and replays automatically, letting the server recognise who you are. A mini-program’s wx.request has none of that machinery: nothing is stored or replayed, so it must be kept and attached by hand.',
+  },
+  Session: {
+    zh: 'Session（会话）：服务器端保存的「这次访问的状态」，浏览器只持有一个 session id（通常放在 Cookie 里）。这个项目的短信验证码就存在 session 里，所以请求必须带同一个 session id 才能对上 —— 这就是非维护 Cookie 不可的原因。',
+    en: 'Session: server-side state for one visit, with the browser holding only a session id (usually in a cookie). The SMS code lives in that session here, so requests must carry the same session id — which is why cookies must be maintained by hand.',
+  },
+  反向代理: {
+    zh: '反向代理：挡在后端前面的那层（Nginx 之类），对外暴露 /api 这样的路径并转发到真正的服务。所以正式环境请求走 /api 是对的；本地直连后端没有这层，路径里带 /api 就 404 —— 这就是本地调试要剥前缀的原因。',
+    en: 'Reverse proxy: the layer (e.g. Nginx) in front of the backend that exposes paths like /api and forwards them to the real service. In production /api is correct; locally there is no such layer, so keeping /api yields a 404 — hence stripping the prefix for local debugging.',
+  },
+  'node:vm': {
+    zh: 'node:vm：Node 内置模块，用来在「自己造的上下文」里执行一段 JS。这里用它模拟小程序运行环境（假 wx、假 storage），把真实业务代码加载进去跑 —— 于是不用微信开发者工具、不用网络也能测。',
+    en: 'node:vm: a built-in Node module that runs JavaScript inside a caller-made context. Here it fakes the mini-program runtime (fake wx, fake storage) so the real business code can be loaded and exercised without the WeChat devtools or network.',
+  },
+  回归测试: {
+    zh: '回归测试：改完代码后跑一遍已有用例，确认「没把原来能用的事弄坏」。它不追求覆盖率，贵在能随时、低成本地跑；这个项目的测试就是 `node tests/register-identity.test.js` 一条命令、零依赖。',
+    en: 'Regression test: re-running existing cases after a change to confirm nothing that worked is broken. It is not about coverage but about being cheap enough to run any time — here a single dependency-free command.',
+  },
+  jwt: {
+    zh: 'JWT（JSON Web Token）：一种自包含的令牌，服务端把身份信息签名后放进令牌里，客户端每次带上它即可，不需要服务端存会话。与 Session 是两条路线：Session 靠服务端存储，JWT 靠签名校验。',
+    en: 'JWT (JSON Web Token): a self-contained signed token carrying identity claims, so the client presents it each time and no server-side session store is needed — the opposite trade-off to sessions.',
+  },
+  枚举: {
+    zh: '枚举（enum）：取值被限定的那几种之一，比如身份只能是 Doctor / Teacher / Other。判断时用「等于某个固定值」，比塞进一串数字 0/1 更难出错；这个项目之所以改成三个互斥的 0/1 字段，是因为后端表结构就是那样存的 —— 属于「迁就历史，但只在边界上迁就」。',
+    en: 'enum: a value restricted to a fixed set, e.g. identity is only Doctor / Teacher / Other. Comparing against a fixed constant is far less error-prone than spreading numeric 0/1 flags — this project uses three mutually exclusive flags only because the backend table stores them that way, i.e. accommodating legacy shape at the boundary only.',
+  },
 }
