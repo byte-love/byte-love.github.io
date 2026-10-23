@@ -368,13 +368,13 @@ export const projects: Project[] = [
         '重写为 Python 流水线：解析 → 计数聚合 → 指标计算，输出省级 / 城市级 / 上市公司三档',
         '并行执行优先用进程池，环境禁掉进程池时自动降级为子进程 + 临时文件',
         '自研 xlsx 写出，替掉通用库的开销',
-        '写 selftest.py 做全量对账：各地区之和 = 当年总数、IPC 计数 = 逐条求和、共现对数 = ΣC(k,2)',
+        '写 selftest.py 做端到端自检：用需求文档给的 5 条专利样例跑完整流程，与手算答案逐条核对，并回读 xlsx 与 csv 比对',
       ],
       en: [
         'Rewrote as a Python pipeline: parse → count aggregation → index computation, emitting province / city / listed-company levels',
         'Preferred a process pool, automatically falling back to subprocesses plus temp files where the pool is blocked',
         'Replaced the generic xlsx writer with a small purpose-built one',
-        'Added selftest.py for full reconciliation: per-region sums equal yearly totals, IPC counts match row-wise sums, co-occurrence pairs match ΣC(k,2)',
+        'Added selftest.py: the five-patent sample from the spec is run end to end and checked against hand-computed answers, then the xlsx is read back and compared with the csv',
       ],
     },
     result: {
@@ -390,6 +390,14 @@ export const projects: Project[] = [
       ],
     },
     repo: 'https://github.com/byte-love/tech-complementarity-index',
+    notes: {
+      zh: {
+        0: '为什么重写：旧实现是几个 Java 脚本 + 一份 MongoDB 旧快照，有五个硬伤 —— ① 快照只到 2024 年，而源数据到 2025 年（差 120 万行），需求明确要算到 2025；② 三个分组脚本里 `doc.get("_id", Document.class).get("_id", ...)` 会拿到 null，下一行就 NPE，根本跑不起来；③ IPC 只判 `trim().length() < 4` 就取前 4 位、不校验格式，于是 `//(C`、`∴(A0`、`////` 都被当成 IPC 小类写进结果（旧结果里混了 3602 条城市级 + 2361 条省级脏值）；④ 最内层循环里逐次 println，上千万行控制台输出，是它跑几天的首要原因；⑤ 只输出 >0 的共现组合，与需求「两两之间（含零共现）」不符。\n新的 Python 流水线分成三段，各自可单独跑：解析（fastxlsx 流式读 2200 万行 / 约 780MB）→ 计数聚合（按地区/公司 × 年 × IPC 计数，以及两两共现计数）→ 指标计算（RPCA 与技术联系指数）。\n输出五份：省级 RPCA 383,505 行、城市级 1,775,721 行、技术联系指数 244,650 行、上市公司本身 363,067 行、集团合计 751,636 行，各给 csv + xlsx。',
+        1: '为什么要兜底：Windows 上 multiprocessing 依赖命名管道，某些受限 / 沙箱环境里创建进程池会直接抛 `PermissionError: [WinError 5]`；而 subprocess 把 stdout 指向 DEVNULL / 继承 / 文件都能正常工作。\n做法：先试 ProcessPoolExecutor，抛 PoolUnavailable 就切换成「每个任务起一个子进程，结果 pickle 到临时文件，父进程读回」。两种模式结果完全一致，因为每个 worker 只回传几张计数表（数据量很小），用临时文件传完全够快。\n一个细节：临时目录是三级探测的 —— 环境变量 TACD_TMP > 仓库内 `_tmp_workers` > 系统临时目录，并且每个候选都先写一个探针文件确认「真的可写」，避免选到只读目录、跑到一半才失败。',
+        2: '实测数据：openpyxl 的 write_only 模式写 383,505 行要 20.1 秒（约 1.9 万行/秒），同样的数据写 CSV 只要 0.4 秒。本项目四个 xlsx 合计 174 万行，光写文件就要约 90 秒，接近总耗时四成 —— 所以自己拼了一个最小 xlsx 包。\n做法：直接往 zip 里流式写 `[Content_Types].xml`、`_rels/.rels`、`xl/workbook.xml`、`xl/styles.xml`、`xl/sharedStrings.xml`、`xl/worksheets/sheet1.xml` 这几个必需部件；字符串走共享字符串表（省份、地市、IPC、年份重复度极高，共享表通常只有几千条），数值直接写 `<v>`。\n结果：20.1 秒 → 2.3 秒，快 8.7 倍；产物再用 openpyxl 回读校验，确保 Excel 和 pandas 都能正常打开。\n边界：这个写出器只覆盖基础单元格（没有公式、样式、合并单元格），本场景够用；通用场景别自己写，用库。',
+        3: '需求文档给了一份可以手算的样例：城市 c 有 3 条专利、全国共 5 条 —— 手算答案就是金标准。P1 的分类号归到大组 {A01N, A01P}，于是 RPCA(c, A01N, 2022) = (1/3) / (1/5) = 5/3 = 1.666667；Φ̃(A01N, A01P) = 1；Φ(A01N, A23J) = 0（零共现也要输出）。\nselftest.py 用这份样例跑完整流程，逐条核对：手算的 RPCA、Φ̃、零共现值、零值条数、组合数 C(7,2) = 21、IPC 四位代码长度，最后再把 xlsx 回读出来和 csv 比对（确保两个产物一致）。\n运行时还会做两类交叉对账：打印各年行数（可直接和原始 Excel 的会计年度计数核对，确认没漏读文件）；核对上市公司数据里「关系」列的取值与文件夹名一致（防止把母公司 / 子公司搞反）。\n意义：手算答案当金标准，程序与它对上，说明公式实现没错；各年行数对账则保证没有整份文件被漏掉。这是这个项目最值钱的部分 —— 不是算得快，而是算完之后能被证明是对的。',
+      },
+    },
     diagram: '/diagrams/tech-complementarity-index.svg',
     featured: false,
   },

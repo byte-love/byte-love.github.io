@@ -380,5 +380,29 @@ export const glossary: Record<string, L> = {
     zh: '校验链：一条独立于主流程的验证路径 —— 不复用主流程的中间产物，而是从头重算，再和最终结果比对。它的价值在于「同一条路径的错误不会被自己发现」：如果校验也用中间文件，那中间文件算错了两边一起错，比对照样通过。',
     en: 'A verification chain: a validation path independent of the main pipeline that recomputes from the source and compares against the final output. Its value is that a path cannot detect its own mistakes — reusing the intermediate files would let both sides be wrong together and still "pass".',
   },
+  RPCA: {
+    zh: 'RPCA（显性专利比较优势，Revealed Patent Comparative Advantage）：衡量某个地区（或公司）在某个技术领域上是不是比全国平均水平更强。算法就是两个占比相除 —— 该地区该领域的专利占该地区全部专利的比例 ÷ 全国该领域占全国全部专利的比例。大于 1 表示相对更强，小于 1 表示相对更弱。',
+    en: 'RPCA (revealed patent comparative advantage): whether a region or firm is stronger than the national average in one technology field. It is a ratio of ratios — that region’s share of patents in the field divided by the national share of the field. Above 1 means relatively stronger, below 1 relatively weaker.',
+  },
+  共现: {
+    zh: '共现（co-occurrence）：同一条专利的分类号里，两个 IPC 大组一起出现的次数。它是「技术联系」的原始证据 —— 两个技术领域经常被同一批专利同时引用，说明它们在技术上相关。零共现也是合法结果（说明这两个领域在这批数据里没被关联过），必须输出，不能过滤掉。',
+    en: 'Co-occurrence: the number of patents whose classification codes contain two IPC groups together. It is the raw evidence for technology linkage — fields repeatedly appearing on the same patents are related. Zero co-occurrence is a legitimate result and must be emitted, not filtered out.',
+  },
+  技术联系指数: {
+    zh: '技术联系指数（Φ̃）：把共现次数归一化成一个可比的强度。样例口径是 Φ̃(i,j) = 共现次数 ÷ max(1, 各自出现次数)，再标准化得到 Φ。分母里的 max(1, …) 是为了避免除零；两个领域从不同时出现时结果是 0，而不是「缺失」。',
+    en: 'Technology linkage index (Φ̃): normalises co-occurrence into a comparable strength — co-occurrences over max(1, each field’s count), then standardised into Φ. The max(1, …) guards against division by zero; fields that never co-occur yield 0 rather than a missing value.',
+  },
+  进程池: {
+    zh: '进程池（process pool）：预先起一组子进程，把任务分给它们并行跑，避免每个任务都重新创建进程。Python 的 multiprocessing 在 Windows 上靠命名管道传任务和结果，受限环境里可能直接建不起来 —— 这就是要写降级路径的原因。',
+    en: 'Process pool: a set of worker processes kept around to run tasks in parallel without paying process-creation cost each time. On Windows multiprocessing uses named pipes to ship tasks and results, which some restricted environments block — hence the fallback path.',
+  },
+  命名管道: {
+    zh: '命名管道（named pipe）：Windows 上进程之间传数据的一种系统对象，multiprocessing 用它把任务和结果在父子进程间搬运。受限或沙箱环境里可能被禁用（报 WinError 5 = 拒绝访问），于是进程池直接创建失败。',
+    en: 'Named pipe: a Windows OS object for passing data between processes; multiprocessing uses it to move tasks and results between parent and children. Sandboxed environments may forbid it (WinError 5, access denied), so creating the pool fails outright.',
+  },
+  降级: {
+    zh: '降级（fallback）：主路径不可用时自动切换到一条更朴素但能工作的实现，而不是直接报错退出。这里是从「进程池」降级到「子进程 + 临时文件」；关键是两条路径算出来的结果必须完全一致，且降级要留日志，别让用户以为自己用的是主路径。',
+    en: 'Fallback: when the preferred path is unavailable, switch automatically to a simpler implementation that still works instead of failing. Here it is process pool → subprocesses plus temp files; both paths must produce identical results, and the fallback should be logged so nobody assumes they used the main path.',
+  },
 }
 
