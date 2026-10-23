@@ -25,10 +25,9 @@ const terms = Object.keys(glossary).sort((a, b) => b.length - a.length)
 const badge = (term: string) =>
   `${esc(term)}<span class="gl-i" role="note" aria-label="${esc(glossary[term][lang]).replace(/"/g, '&quot;')}" data-tip="${esc(glossary[term][lang]).replace(/"/g, '&quot;')}">?</span>`
 
-/** 纯文本：术语首次出现处挂角标，其余字符转义 */
-const tipifyText = (text: string) => {
+/** 纯文本：术语首次出现处挂角标，其余字符转义；used 由调用方共享，保证一条注解只标一次 */
+const tipifyText = (text: string, used: Set<string> = new Set()) => {
   const out: string[] = []
-  const used = new Set<string>()
   let i = 0
   while (i < text.length) {
     const hit = terms.find((t) => !used.has(t) && text.startsWith(t, i))
@@ -68,8 +67,9 @@ const decorateCode = (codeHtml: string) =>
 
 /** 含 `code` 的条目：code 段原样保留，不往里插术语角标；但实参可以挂参数解释 */
 const tipify = (raw: string) => {
+  const used = new Set<string>()
   const parts = raw.replace(/`([^`]+)`/g, '<code>$1</code>').split(/(<code>[\s\S]*?<\/code>)/)
-  return parts.map((p, i) => (i % 2 === 1 ? decorateCode(p) : tipifyText(p))).join('')
+  return parts.map((p, i) => (i % 2 === 1 ? decorateCode(p) : tipifyText(p, used))).join('')
 }
 ---
 

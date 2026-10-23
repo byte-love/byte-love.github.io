@@ -72,4 +72,24 @@ export const glossary: Record<string, L> = {
     zh: '不可见分隔符：\\001 是 ASCII 控制字符 SOH，正常文本里几乎不会出现，所以用它标出字段边界。必须要有它 —— 否则 "ab"+"c" 和 "a"+"bc" 都拼成 "abc"，两篇不同论文撞成同一个键，后一篇会被当成重复丢掉。也不用 -、|、, 这类常见字符，因为标题里本身就有。',
     en: 'Invisible separator: \\001 is the ASCII SOH control character, practically absent from normal text, so it marks field boundaries. It is required — otherwise "ab"+"c" and "a"+"bc" both become "abc" and two different papers collide, discarding a real record. Common characters like - or | would not work because titles contain them.',
   },
+  training_set: {
+    zh: '训练集表（学习材料）。内核只从这张表读数据训练模型；交叉验证时它是「去掉当前这一折之后剩下的全部样本」。',
+    en: 'The training-set table (the study material). The kernel reads only this table to train; during cross-validation it holds everything except the current fold.',
+  },
+  testing_set: {
+    zh: '测试集表（考卷）。内核训练完读这张表做评估、写报告。内核不会训练它，所以往这张表里放什么，就等于决定了「考什么」—— 这就是客户端能编排交叉验证的原因。',
+    en: 'The test-set table (the exam paper). After training the kernel reads it to evaluate and write the report. It is never used for training, so what you put here decides what gets tested — that is exactly why the client can orchestrate cross-validation.',
+  },
+  cv_source: {
+    zh: '快照表：交叉验证开始前，把 training_set 的全量数据原样复制一份进来。之后每一折都从它重建 training_set / testing_set，所以无论跑多少折、中途失败多少次，数据都不会「越跑越少」。',
+    en: 'The snapshot table: before cross-validation starts, the whole of training_set is copied here. Every fold rebuilds both tables from this snapshot, so no matter how many folds run or how often a run fails, the data set cannot shrink.',
+  },
+  FolderName: {
+    zh: 'FolderName / FolderPath：样本所属文件夹的名字与路径（用来按目录组织文本库）。testing_set 可能缺这两列，原因是老的单次留出法代码插入时只写了 9 列（FilePath / TextContent / TextLabelName / CreateTime / Model / FileSize / FileType / Status / FileName），没有它们；而建表用的是 CREATE TABLE IF NOT EXISTS，旧库也不会被补列。所以重建两表时必须取「两表都有的列」，否则 INSERT 会因列不匹配直接失败。',
+    en: 'FolderName / FolderPath: the name and path of the folder a sample came from (used to organise the text library by directory). testing_set may lack these two columns because the legacy hold-out code only inserted 9 columns (FilePath, TextContent, TextLabelName, CreateTime, Model, FileSize, FileType, Status, FileName); and since tables are created with CREATE TABLE IF NOT EXISTS, old databases never gain the columns. That is why rebuilding the two tables must use only the columns they share, or the INSERT fails on a column mismatch.',
+  },
+  折: {
+    zh: '折（fold）：把数据分成 K 份，每一份就叫一折。跑第 i 折时，这一折当考卷（testing_set），其余 K-1 折当学习材料（training_set），跑完换下一折。K 折就跑 K 次，每条数据恰好当一次考卷。',
+    en: 'A fold: one of K slices of the data. When running fold i, that slice is the exam paper (testing_set) and the other K-1 slices are the study material (training_set), then it moves to the next fold. K folds means K runs, and each sample is examined exactly once.',
+  },
 }

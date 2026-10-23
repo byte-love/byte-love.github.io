@@ -47,4 +47,12 @@ export const params: Record<string, L> = {
     zh: 'Lua 脚本的第 2 个参数：用户 id，用作限领校验和同步队列的 field。',
     en: 'Second argument: the user id, used as the field for both the limit check and the sync queue.',
   },
+  Id: {
+    zh: '样本的唯一编号（表里的主键）。折映射靠它把「第几折」对应回具体是哪一条数据；重建两张表时也是按 Id 的集合来划分。',
+    en: 'The unique id of a sample (the table’s primary key). The fold map uses it to tie a fold back to a concrete row, and rebuilding the tables partitions rows by their Id.',
+  },
+  FoldIndex: {
+    zh: '这条样本被分到第几折（从 0 开始）。跑第 i 折时，FoldIndex = i 的行进 testing_set，其余进 training_set。',
+    en: 'Which fold this sample belongs to (0-based). When running fold i, rows with FoldIndex = i go to testing_set and the rest to training_set.',
+  },
 }
