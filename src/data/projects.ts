@@ -201,6 +201,36 @@ export const projects: Project[] = [
       },
     },
     diagram: '/diagrams/wechat-register-miniprogram.svg',
+    shots: [
+      {
+        src: '/shots/mp/01-school.png',
+        caption: {
+          zh: '第一步 学校与身份：填学校全称、选身份（教师 / 在读博士生 / 其他研究人员），身份决定后面展示哪些字段；未勾选协议不能下一步',
+          en: 'Step 1: school plus identity (teacher / PhD student / other researcher) — the identity decides which fields appear later; the agreement box must be ticked to continue',
+        },
+      },
+      {
+        src: '/shots/mp/02-wechat.png',
+        caption: {
+          zh: '第二步 微信授权：一键获取手机号（微信手机号快速验证），也可改为手动输入',
+          en: 'Step 2: WeChat phone-number authorisation, with a manual fallback',
+        },
+      },
+      {
+        src: '/shots/mp/03-profile.png',
+        caption: {
+          zh: '第三步 资料：姓名 / 手机号 / 学院 / 系别 / 个人邮箱 / 学号 / 入学年份 / 学制，按身份动态展示与校验',
+          en: 'Step 3: profile fields — name, phone, college, department, email, student id, enrolment year, programme length — shown and validated per identity',
+        },
+      },
+      {
+        src: '/shots/mp/04-done.png',
+        caption: {
+          zh: '第四步 完成：提交后发送激活邮件，激活成功才进入注册流程',
+          en: 'Step 4: an activation email is sent; the registration only completes after activation',
+        },
+      },
+    ],
     featured: true,
   },
   {
