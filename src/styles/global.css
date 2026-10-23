@@ -208,8 +208,9 @@ article.project { padding: 44px 0 64px; }
   align-items: center;
   gap: 6px;
   padding: 5px 13px 5px 11px;
-  border: 1px solid var(--line);
+  border: 1px solid var(--fg-3);
   border-radius: 999px;
+  background: var(--bg-2);
   color: var(--fg-2);
   font-size: 13px;
   line-height: 1.5;
@@ -217,8 +218,8 @@ article.project { padding: 44px 0 64px; }
 }
 .back-link:hover {
   color: var(--fg);
-  border-color: var(--fg-3);
-  background: var(--bg-2);
+  border-color: var(--fg-2);
+  background: var(--bg);
   text-decoration: none;
 }
 article.project h1 { font-size: 26px; margin: 0 0 6px; }
