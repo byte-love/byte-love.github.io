@@ -244,4 +244,72 @@ export const glossary: Record<string, L> = {
     zh: '起始偏移：每个标签发牌时随机选一个起点折（offset），避免这条标签的余数样本都堆在前几折，而是均匀铺满各折。',
     en: 'Start offset: a randomly chosen starting fold per label, so a label’s leftover samples spread across folds instead of piling into the first few.',
   },
+  precision: {
+    zh: 'precision（精确率 / 查准率）：预测为某一类的样本里，真正属于该类的比例 —— 白话说「你说是正面的，有多少确实是」。分母是「预测为该类的条数」，所以当一条预测都没有时，分母为 0，指标无定义。',
+    en: 'precision: of everything predicted as a class, the fraction that really is that class. Its denominator is the number of predictions for the class, so with zero predictions the metric is undefined.',
+  },
+  recall: {
+    zh: 'recall（召回率 / 查全率）：某一类真实样本里被成功找出来的比例 —— 白话说「真正属于这一类的，你抓到了多少」。分母是「该类真实条数」，漏掉的越多召回越低。',
+    en: 'recall: of all samples that truly belong to a class, the fraction that was found. Its denominator is the true count of that class, so missing more lowers recall.',
+  },
+  F1: {
+    zh: 'F1：precision 与 recall 的调和平均（2PR/(P+R)），两者都高才高 —— 只抓一个准（precision 高但漏一半）或只抓一个全（recall 高但错一堆）都上不去。Macro F1 按类别平均，Weighted F1 按各类样本数加权平均。',
+    en: 'F1: the harmonic mean of precision and recall (2PR/(P+R)), high only when both are high. Macro F1 averages over classes; Weighted F1 weights classes by support.',
+  },
+  sklearn: {
+    zh: 'scikit-learn（sklearn）：Python 的机器学习工具库。cross_val_predict 做的正是「折外预测」，classification_report 输出 precision/recall/F1 报表 —— 业界对照标准。说「与 sklearn 口径一致」，意思是同样的预测值算出来的指标数字相同。',
+    en: 'scikit-learn: a Python ML library. cross_val_predict produces out-of-fold predictions and classification_report prints per-class precision/recall/F1 — the industry reference. Saying "same as sklearn" means the same predictions yield the same numbers.',
+  },
+  ROLLBACK: {
+    zh: 'ROLLBACK：回滚事务 —— 把这一事务里已经做过的改动全部撤销，数据库回到事务开始前的状态。与之相对的是 COMMIT，提交后永久生效、不能撤销。',
+    en: 'ROLLBACK: abort the transaction, undoing everything it changed and returning the database to its state at the start. The opposite of COMMIT, which makes changes permanent.',
+  },
+  DataFormatter: {
+    zh: 'DataFormatter：POI 里「按单元格显示格式取值」的工具 —— 日期、千分位、固定小数位都按 Excel 里看到的样子输出，比手写 DecimalFormat 稳。但它底层取到的仍是 double，挡不住精度损失。',
+    en: 'DataFormatter: a POI helper that returns a cell’s text as Excel displays it — dates, thousands separators, fixed decimals — steadier than a hand-written DecimalFormat. It still reads a double underneath, so it cannot undo precision loss.',
+  },
+  NumberToTextConverter: {
+    zh: 'NumberToTextConverter：POI 提供的数字转文本工具，专门把数字转成「不用科学计数法」的字符串（最多 15 位有效数字），比 DecimalFormat("#.##") 更贴近 Excel 显示；同样受 double 精度限制。',
+    en: 'NumberToTextConverter: a POI utility that renders numbers as text without scientific notation (up to 15 significant digits). Closer to what Excel shows than DecimalFormat("#.##"), yet still bounded by double precision.',
+  },
+  stock_num: {
+    zh: 'stock_num：活动表里「剩余库存」这一列。扣减语句是 update activity set stock_num = stock_num - 1 where id = ? and stock_num > 0 —— 后半句是兜底：库存已经是 0 时更新 0 行，事务随之回滚，数据库库存永远不会被扣成负数。',
+    en: 'stock_num: the remaining-stock column on the activity table. The decrement is "update activity set stock_num = stock_num - 1 where id = ? and stock_num > 0" — the trailing guard means a zero-stock row updates 0 rows and the transaction rolls back, so stock can never go negative.',
+  },
+  doi: {
+    zh: 'doi（Digital Object Identifier）：论文的永久数字标识，形如 10.1016/j.jfineco.2020.01.001。国际期刊表里常有一列 doi，上游也常把它当论文唯一号用 —— 但它可能为空、也可能是链接，所以不能单独拿来做判重键。',
+    en: 'doi (Digital Object Identifier): a paper’s permanent identifier, e.g. 10.1016/j.jfineco.2020.01.001. International sheets usually have a doi column and upstream often treats it as the paper id — but it can be empty or a URL, so it cannot be the only dedupe key.',
+  },
+  En_Log: {
+    zh: 'En_Log：英文版的操作日志表，字段结构与中文日志表一致，同步进同一个视图、用语言列区分。它的 _id 也是自增的，所以断点改用 ObjectId，避免和中文表的 id 值域撞在一起。',
+    en: 'En_Log: the English operation-log table with the same shape as the Chinese one, synced into the same view and distinguished by a language column. Its _id auto-increments too, so the sync uses ObjectId as the cursor to avoid colliding with the Chinese table’s id range.',
+  },
+  PreLabel: {
+    zh: 'PreLabel：dev_set 里存「模型预测出的标签」的列。应用模型跑完后，内核把每条文本的预测结果写回这一列，客户端读它、再和真实标签比对，自己算混淆矩阵与指标。',
+    en: 'PreLabel: the dev_set column holding predicted labels. After "apply model" runs, the kernel writes each text’s prediction here; the client reads it and compares against ground truth to compute the confusion matrix itself.',
+  },
+  OOM: {
+    zh: 'OOM（Out Of Memory）：内存耗尽、进程被系统杀掉。全量读入 + 全量驻留内存的写法在行数一多时必炸，流式读写（游标读 + 滑窗写）存在的意义就是避免它。',
+    en: 'OOM (out of memory): the process is killed after exhausting memory. Load-everything-in approaches collapse as rows grow; streaming (cursor read plus sliding-window write) exists to prevent exactly that.',
+  },
+  Hash: {
+    zh: 'Hash：Redis 的哈希结构 —— 一个 Key 下面挂多组 field→value。库存用 field=活动id、value=库存数；限领用 field=用户id、value=1。相比「一个活动一个 String Key」，Hash 更省内存、Key 数量也少得多。',
+    en: 'Hash: the Redis structure holding many field→value pairs under one key. Stock uses field=activity id, value=remaining count; the claim guard uses field=user id, value=1. Compared with one String key per activity, a Hash saves memory and keeps the key count small.',
+  },
+  HGET: {
+    zh: 'HGET：Redis 命令，读 Hash 里某个 field 的值；field 不存在时返回 nil（在 Lua 里是 false，不是 null）。Lua 脚本前两步就是两次 HGET：先查这个用户是否已抢、再查库存还剩多少。',
+    en: 'HGET: a Redis command reading one hash field; a missing field returns nil (false inside Lua, not null). The script’s first two steps are two HGETs — has this user claimed, and how much stock is left.',
+  },
+  Redis: {
+    zh: 'Redis：内存数据库。命令单线程执行，所以单条命令和 Lua 脚本都是原子的；支持 String / Hash / List / Set 等结构。这个项目用它当抢券的主战场 —— 库存扣减、限领判断、待同步队列全在它里面完成。',
+    en: 'Redis: an in-memory database. Commands execute on a single thread, so each command and each Lua script is atomic; it offers String/Hash/List/Set structures. Here it is the main arena for grabbing — stock decrement, limit checks and the sync queue all live in it.',
+  },
+  paperId: {
+    zh: 'paperId：项目里给论文定义的唯一编号字段，取值来自上游的 _id / doi / PaperID 列。因为来源杂，它可能是一个 DOI、一个链接、甚至 "N/A"，所以判重不能只靠它，要和其他字段组合。',
+    en: 'paperId: the project’s own unique identifier for a paper, taken from upstream _id / doi / PaperID columns. Because sources vary it may be a DOI, a URL or even "N/A", so dedupe must combine it with other fields.',
+  },
+  TSV: {
+    zh: 'TSV（Tab-Separated Values）：用制表符分隔的纯文本表格。比 CSV 更不容易和内容里的逗号打架，程序解析也更简单，所以除了 Markdown 表格，还提供这种输出形态。',
+    en: 'TSV (tab-separated values): a plain-text table separated by tabs. Less likely than CSV to collide with commas inside content and simpler for programs to parse — hence offered alongside Markdown tables.',
+  },
 }

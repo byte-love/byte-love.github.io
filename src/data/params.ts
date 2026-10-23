@@ -55,4 +55,8 @@ export const params: Record<string, L> = {
     zh: '这条样本被分到第几折（从 0 开始）。跑第 i 折时，FoldIndex = i 的行进 testing_set，其余进 training_set。',
     en: 'Which fold this sample belongs to (0-based). When running fold i, rows with FoldIndex = i go to testing_set and the rest to training_set.',
   },
+  foldCount: {
+    zh: '折数 K：把数据切成几份。K 折就要训练 K 次；K 越大，每折考卷越小、训练集越大，指标波动越小但耗时成倍增长。',
+    en: 'The fold count K: how many slices the data is cut into. K folds means K training runs; larger K means a smaller exam per fold and a larger training set, less variance but proportionally more time.',
+  },
 }

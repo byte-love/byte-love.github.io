@@ -39,4 +39,36 @@ export const methods: Record<string, L> = {
     zh: '折映射表：一行对应一条样本，两个字段就是「这条样本属于第几折」。先按标签分层算好整张表，之后每一折查表就知道该把谁放进考卷。',
     en: 'The fold map: one row per sample, two fields saying which fold that sample belongs to. It is computed up front with stratified splitting, then each fold just looks up who goes into the exam.',
   },
+  GetMinLabelCount: {
+    zh: '取「每个标签的样本数里的最小值」。折数不能超过它 —— 否则必有某一折的训练集缺某个标签，撞上内核「没见过这个标签就判 0 分且不报错」的陷阱。',
+    en: 'Returns the smallest per-label sample count. The fold count must not exceed it, or some fold’s training set will miss a label and hit the kernel’s "unseen label scores 0 without error" trap.',
+  },
+  GetSingleSampleLabels: {
+    zh: '提前找出「只有 1 条样本的标签」。这类标签一旦被分到某一折当考卷，其余折的训练集就再也见不到它 —— 用户需要提前知道，而不是等到某折莫名其妙 0 分。',
+    en: 'Finds labels that have exactly one sample up front. Once such a label lands in a fold as the exam, every other fold’s training set never sees it — the user should know before a fold mysteriously scores 0.',
+  },
+  RebalanceEmptyFolds: {
+    zh: '兜底：把空折填上。折数大于「最小类样本数」时，分层发牌可能留下一条样本都没有的折；空折会让重建数据集抛异常、整轮中断，所以这里从样本最多的折挪一条过来。',
+    en: 'The fallback that fills empty folds. When the fold count exceeds the smallest class size, stratified dealing can leave a fold with zero samples, which makes the rebuild throw and aborts the run — so one sample is moved over from the largest fold.',
+  },
+  CopyTestingToDevSet: {
+    zh: '把本折的 testing_set 复制进 dev_set，供「应用模型」模式使用。留一法靠它把每折那 1 条考卷交给内核预测，再把预测结果读回来汇总。',
+    en: 'Copies this fold’s testing_set into dev_set for "apply model" mode. Leave-one-out uses it to have the kernel predict that single held-out sample, then reads the predictions back for pooling.',
+  },
+  ReadDevPredictions: {
+    zh: '读回 dev_set 里的逐条预测（id → PreLabel）。留一法在客户端自己算指标，靠的就是这份逐条结果 —— 而不去用内核那份「只有 1 条样本」的评估报告。',
+    en: 'Reads the per-item predictions (id → PreLabel) back from dev_set. This is what lets leave-one-out compute metrics client-side instead of trusting the kernel’s report over a single test sample.',
+  },
+  BuildFoldMetricFromPredictions: {
+    zh: '用逐条预测拼出某一折的指标：按这一折的混淆矩阵算逐类 precision/recall/f1，macro / weighted F1 与 sklearn 口径一致，support = 该类在真实标签里的条数。',
+    en: 'Builds a fold’s metrics from per-item predictions: per-class precision/recall/f1 from that fold’s confusion matrix, macro and weighted F1 aligned with sklearn, and support equal to the class’s true count.',
+  },
+  SnapshotDevSet: {
+    zh: '把用户原有的 dev_set 备份成一张影子表，供交叉验证临时借用 dev_set 用。不备份的话，留一法跑完用户的预测集就被写满了别人的预测结果。',
+    en: 'Backs up the user’s original dev_set into a shadow table before cross-validation borrows it. Without the backup, running LOOCV would overwrite the user’s prediction set with someone else’s results.',
+  },
+  RestoreDevSet: {
+    zh: '把 dev_set 还原成备份的样子并删掉影子表。成功、取消、异常三条路径都要调用 —— 只覆盖不还原，用户的数据就丢了。',
+    en: 'Restores dev_set from the shadow table and drops it. Called on success, cancel and error alike — overwrite without restore loses the user’s data.',
+  },
 }
