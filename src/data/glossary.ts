@@ -344,4 +344,41 @@ export const glossary: Record<string, L> = {
     zh: '枚举（enum）：取值被限定的那几种之一，比如身份只能是 Doctor / Teacher / Other。判断时用「等于某个固定值」，比塞进一串数字 0/1 更难出错；这个项目之所以改成三个互斥的 0/1 字段，是因为后端表结构就是那样存的 —— 属于「迁就历史，但只在边界上迁就」。',
     en: 'enum: a value restricted to a fixed set, e.g. identity is only Doctor / Teacher / Other. Comparing against a fixed constant is far less error-prone than spreading numeric 0/1 flags — this project uses three mutually exclusive flags only because the backend table stores them that way, i.e. accommodating legacy shape at the boundary only.',
   },
+  iterparse: {
+    zh: 'iterparse：Python 标准库里「边解析边产出事件」的 XML 读法 —— 不把整棵文档树建在内存里，而是每读完一个节点就交给你。用来处理几百 MB / 上千万行的表格，内存占用只跟当前节点有关，而不是跟文件大小有关。',
+    en: 'iterparse: the streaming XML reader in Python’s standard library — instead of building the whole document tree in memory it hands you events node by node, so memory tracks the current node rather than the file size.',
+  },
+  sharedStrings: {
+    zh: 'sharedStrings.xml：xlsx 里专门存字符串的表 —— 单元格只保存一个索引，文字统一放这里（因为同一段文字会被成千上万个单元格复用）。读 xlsx 时必须先把这张表读进内存，才能把索引还原成文字。',
+    en: 'sharedStrings.xml: the string table inside an xlsx. Cells store only an index and the text lives here once, since the same string is reused by thousands of cells. A reader must load it first to resolve indices back into text.',
+  },
+  openpyxl: {
+    zh: 'openpyxl：Python 里读写 xlsx 最常用的库，用起来最方便，但常规模式会把整张表建成对象树放进内存。百万行级别就不合适了，得改用它的 read_only 模式或自己流式解析。',
+    en: 'openpyxl: the usual Python library for xlsx. Convenient, but its normal mode materialises the sheet as an object tree in memory, which does not scale to millions of rows — hence read_only mode or a hand-rolled streaming parser.',
+  },
+  IPC: {
+    zh: 'IPC（国际专利分类号）：给专利按技术领域分类的编码，形如 G11C7/16 —— 部（字母）+ 大类（两位数字）+ 小类（字母）+ 大组/小组。这个流水线把一条专利的多个分类号都归到「大组」（如 G11C7）这一层再统计。',
+    en: 'IPC (International Patent Classification): the code classifying a patent by technology, e.g. G11C7/16 — section, class, subclass, main group/subgroup. The pipeline normalises every code on a patent down to the main-group level (like G11C7) before counting.',
+  },
+  定点整数: {
+    zh: '定点数：不用浮点表示小数，而是把小数乘上一个固定倍数存成整数（这里乘 1e6、即保留 6 位小数），用的时候再除回去。好处是「同一个值在任何机器上都是同一个整数」，比对能逐位相等，不会有浮点打印出 0.30000000000000004 那种争议。代价是范围有限、每次都有半个步长的舍入误差。',
+    en: 'Fixed point: instead of a float, store the value times a constant scale (1e6 here, six decimals) as an integer, dividing later. The same value is then the same integer on every machine, so comparisons are exact rather than fighting over 0.30000000000000004. The cost is a bounded range and half-a-step rounding error.',
+  },
+  浮点: {
+    zh: '浮点数（float / double）：用「尾数 × 2 的幂」表示小数，范围很大，但无法精确表示 0.1 这类十进制小数 —— 所以 0.1 + 0.2 会等于 0.30000000000000004。需要精确比对时要么用定点整数、要么用 Decimal，不能靠「打印出来看着一样」。',
+    en: 'Floating point: represents decimals as mantissa × 2^exponent, covering a huge range but unable to hold values like 0.1 exactly — hence 0.1 + 0.2 = 0.30000000000000004. For exact comparison use fixed-point integers or Decimal; "it prints the same" is not evidence.',
+  },
+  pandas: {
+    zh: 'pandas：Python 的数据分析库，read_excel 一行就能把整张表读成 DataFrame。方便，但它默认「全量载入内存 + 推断每列类型」，百万行以上的 xlsx 非常吃内存 —— 所以这个项目干脆绕开它，自己流式解析 XML。',
+    en: 'pandas: the Python data-analysis library; read_excel turns a sheet into a DataFrame in one line. Convenient, but it loads everything and infers column types, which is memory-hungry past a million rows — so this pipeline streams the XML itself instead.',
+  },
+  int32: {
+    zh: 'int32：32 位有符号整数，范围约 ±21.4 亿。用它存 1e-6 定点数时，能表示的实际值只有约 ±2147（21.4 亿 ÷ 1e6）—— 存指标够用，但换成更大的量就会溢出，这是选型时必须算一遍的边界。',
+    en: 'int32: a signed 32-bit integer, roughly ±2.14e9. Holding 1e-6 fixed-point values there limits the representable range to about ±2147 — plenty for metrics, but it overflows for larger magnitudes, a bound worth checking when choosing the type.',
+  },
+  校验链: {
+    zh: '校验链：一条独立于主流程的验证路径 —— 不复用主流程的中间产物，而是从头重算，再和最终结果比对。它的价值在于「同一条路径的错误不会被自己发现」：如果校验也用中间文件，那中间文件算错了两边一起错，比对照样通过。',
+    en: 'A verification chain: a validation path independent of the main pipeline that recomputes from the source and compares against the final output. Its value is that a path cannot detect its own mistakes — reusing the intermediate files would let both sides be wrong together and still "pass".',
+  },
 }
+
