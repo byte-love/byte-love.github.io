@@ -133,8 +133,8 @@ export const glossary: Record<string, L> = {
     en: 'Confusion matrix: a count table of true label × predicted label. Accuracy, precision, recall, F1 and support are all derived from it. Pooling all folds into one matrix then computing is the "pooled out-of-fold" protocol; computing per fold and averaging is the "average of folds" protocol.',
   },
   support: {
-    zh: 'support：某一类在真实标签里实际有多少条样本。按折平均时 support 会被各折的样本量稀释（留一每折只有 1 条时尤其离谱），所以汇总口径要把各折 support 相加，才等于这一类的真实条数。',
-    en: 'support: how many samples of a class actually exist in the ground truth. Averaging across folds dilutes it (badly when each fold holds a single sample), so the pooled protocol sums support across folds to recover the true class count.',
+    zh: 'support：某一类在真实标签里实际有多少条样本。它决定了「各折平均」会不会失真 —— 因为平均的分母是「折数」，不是「该类样本数」。举本项目留一的真实数：24 条（12 正 / 12 负），模型预测正面 23 次、答对 11 次。折外汇总的正面 precision = 11/23 = 0.4783；各折平均 = 11/24 = 0.4583，分母从 23 变成折数 24。正面 recall 更明显：汇总 11/12 = 0.9167，各折平均 11/24 = 0.4583 —— 12 条负面样本也被算进了正面召回的分母。',
+    en: 'support: how many samples of a class actually exist in the ground truth, and it decides whether averaging folds distorts things — because the average divides by the fold count, not by the class count. Real numbers from this project’s LOOCV: 24 samples (12 positive, 12 negative), the model predicted positive 23 times with 11 correct. Pooled positive precision = 11/23 = 0.4783; averaging folds = 11/24 = 0.4583, the denominator turning from 23 into the fold count 24. Positive recall is starker: pooled 11/12 = 0.9167 versus 11/24 = 0.4583 — the 12 negatives end up in the denominator of positive recall.',
   },
   'Macro F1': {
     zh: 'Macro F1：先算每个类别的 F1，再对类别取平均 —— 每个类别权重相同，小类不会被大类淹没。与之相对的是 Weighted F1，按各类样本数加权，样本多的类影响更大。两个口径一起看，才知道模型是不是只顾着多数类。',
