@@ -76,7 +76,7 @@ const tipify = (raw: string) => {
 <Base lang={lang} title={`${project.title[lang]} · ${copy.name}`} langSwitchHref={langSwitchHref}>
   <article class="project">
     <div class="wrap">
-      <p><a href={back}>{copy.detailBack}</a></p>
+      <p class="back"><a class="back-link" href={back}>{copy.detailBack}</a></p>
       <h1>{project.title[lang]}</h1>
       <p class="sub">{project.subtitle[lang]}</p>
 
