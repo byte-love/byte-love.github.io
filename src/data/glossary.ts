@@ -92,4 +92,16 @@ export const glossary: Record<string, L> = {
     zh: '折（fold）：把数据分成 K 份，每一份就叫一折。跑第 i 折时，这一折当考卷（testing_set），其余 K-1 折当学习材料（training_set），跑完换下一折。K 折就跑 K 次，每条数据恰好当一次考卷。',
     en: 'A fold: one of K slices of the data. When running fold i, that slice is the exam paper (testing_set) and the other K-1 slices are the study material (training_set), then it moves to the next fold. K folds means K runs, and each sample is examined exactly once.',
   },
+  SQLite: {
+    zh: 'SQLite：文件型嵌入式数据库 —— 整个库就是一个文件（这里是 Resources\\BigModel\\SqliteData_Temp.sqlite），不用起服务、不用连网络，进程直接开文件读写；支持事务。这里它扮演「客户端和内核之间唯一的交换介质」。',
+    en: 'SQLite: an embedded, file-based database — the whole database is one file (here Resources\\BigModel\\SqliteData_Temp.sqlite) with no server and no network; processes just open the file, and transactions are supported. It acts as the only exchange medium between the client and the kernel.',
+  },
+  交换介质: {
+    zh: '交换介质：客户端（C# 进程）和训练内核（独立 exe）是两个进程，谁都没法直接读对方的内存。它们唯一能共享的东西是磁盘上的一个文件，所以数据必须先落到这个文件里，对方才能读到 —— 这就是「交换介质」的含义，也是为什么切折要写数据库、而不是"把数据传给内核"。',
+    en: 'Exchange medium: the client (a C# process) and the training kernel (a separate exe) cannot read each other’s memory. The only thing they can share is a file on disk, so data must be written there first for the other side to read it — that is what the medium means, and why splitting folds means writing a database rather than "passing data to the kernel".',
+  },
+  dev_set: {
+    zh: 'dev_set（预测集/应用集）：给"应用模型"用的表 —— 把待预测的文本放进去，内核跑完把预测标签 PreLabel 写回同一张表。它本来是用户自己的数据，所以交叉验证要临时借用它收集折外预测时，必须先备份（SnapshotDevSet）、跑完还原（RestoreDevSet），否则用户的数据就被覆盖了。',
+    en: 'dev_set (the prediction table): used by "apply model" — you put texts in, the kernel writes predicted labels (PreLabel) back into the same table. It normally holds the user’s own data, so when cross-validation borrows it to collect out-of-fold predictions it must snapshot first (SnapshotDevSet) and restore afterwards (RestoreDevSet), or the user’s data is overwritten.',
+  },
 }
