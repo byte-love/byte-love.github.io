@@ -101,8 +101,8 @@ export const glossary: Record<string, L> = {
     en: 'Exchange medium: the client (a C# process) and the training kernel (a separate exe) cannot read each other’s memory. The only thing they can share is a file on disk, so data must be written there first for the other side to read it — that is what the medium means, and why splitting folds means writing a database rather than "passing data to the kernel".',
   },
   dev_set: {
-    zh: 'dev_set（预测集/应用集）：给"应用模型"用的表 —— 把待预测的文本放进去，内核跑完把预测标签 PreLabel 写回同一张表。它本来是用户自己的数据，所以交叉验证要临时借用它收集折外预测时，必须先备份（SnapshotDevSet）、跑完还原（RestoreDevSet），否则用户的数据就被覆盖了。',
-    en: 'dev_set (the prediction table): used by "apply model" — you put texts in, the kernel writes predicted labels (PreLabel) back into the same table. It normally holds the user’s own data, so when cross-validation borrows it to collect out-of-fold predictions it must snapshot first (SnapshotDevSet) and restore afterwards (RestoreDevSet), or the user’s data is overwritten.',
+    zh: 'dev_set（本项目里的「应用集」）：三张表的分工是 —— training_set 是课本（有标签，用来学）、testing_set 是考卷（有标签，用来算分）、dev_set 是待批改的作业（没标签，交给模型作答）。把新文本放进 dev_set、以「应用模型」模式调内核，内核会把预测标签写回同一张表的 PreLabel 列，不新增行。注意：它跟教科书里的验证集（validation / dev set）不是一回事，名字是历史沿用。因为它本是用户自己的数据，交叉验证借用它收集折外预测时必须先 SnapshotDevSet 备份、跑完 RestoreDevSet 还原（成功 / 取消 / 异常三条路径都要还原）。',
+    en: 'dev_set (the "apply set" in this project): the three tables divide the work — training_set is the textbook (labelled, for learning), testing_set is the exam (labelled, for scoring), dev_set is the ungraded homework (unlabelled, handed to the model). Put new texts into dev_set and run the kernel in "apply model" mode: it writes predictions back into the PreLabel column of the same rows, adding no rows. Note it is not the textbook validation/dev set — the name is legacy. Since it normally holds the user’s own data, cross-validation must snapshot it (SnapshotDevSet) and restore it afterwards (RestoreDevSet), on the success, cancel and error paths alike.',
   },
   标签: {
     zh: '标签（label）：训练数据里预先给好的「正确答案」—— 这条文本属于哪一类。一条样本 = 一段文本 + 一个标签（如 正面 / 负面），模型学的就是「看到这样的文本该输出哪个标签」。评估指标全是在标签和预测值之间比对算出来的。',
