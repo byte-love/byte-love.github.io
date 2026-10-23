@@ -252,6 +252,10 @@ export const glossary: Record<string, L> = {
     zh: 'recall（召回率 / 查全率）：某一类真实样本里被成功找出来的比例 —— 白话说「真正属于这一类的，你抓到了多少」。分母是「该类真实条数」，漏掉的越多召回越低。',
     en: 'recall: of all samples that truly belong to a class, the fraction that was found. Its denominator is the true count of that class, so missing more lowers recall.',
   },
+  逐类: {
+    zh: '逐类（per-class）：对每一个类别单独算一行指标（正面一行、负面一行：precision / recall / f1 / support），而不是把全部样本混在一起算一个整体数字。整体准确率看不出「模型是不是只会答多数类」，逐类指标能。',
+    en: 'Per-class: computing a separate row of metrics for each class (precision / recall / f1 / support) instead of one aggregate over all samples. Overall accuracy cannot reveal a model that only serves the majority class; per-class metrics can.',
+  },
   F1: {
     zh: 'F1：precision 与 recall 的调和平均（2PR/(P+R)），两者都高才高 —— 只抓一个准（precision 高但漏一半）或只抓一个全（recall 高但错一堆）都上不去。Macro F1 按类别平均，Weighted F1 按各类样本数加权平均。',
     en: 'F1: the harmonic mean of precision and recall (2PR/(P+R)), high only when both are high. Macro F1 averages over classes; Weighted F1 weights classes by support.',
