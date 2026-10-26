@@ -404,5 +404,73 @@ export const glossary: Record<string, L> = {
     zh: '降级（fallback）：主路径不可用时自动切换到一条更朴素但能工作的实现，而不是直接报错退出。这里是从「进程池」降级到「子进程 + 临时文件」；关键是两条路径算出来的结果必须完全一致，且降级要留日志，别让用户以为自己用的是主路径。',
     en: 'Fallback: when the preferred path is unavailable, switch automatically to a simpler implementation that still works instead of failing. Here it is process pool → subprocesses plus temp files; both paths must produce identical results, and the fallback should be logged so nobody assumes they used the main path.',
   },
+  xlsx: {
+    zh: 'xlsx：Excel 2007 之后的文件格式，本质是一个 zip 包，里面用一堆 XML 描述工作表、共享字符串、样式。所以既能用库（openpyxl / POI）读，也能自己解 zip + 解析 XML —— 后者在千万行级别才跑得动。',
+    en: 'xlsx: the Excel 2007+ format, really a zip archive of XML parts describing sheets, shared strings and styles. It can be read through a library (openpyxl / POI) or by unzipping and parsing the XML directly — the latter is what scales to tens of millions of rows.',
+  },
+  'wx.request': {
+    zh: 'wx.request：小程序发起 HTTP 请求的 API（相当于浏览器的 fetch / XMLHttpRequest）。两处和浏览器不同：① 它不维护 Cookie，响应里的 Set-Cookie 不会自动保存、下次也不会自动带上；② 请求域名要在小程序后台配置合法域名。',
+    en: 'wx.request: the mini-program HTTP API (fetch/XHR’s counterpart). Two differences matter: it keeps no cookie jar, so Set-Cookie is neither stored nor replayed; and request domains must be whitelisted in the console.',
+  },
+  'app.globalData': {
+    zh: 'app.globalData：小程序挂在 App 实例上的全局对象，任何页面都能通过 getApp() 读到。适合放「一次使用期间共享」的状态（比如这里手搓的 Cookie），但它是内存 —— 小程序被彻底关闭就清空，不适合放要长期保留的数据。',
+    en: 'app.globalData: the global object on the App instance, readable from any page via getApp(). Good for state shared within one session (like the hand-rolled cookie here), but it lives in memory — closing the mini-program clears it.',
+  },
+  setData: {
+    zh: 'setData：小程序里唯一能把数据从逻辑层送到视图层的方法。它走跨线程通信（逻辑层与渲染层是两个线程），每次调用都有序列化和传输成本；直接改 this.data 只改内存，界面不会刷新。',
+    en: 'setData: the only way to push data from the logic layer to the view layer. It crosses a thread boundary, so every call costs serialisation and transfer; assigning to this.data changes memory only and leaves the UI stale.',
+  },
+  'wx.setStorageSync': {
+    zh: 'wx.setStorageSync / wx.getStorageSync：小程序的本地持久化存储（相当于浏览器的 localStorage），按 key 存数据，关掉小程序再打开还在。和 app.globalData 的区别就是「落盘 vs 内存」。',
+    en: 'wx.setStorageSync / wx.getStorageSync: the mini-program’s persistent local storage (localStorage’s counterpart), keyed and surviving restarts. The difference from app.globalData is disk versus memory.',
+  },
+  payload: {
+    zh: 'payload：报文里「真正要传的数据」那部分，区别于头部、签名等元信息。口语里的「提交体 / 请求体」一般就指它。',
+    en: 'payload: the actual data carried by a message, as opposed to headers or signatures — roughly "request body".',
+  },
+  JSON: {
+    zh: 'JSON（JavaScript Object Notation）：纯文本的数据交换格式，写法是 `{"key": "value"}`。人能读、任何语言都能解析；缺点是没有类型信息，日期和二进制要先约定编码方式。',
+    en: 'JSON (JavaScript Object Notation): a plain-text interchange format using {"key": "value"}. Human-readable and universally parseable, but type-less — dates and binary need an agreed encoding.',
+  },
+  CSV: {
+    zh: 'CSV（Comma-Separated Values）：逗号分隔的纯文本表格，最通用的数据交换格式，Excel 能直接打开。坑是字段内容里含逗号或换行时必须整体加引号，否则列会错位。',
+    en: 'CSV (comma-separated values): the most portable plain-text table format. The pitfall: fields containing commas or newlines must be quoted whole, or columns shift.',
+  },
+  URL: {
+    zh: 'URL（统一资源定位符）：即网址，结构是 `协议://主机:端口/路径?查询#锚点`。做安全时要注意协议部分 —— `javascript:` 这种伪协议被拼进 href 就成了 XSS 入口。',
+    en: 'URL: scheme://host:port/path?query#fragment. The scheme matters for security — a pseudo-scheme like javascript: spliced into an href becomes an XSS vector.',
+  },
+  zip: {
+    zh: 'zip：把多个文件打包压缩的归档格式。xlsx / docx / jar 本质上都是 zip，所以「读 xlsx」也可以理解成「解开 zip 再解析里面的 XML」。',
+    en: 'zip: an archive format bundling and compressing files. xlsx, docx and jar are all zips underneath, so "reading an xlsx" is "unzip it and parse the XML inside".',
+  },
+  max_row: {
+    zh: 'max_row：Excel 记录「工作表最后一行行号」的元数据。它经常不准 —— 有人在第一百万行误留过格式或空值，文件就会写着 max_row = 1000000；按它循环会白跑几十万空行，所以流式读取要自己判空行。',
+    en: 'max_row: sheet metadata recording the last used row. It is frequently wrong — a stray value on row 1,000,000 makes the file claim a million rows, so streaming readers must detect empty rows themselves.',
+  },
+  Map: {
+    zh: 'Map：键值容器（这里指 JS 的对象式字典或 Java 的 java.util.Map）。先把「名字 → 值」收集起来再合并，比写一串 if 好维护。',
+    en: 'Map: a key-value container (a JS map-like object or Java’s java.util.Map). Collecting name → value before merging beats a chain of ifs.',
+  },
+  storage: {
+    zh: 'storage（本地存储）：把数据落在客户端磁盘上，关掉再打开还在（浏览器是 localStorage，小程序是 wx.setStorageSync）。和内存变量相对：内存快但会丢，storage 慢但持久。',
+    en: 'storage: data persisted to client disk and surviving restarts (localStorage in browsers, wx.setStorageSync in mini-programs). Memory is fast but lossy; storage is slower but durable.',
+  },
+  HTML: {
+    zh: 'HTML（超文本标记语言）：用标签描述页面结构的语言（`<p>`、`<span>`、`<a href>`）。它和「纯文本」的关键区别是：数据里的 `<` 若不转义就会被当成标签 —— 这是 XSS 的根源。',
+    en: 'HTML: the tag-based markup describing page structure. The crucial difference from plain text: an unescaped < in data becomes a tag — the root of XSS.',
+  },
+  DOM: {
+    zh: 'DOM（Document Object Model，文档对象模型）：浏览器把 HTML 解析成的一棵对象树，JS 通过它读写页面 —— document、querySelector、innerHTML、addEventListener 都在这一层。小程序没有 DOM，所以不能直接操作页面节点，只能用 setData 驱动视图。',
+    en: 'DOM (Document Object Model): the object tree a browser builds from HTML, through which JS reads and writes the page — document, querySelector, innerHTML, addEventListener. Mini-programs have no DOM; pages are driven by setData instead.',
+  },
+  BOM: {
+    zh: 'BOM（Browser Object Model，浏览器对象模型）：浏览器提供、但「不是页面本身」的那套能力 —— window、location、history、navigator、localStorage、setTimeout 都属于 BOM。小程序也没有 BOM，所以存储要用 wx.setStorageSync、跳转要用 wx.navigateTo。',
+    en: 'BOM (Browser Object Model): browser capabilities that are not the page itself — window, location, history, navigator, localStorage, setTimeout. Mini-programs have no BOM either: storage becomes wx.setStorageSync, navigation wx.navigateTo.',
+  },
+  JSCore: {
+    zh: 'JSCore：JavaScript 引擎（WebKit 的实现名；V8 是 Chrome 的同类引擎）。小程序把 JS 跑在 JSCore / V8 里 —— 引擎只提供语言本身，不提供 DOM/BOM，那些能力要靠宿主（浏览器或小程序框架）另行提供。',
+    en: 'JSCore: a JavaScript engine (WebKit’s; V8 is Chrome’s equivalent). Mini-programs run JS in JSCore/V8, and an engine supplies only the language — no DOM, no BOM — so those capabilities come from the host.',
+  },
 }
 
