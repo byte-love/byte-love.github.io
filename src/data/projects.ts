@@ -562,6 +562,125 @@ export const projects: Project[] = [
     },
     featured: true,
   },
+  {
+    slug: 'nuanyang-eldercare',
+    category: 'personal',
+    title: { zh: '暖阳颐养 · 智慧养老管理平台', en: 'Nuanyang Eldercare · smart care platform' },
+    subtitle: {
+      zh: '基于若依二次开发的机构养老后台，把 AI 接进「入住—护理—评估—咨询」主流程：体检报告自动评估、自然语言查业务数据、养老知识问答、设备状态与告警推送。',
+      en: 'An institutional eldercare back office built on RuoYi, with AI wired into the move-in → care → assessment → consultation flow: automatic health-report assessment, natural-language business queries, care knowledge Q&A, and live device status plus alerts.',
+    },
+    role: { zh: '个人 · 核心业务联调 + AI 能力集成', en: 'Solo · core business integration + AI capability' },
+    period: '2025.07 – 2025.10',
+    stack: ['Spring Boot', 'Vue 3', 'MySQL', 'Redis', 'Dify', 'RAGFlow', '百度千帆', '阿里百炼', '华为云 IoT', 'RabbitMQ'],
+    problem: {
+      zh: '机构养老的入住办理、护理排班、健康评估、家属沟通大量依赖纸质和 Excel：信息分散、查不动；护理等级靠人工经验判断；家属想问政策没有入口；设备报警靠人盯着屏幕。要在若依已经给出的基础 CRUD 上，把大模型和 IoT 接进这条主流程，同时不能把原有业务拖慢。',
+      en: 'Move-in paperwork, care rosters, health assessments and family communication all ran on paper and spreadsheets: information scattered, hard to query, care levels decided by experience, no channel for families asking about policy, and device alarms watched by a human staring at a screen. The job was to wire LLMs and IoT into that flow on top of the RuoYi baseline without slowing the existing business.',
+    },
+    action: {
+      zh: [
+        '集成百度千帆大模型，实现老人 PDF 体检报告自动分析与健康评估，结合人工二次审核机制降低评估成本',
+        '基于阿里百炼构建 Agent（Function Calling），结合系统业务接口实现自然语言查询老人信息、预约记录等功能',
+        '基于 RAGFlow 构建检索增强生成能力，接入医疗与养老知识库，实现基础医疗知识问答与上下文增强推理',
+        '引入 Dify 对话编排平台构建多轮交互流程，支持用户与 AI 连续对话，提升交互体验',
+        '对接华为云 IoT 平台实现养老设备接入与数据上报，结合 WebSocket 实现老人状态实时监控与异常告警',
+        '针对多设备并发上报场景，设计 RabbitMQ 消息队列 + 自定义线程池异步消费模型，实现流量削峰填谷',
+        '采用 Redis 缓存热点数据 + MySQL 定期归档策略，降低数据库读写压力，提升系统响应性能',
+      ],
+      en: [
+        'Integrated Baidu Qianfan to analyse uploaded PDF health reports and produce health assessments, with a human second-review step to keep the cost down',
+        'Built an agent on Alibaba Bailian with function calling, exposing business APIs so users can ask for resident details and appointment records in natural language',
+        'Added retrieval-augmented generation on RAGFlow over medical and eldercare knowledge bases for grounded Q&A and context-aware answers',
+        'Used Dify to compose the multi-turn conversation flow, giving continuous dialogue with the assistant',
+        'Connected Huawei Cloud IoT so care devices report their own data, with WebSocket pushing live status and alarms to the console',
+        'For many devices reporting at once, designed a RabbitMQ queue plus a custom thread pool for asynchronous consumption, shaving the peak',
+        'Cached hot data in Redis and archived MySQL rows on a schedule to cut read/write pressure and improve response time',
+      ],
+    },
+    result: {
+      zh: [
+        '入住—护理—评估—咨询主流程贯通，健康评估从「人工填表」变成「上传 PDF → 模型给结论 → 人工复核」',
+        '暖阳智询支持流式多轮对话与会话历史管理，提示词和业务工具都在 Dify 侧配置，改话术不用改代码',
+        '设备数据经消息队列异步消费，前端通过 WebSocket 实时看到状态与告警',
+      ],
+      en: [
+        'The move-in → care → assessment → consultation flow is connected end to end; assessment went from filling forms by hand to uploading a PDF, getting a model-generated conclusion and reviewing it',
+        'The assistant streams multi-turn conversations with history; prompts and business tools live in Dify, so wording changes need no code change',
+        'Device data is consumed asynchronously from the queue, and the console shows live status and alarms over WebSocket',
+      ],
+    },
+    repo: 'https://github.com/byte-love/nuanyang-eldercare',
+    notes: {
+      zh: {
+        0: '体检报告是 PDF，先抽文本再交给模型，因为模型读不了二进制 PDF。抽取出来的是一堆没有结构的文字，所以提示词里要求模型按固定字段输出（风险项、建议、护理等级倾向），后端按字段解析后落库，前端直接按字段渲染 —— 如果让模型自由发挥，前端就没法展示。\n「人工二次审核」不是礼貌用语，是这条链路必须有的一环：模型给的是建议，最终落库的护理等级要人点确认，否则误判会直接影响护理安排和收费。\n边界：这份仓库的演示 GIF 里没有大模型生成那一步，因为当时用的 key 过期了；2025 年那条链路是跑通过的，重跑要自己填 key。',
+        1: 'Agent 和「让模型直接查库」是两回事：模型不碰数据库，它只决定「调哪个函数、传什么参数」，真正的查询由后端执行，再把结果回喂给模型组织成人话。\n为此专门开了一组接口（DifyServeController）当 Agent 的 Tool 数据源：老人信息、预约记录这类查询各是一个函数，函数名和参数说明写进大模型的工具定义里。这样权限和 SQL 都还在后端手里，模型越权不了。\n边界：这些工具只做查询，没有开放任何写操作 —— 让模型直接改数据在当时不是一个可接受的风险。',
+        2: 'RAGFlow 那边负责的是「切分 + 向量化 + 检索」：知识库文档被切成片段、转成向量存起来，提问时先按语义检索出最相关的几段，再连同问题一起交给模型。\n这么做的意义在于回答有出处：模型不再是凭记忆讲，而是基于检索回来的资料讲，问「养老机构补贴政策」这类问题才不会瞎编。\n边界：知识库内容靠人工维护，检索不到就不该硬答 —— 医疗相关的回答一律加「仅供参考、以医生为准」，不做诊断结论。',
+        3: 'Dify 承担的是「对话流程编排」：多轮上下文、开场白、兜底话术、工具调用顺序都在它的界面上配置，后端只负责把用户的提问转发过去、把流式回复原样转回前端。\n这样调提示词不需要改代码、不需要发版，运营或产品可以自己改；代价是多一个需要部署和维护的服务（`dify.baseUrl` 与 `dify.apiKey` 写在配置里）。\n前端用 SSE 接流式输出，用户看到的是一个字一个字出来，而不是等十秒后整段蹦出来。',
+        4: '设备侧不经过我们后端直连，而是先上报到华为云 IoT 平台，后端订阅平台的消息再往下走 —— 好处是设备接入、鉴权、离线状态这些事由平台兜住。\n告警链路是「设备 → IoT 平台 → 后端消费 → WebSocket 推前端」，前端不需要轮询，页面开着就能收到。\n边界：告警只做到「展示 + 推送」，没有分级升级（比如多久没人处理就通知家属/管理员），也没有和历史告警做关联分析。',
+        5: '多设备同时上报是典型的「瞬时量大、处理可以慢一点」场景，所以入口先落队列：后端把消息丢进 RabbitMQ 就返回，消费能力由自己的线程池决定，不会被一波上报打穿。\n自定义线程池而不是默认的：队列消费是 IO 密集（还要写库、调推送），线程数要按实测调，默认的固定池容易要么闲着要么排长队。\n边界：这一段的可靠性细节（消息确认模式、重试次数、死信队列）我没有留下记录，被追问时只能讲设计意图，不能讲参数。',
+        6: 'Redis 缓存的是读多写少的热点：首页统计、配置、字典这类，每次刷新都去查库既慢又没必要。\nMySQL 的定期归档解决的是另一件事：日志和流水类表只增不减，时间一长单表就影响查询和备份速度，所以按时间把旧数据挪到归档表。\n边界：归档的边界时间（留多久在热表）是拍的经验值，没有按真实数据增长曲线算过；缓存与库的最终一致也只靠过期时间，没有做主动失效。',
+      },
+    },
+    featured: true,
+  },
+  {
+    slug: 'eduverse',
+    category: 'personal',
+    title: { zh: 'Eduverse（知界）· 在线教育微服务平台', en: 'Eduverse · online education microservices' },
+    subtitle: {
+      zh: '15 个微服务 + 网关 + Nacos + Spring AI 多智能体的在线教育平台，覆盖课程、交易、学习、考试、搜索与 AI 答疑。业务骨架来自公开教学项目，15 个后端服务与多智能体的落地实现是本人完成。',
+      en: 'An online-education platform with 15 microservices behind a gateway, Nacos, and a Spring AI multi-agent layer — courses, trading, learning, exams, search and an AI tutor. The business skeleton comes from a public teaching project; all 15 backend services and the multi-agent layer are my implementation.',
+    },
+    role: { zh: '个人 · 后端全部服务 + AI 集成', en: 'Solo · all backend services + AI integration' },
+    period: '2026.02 – 2026.05',
+    stack: ['Spring Boot 3.3', 'Spring Cloud', 'Spring AI 1.0', 'Nacos', 'Gateway', 'MySQL', 'Redis', 'Seata', 'RabbitMQ', 'Elasticsearch', 'Docker Compose'],
+    problem: {
+      zh: '在线教育要覆盖课程、交易、学习、考试、搜索、AI 答疑一整条链。塞进一个应用里，模块互相牵制、发一次版全站停；而 AI 答疑如果只挂一个大模型，它会拿「讲解知识点」的口吻回答「怎么买课」—— 不同意图应该由不同角色的智能体回答，还得能一个字一个字地流式返回。',
+      en: 'Online education spans courses, payments, learning, exams, search and AI tutoring. Packed into one application, modules hold each other hostage and every release stops the site — and a single catch-all model answers “how do I buy this course” in the tone of “explaining a concept”. Different intents need different agents, and answers must stream out token by token.',
+    },
+    action: {
+      zh: [
+        '搭建 15 个微服务架构，基于 Nacos 实现服务注册发现与配置中心热加载，Gateway 统一路由与跨域处理',
+        '基于 Spring AI 1.0 实现多智能体架构：RouteAgent 意图识别 + 4 个专业 Agent（课程推荐/购买咨询/知识讲解/课程咨询），通过 Function Calling 机制让大模型调用业务工具',
+        '集成 VectorStore 向量检索实现 RAG 检索增强生成，配置 topK 与 similarityThreshold 控制检索质量，SSE（Flux + ServerSentEvent）实现流式对话输出',
+        'Nacos 配置中心热加载系统提示词（@PostConstruct + Listener），无需重启即可实时调整 Agent 行为策略',
+        '对接腾讯云 VOD 视频点播服务：实现客户端直传签名、JWT 防盗链播放签名、任务流转码回调处理等完整链路',
+        '使用 Docker Compose + Nginx 实现容器化一键部署，MySQL 初始化自动执行',
+      ],
+      en: [
+        'Stood up 15 microservices: service discovery and hot-reloaded configuration on Nacos, with a Gateway handling routing and CORS',
+        'Built the multi-agent layer on Spring AI 1.0 — a RouteAgent for intent, plus four specialists (recommendation, course consultation, purchase guidance, knowledge explanation) — using function calling so the model can invoke business tools',
+        'Added RAG over a VectorStore with topK and similarityThreshold tuning retrieval quality, and streamed answers over SSE (Flux + ServerSentEvent)',
+        'Hot-reloaded system prompts through Nacos config (@PostConstruct + listener), so agent behaviour can change without a restart',
+        'Integrated Tencent Cloud VOD: client-side upload signatures, JWT-protected playback URLs, and transcoding callbacks — the whole chain',
+        'Packaged everything with Docker Compose + Nginx for one-command deployment, with MySQL initialised automatically',
+      ],
+    },
+    result: {
+      zh: [
+        '15 个服务各自独立起停，外部只认网关一个入口；改配置推下去即生效，不用逐个重启',
+        'AI 答疑按意图分流到 4 个角色智能体，回答通过 SSE 流式返回，多轮对话保留上下文',
+        'docker compose 一条命令起整套环境，MySQL 建库与初始化自动执行',
+      ],
+      en: [
+        'All 15 services start and stop independently behind one gateway address; config changes propagate without restarting each instance',
+        'AI answers are routed by intent to four specialist agents, streamed over SSE, with context kept across turns',
+        'One docker compose command brings the whole stack up, including automatic MySQL initialisation',
+      ],
+    },
+    repo: 'https://github.com/byte-love/eduverse',
+    notes: {
+      zh: {
+        0: '15 个服务不是「拆得越多越好」，而是按业务边界拆：用户、课程、学习、考试、交易、支付、营销、搜索、消息、媒体、点评、数据、认证、AI，外加网关。每个服务一个库（`tj_*`），服务之间只通过 Feign 接口和一个共享的 DTO 模块通信，不允许跨库直连。\n注册与配置都放 Nacos：服务启动注册地址、按名字调用，不用把 IP 写进配置；配置改了推给所有实例。\n网关是唯一入口，统一做路由、JWT 鉴权和跨域 —— 这样后面任何一个服务换端口，外部调用方都不用动。\n边界：服务拆到 15 个，运维成本也翻了 15 倍；这套东西在一台机器上跑，是为学习和演示，不是生产规模的部署。',
+        1: '入口先由一个 RouteAgent 判断意图，再分给四类专家：课程推荐、课程咨询、购买引导、知识点讲解。这样回答的口吻和工具都是对的 —— 问「有没有 Java 课」不该去讲 Java 是什么。\n工具调用是关键：模型不直接查库，它输出「调哪个函数、传什么参数」，后端执行完把结果回喂给模型组织语言。权限和 SQL 始终留在后端。\n边界：意图识别本身也是模型判断，会有分错的时候；当时的兜底是分不清就落到「课程咨询」这个最通用的角色，而不是让用户重问。',
+        2: 'RAG 解决的是「模型不知道我们平台上有什么课」。课程上架后要把课程数据同步进向量库（embedding 接口），提问时先用向量检索找出最相关的几门课，再连同问题交给模型。\ntopK 控制「喂几段资料给模型」：给太少答不全，给太多既慢又容易跑题；similarityThreshold 是「相似度低于这个值就当没检索到」，用来避免拿不相关的片段硬凑答案。\n流式输出用 SSE：Spring 侧返回 Flux<ChatEventVO>，一个事件一段文本，前端边收边渲染。\n边界：向量库里的课程数据是「上架时同步」的，改了课程要重新同步；没做增量更新。',
+        3: '提示词写在 Nacos 配置里，改完推给实例就生效 —— 调话术不用发版，这在调 AI 行为的阶段是刚需，否则每次改一个词都要走一遍构建发布。\n实现上是启动时（@PostConstruct）读一次、再挂一个 Nacos 的 Listener，配置一变就刷新内存里的提示词模板。\n边界：热更新只覆盖提示词这类配置，模型本身的行为（换模型、换温度）还是要重启。',
+        4: '视频点播这条链路有三段，每段都有个坑：\n· 上传：客户端直传要后端签一个限时上传凭证，不能让客户端拿到长期密钥；\n· 播放：播放地址带 JWT 防盗链签名，防止别人拿到地址就无限传播；\n· 转码回调：视频转码完成后 VOD 会回调后端，要校验来源并更新库里的播放地址与时长。\n边界：回调接口的幂等做了（按文件 ID 覆盖写），但没有做回调丢失后的主动补偿查询。',
+        5: 'Docker Compose 把「一整套环境」写成一个文件：MySQL、Redis、Nacos、RabbitMQ、ES 和各服务，一条命令起来。MySQL 的建库和初始化脚本挂在容器的初始化目录里，第一次起容器自动执行。\nNginx 在最前面接静态资源和反向代理，和线上部署的形态保持一致，本地跑起来的就是线上那一套。\n边界：这份 compose 是单机编排，没有做多副本和滚动更新；服务间也没有配健康检查的重启策略，挂了要手动起。',
+      },
+    },
+    featured: true,
+  },
 ]
 
 export const featured = projects.filter((p) => p.featured)

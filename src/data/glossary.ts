@@ -524,5 +524,69 @@ export const glossary: Record<string, L> = {
     zh: '只读探测接口，不写任何库：接上源库跑 COUNT(*) 和 MAX(ID)，量出「这次真会拉多少行」。写生产库的同步一旦开始无法取消，所以要先用它把数字量清楚。',
     en: 'A read-only probe: it runs COUNT(*) and MAX(ID) against the source and reports how many rows the next run would actually pull. A sync that writes the production DB cannot be cancelled, so the numbers get measured first.',
   },
+  Dify: {
+    zh: 'Dify：开源的 LLM 应用编排平台。把「提示词 + 知识库 + 工具调用」在界面上编排成一条对话流程，业务后端只调它的 API 拿流式回复，不用自己实现对话状态机。',
+    en: 'Dify: an open-source platform for composing LLM apps. Prompt, knowledge base and tool calls are wired together visually as a conversation flow; the backend just calls its API for a streamed answer instead of implementing the dialogue state machine itself.',
+  },
+  RAGFlow: {
+    zh: 'RAGFlow：开源的 RAG（检索增强生成）引擎。负责把文档切分、向量化、建索引，提问时先检索出相关片段再交给大模型作答 —— 让模型基于自己的资料回答，而不是凭记忆编。',
+    en: 'RAGFlow: an open-source RAG engine. It chunks and vectorizes documents, builds the index, and on each question retrieves the relevant passages before the model answers — so the answer is grounded in your own material rather than the model’s memory.',
+  },
+  Nacos: {
+    zh: 'Nacos：服务注册中心兼配置中心。服务启动时把地址注册上去、彼此按名字调用（不用写死 IP）；配置放它这里，改完推给所有实例，不用挨个重启。',
+    en: 'Nacos: service registry plus config centre. Services register their address on startup and call each other by name instead of hard-coded IPs; configuration lives there and is pushed to every instance, so no restart-by-restart rollout.',
+  },
+  网关: {
+    zh: '网关（Gateway）：微服务对外只留一个入口，由它按路径把请求转给后面的服务，顺便做鉴权、限流、跨域。这样服务换端口对外不用改，调用方只认网关一个地址。',
+    en: 'An API gateway: microservices sit behind one entry point that routes by path and handles auth, rate limiting and CORS along the way. Services can change ports freely; callers only know the gateway address.',
+  },
+  Seata: {
+    zh: 'Seata：分布式事务框架。一次业务跨多个服务和多个库时，「要么全成、要么全不成」没法靠单库事务保证，Seata 用全局事务 ID 把各分支串起来统一提交或回滚。',
+    en: 'Seata: a distributed transaction framework. When one business action spans several services and databases, a single-database transaction cannot keep it atomic; Seata links the branches under a global transaction id and commits or rolls them back together.',
+  },
+  Elasticsearch: {
+    zh: 'Elasticsearch：基于倒排索引的搜索引擎，擅长「按关键词和条件搜一堆文本」这种关系库做不好的场景；代价是写入要建索引、有可见性延迟，还多一套集群要运维。',
+    en: 'Elasticsearch: a search engine built on inverted indexes, good at the “search text by keyword and filters” case a relational database handles poorly. The cost is indexing work on write, a short visibility delay, and one more cluster to run.',
+  },
+  VectorStore: {
+    zh: 'VectorStore（向量库）：把文本变成向量存起来，按「语义相近」检索而不是按关键词。RAG 就靠它找到与问题最相关的片段，喂给大模型当上下文。',
+    en: 'A vector store keeps text as embeddings and retrieves by semantic closeness instead of keywords. RAG relies on it to find the passages most relevant to a question and feed them to the model as context.',
+  },
+  SSE: {
+    zh: 'SSE（Server-Sent Events）：服务器单向、持续地把数据推给浏览器，复用普通 HTTP，比 WebSocket 轻。流式对话用它最合适 —— 只需要服务端往下推字符，不需要双向。',
+    en: 'SSE (Server-Sent Events): the server keeps pushing data to the browser over a plain HTTP response. Lighter than WebSocket and a natural fit for streamed chat, where only the server needs to push tokens.',
+  },
+  FunctionCalling: {
+    zh: 'Function Calling（工具调用）：把「函数名 + 参数说明」告诉大模型，模型判断该用时输出一段结构化参数，后端照参数真正去查库或调接口，再把结果回喂给模型组织语言。模型不直接碰数据。',
+    en: 'Function calling: the model is given function names plus parameter descriptions; when it decides to use one it emits structured arguments, the backend actually runs the query or call, and the result is fed back for the model to phrase. The model never touches the data directly.',
+  },
+  'Spring AI': {
+    zh: 'Spring AI：Spring 官方的 LLM 集成框架，把「提示词模板、对话、向量检索、工具调用」做成 Spring 风格的可注入组件，省得每个项目自己包一层 HTTP 客户端。',
+    en: 'Spring AI: Spring’s official LLM integration framework. Prompt templates, chat, vector retrieval and tool calling become injectable Spring-style components, so every project does not wrap its own HTTP client.',
+  },
+  千帆: {
+    zh: '百度千帆：百度的大模型平台，文心系列模型的 API 入口。这里的体检报告分析走它 —— 调用方只需要一个模型名和 API Key。',
+    en: 'Baidu Qianfan: Baidu’s model platform, the API entry to the ERNIE family. The health-report analysis here goes through it; the caller only needs a model name and an API key.',
+  },
+  百炼: {
+    zh: '阿里百炼：阿里云的大模型平台，能托管提示词和工具，也能直接创建带 Function Calling 的 Agent。',
+    en: 'Alibaba Bailian: Alibaba Cloud’s model platform, which hosts prompts and tools and lets you create agents with function calling directly.',
+  },
+  IoT: {
+    zh: 'IoT（物联网）：让设备自己联网上报状态。这里养老设备把体征和告警上报到云平台，后端订阅消息再推给前端 —— 不是靠人定期去抄表。',
+    en: 'IoT: devices reporting their own state over the network. Here eldercare devices push vitals and alarms to the cloud platform, and the backend consumes those messages and forwards them to the UI instead of staff reading meters.',
+  },
+  RabbitMQ: {
+    zh: 'RabbitMQ：消息队列。生产方把消息丢进队列就返回，消费方按自己的能力取着处理 —— 用来削峰（瞬间大量上报不直接压垮后端）和解耦（设备接入与业务处理互不阻塞）。',
+    en: 'RabbitMQ: a message broker. The producer drops a message into a queue and returns; consumers pull at their own pace — used to shave peaks and to decouple device ingestion from business processing.',
+  },
+  若依: {
+    zh: '若依（RuoYi）：国内常用的开源后台管理脚手架，自带用户、角色、菜单、字典、日志这些基础能力。基于它二次开发可以省掉重复 CRUD，自定义业务叠在上面。',
+    en: 'RuoYi: a widely used open-source admin scaffold in China, shipping users, roles, menus, dictionaries and audit logs. Building on it skips the repetitive CRUD so custom business logic can sit on top.',
+  },
+  MyBatis: {
+    zh: 'MyBatis：Java 的 SQL 映射框架，SQL 写在 XML 或注解里、结果自动映射成对象。MyBatis-Plus 在其上加了通用 CRUD 和分页，单表操作基本不用手写 SQL。',
+    en: 'MyBatis: a Java SQL-mapping framework — SQL lives in XML or annotations and result rows map to objects. MyBatis-Plus adds generic CRUD and pagination, so single-table work rarely needs hand-written SQL.',
+  },
 }
 
