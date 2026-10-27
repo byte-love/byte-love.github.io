@@ -31,11 +31,6 @@ const diyItems = diy.filter((d) => !d.slug.startsWith('todo-'))
         {copy.heroMeta.map((m) => <span>{m}</span>)}
       </p>
     </section>
-    <nav class="section-nav" aria-label={copy.sectionNavLabel}>
-      <a href="#projects">{copy.navProjects}</a>
-      {diyItems.length > 0 && <a href="#diy">{copy.navDiy}</a>}
-      <a href="#about">{copy.navAbout}</a>
-    </nav>
   </div>
 
   <section class="block" id="projects">
