@@ -472,5 +472,25 @@ export const glossary: Record<string, L> = {
     zh: 'JSCore：JavaScript 引擎（WebKit 的实现名；V8 是 Chrome 的同类引擎）。小程序把 JS 跑在 JSCore / V8 里 —— 引擎只提供语言本身，不提供 DOM/BOM，那些能力要靠宿主（浏览器或小程序框架）另行提供。',
     en: 'JSCore: a JavaScript engine (WebKit’s; V8 is Chrome’s equivalent). Mini-programs run JS in JSCore/V8, and an engine supplies only the language — no DOM, no BOM — so those capabilities come from the host.',
   },
+  源和目标: {
+    zh: '源 = 被读的一边，这里是老 SQL Server 里的日志表；目标 = 写入的一边，这里是新 MongoDB 里的日志集合。同步就是把源的行搬到目标。',
+    en: 'Source is the side being read — the legacy SQL Server log tables here. Target is the side being written — the MongoDB log collections. A sync moves rows from source to target.',
+  },
+  形状校验: {
+    zh: '只比结构、不比内容：在源和目标各抽若干条，把出现过的字段名收集起来比对，看有没有字段只在一边出现。结构对得上，才敢沿用同一套字段映射继续写。',
+    en: 'A structure-only check: sample rows on both sides, collect the field names that actually appear, and compare the two sets. Only when the shapes line up can the same field mapping be reused safely.',
+  },
+  缺失字段计数: {
+    zh: '形状校验的产出：抽样里「一边有、另一边没有」的字段个数。等于 0 说明两边字段集合一致；大于 0 说明结构变了，书签不能动。',
+    en: 'The output of a shape check: how many fields appear on one side but not the other in the sample. Zero means the field sets match; anything above zero means the shape changed and the bookmark must stay where it is.',
+  },
+  两段同形: {
+    zh: '源端那一段和目标端那一段的字段集合完全一致。同形只保证「写进去不缺字段、不错位」，不保证「一行不少」—— 内容是否完整是另一件事，要靠后置比对兜。',
+    en: 'The source span and the target span have identical field sets. Matching shapes only guarantee that writes will not miss or misplace a field — not that no rows are missing. Completeness is a separate check.',
+  },
+  后置比对: {
+    zh: '同步跑完后再做一次宽口径核对（逐段计数、抽样哈希），兜住「结构一致但内容缺行」这类形状校验看不出来的问题。',
+    en: 'A broader comparison run after the sync (per-span counts, sampled hashes) to catch what a shape check cannot see: structures that match while rows are missing.',
+  },
 }
 
