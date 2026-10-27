@@ -186,15 +186,105 @@ section.block > .wrap > h2,
   font-weight: 500;
 }
 
-/* ---------- 项目：左索引树 + 右卡片 ---------- */
+/* ---------- 项目：左索引树 + 右卡片 ----------
+   版式照 VitePress 默认主题的侧边栏（VPSidebarItem）：
+   · 分组标题与条目同字号，靠字重 700 / 500 和颜色区分，不做背景块
+   · 子列表一条 1px 细线 + 1rem 缩进
+   · 活动项只改文字色 + 左侧 2px 短指示条，不给整行铺底色
+   · 行高 1.714、上下各 4px，行距由 line-height 撑开而不是靠大 padding
+*/
 .projects-layout {
   display: grid;
-  grid-template-columns: 186px minmax(0, 1fr);
-  gap: 30px;
+  grid-template-columns: 182px minmax(0, 1fr);
+  gap: 28px;
   align-items: start;
 }
 .projects-main { min-width: 0; }
 .projects-main > h2 + .section-note { margin-top: -12px; }
+.projects-main > h2.group-head {
+  margin: 40px 0 22px;
+  scroll-margin-top: 84px;
+}
+
+.project-index {
+  position: sticky;
+  top: 80px;
+  font-size: 14px;
+}
+
+.index-group { padding-bottom: 22px; }
+.index-group:last-child { padding-bottom: 0; }
+
+.index-group > a {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.714;
+  color: var(--fg);
+  padding: 4px 0;
+}
+.index-group > a:hover { color: var(--accent); text-decoration: none; }
+
+.index-group .count {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--fg-3);
+}
+
+.index-tree {
+  list-style: none;
+  margin: 0;
+  padding-left: 1rem;
+  border-left: 1px solid var(--line);
+}
+.index-tree li { margin: 0; }
+
+.index-tree a {
+  position: relative;
+  display: block;
+  padding: 4px 0;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.714;
+  color: var(--fg-2);
+  transition: color 0.25s;
+}
+.index-tree a:hover { color: var(--accent); text-decoration: none; }
+.index-tree a.on { color: var(--accent); }
+
+/* 活动项的 2px 指示条，贴在分隔线上（VitePress .indicator 同款） */
+.index-tree a::before {
+  content: "";
+  position: absolute;
+  left: calc(-1rem - 1px);
+  top: 4px;
+  bottom: 4px;
+  width: 2px;
+  border-radius: 2px;
+  background: transparent;
+  transition: background-color 0.25s;
+}
+.index-tree a.on::before { background: var(--accent); }
+
+@media (max-width: 900px) {
+  .projects-layout { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  .project-index {
+    position: static;
+    display: flex;
+    gap: 18px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--line);
+  }
+  .index-group { padding-bottom: 0; }
+  .index-group > a { padding: 6px 0; }
+  /* 窄屏只留两个分组入口，省掉 11 行目录 */
+  .index-tree { display: none; }
+}
+.section-note { margin-top: -12px; }
 .projects-main > h2.group-head {
   margin: 34px 0 22px;
   scroll-margin-top: 84px;
