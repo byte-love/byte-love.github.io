@@ -5,6 +5,7 @@
   --bg: #ffffff;
   --bg-2: #f7f8fa;
   --line: #e3e6ea;
+  --guide: #dfe4ea;
   --accent: #1f6feb;
   --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
   --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
@@ -19,6 +20,7 @@
     --bg: #0d1117;
     --bg-2: #151b23;
     --line: #232b36;
+    --guide: #2e3a4a;
     --accent: #58a6ff;
   }
 }
@@ -31,6 +33,7 @@ html[data-theme='light'] {
   --bg: #ffffff;
   --bg-2: #f7f8fa;
   --line: #e3e6ea;
+  --guide: #dfe4ea;
   --accent: #1f6feb;
 }
 html[data-theme='dark'] {
@@ -40,6 +43,7 @@ html[data-theme='dark'] {
   --bg: #0d1117;
   --bg-2: #151b23;
   --line: #232b36;
+  --guide: #2e3a4a;
   --accent: #58a6ff;
 }
 
@@ -187,15 +191,14 @@ section.block > .wrap > h2,
 }
 
 /* ---------- 项目：左索引树 + 右卡片 ----------
-   版式照 VitePress 默认主题的侧边栏（VPSidebarItem）：
-   · 分组标题与条目同字号，靠字重 700 / 500 和颜色区分，不做背景块
-   · 子列表一条 1px 细线 + 1rem 缩进
-   · 活动项只改文字色 + 左侧 2px 短指示条，不给整行铺底色
-   · 行高 1.714、上下各 4px，行距由 line-height 撑开而不是靠大 padding
+   树的样式直接对齐 notes-app 的目录树（那套用户认过）：
+   · 每层缩进 + 1px 竖向引导线 + 每行一根短横，层级看得见
+   · 活动项 = 圆角高亮块（bg-2）+ accent 文字，不是纯变色
+   · 字号/颜色按深度递减：分组标题 0.92rem/600，条目 0.86rem
 */
 .projects-layout {
   display: grid;
-  grid-template-columns: 182px minmax(0, 1fr);
+  grid-template-columns: 190px minmax(0, 1fr);
   gap: 28px;
   align-items: start;
 }
@@ -209,66 +212,62 @@ section.block > .wrap > h2,
 .project-index {
   position: sticky;
   top: 80px;
-  font-size: 14px;
+  font-size: 0.88rem;
 }
 
-.index-group { padding-bottom: 22px; }
-.index-group:last-child { padding-bottom: 0; }
+.index-group + .index-group { margin-top: 22px; }
 
+/* 一级：分组标题 */
 .index-group > a {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
   gap: 8px;
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 1.714;
+  padding: 0.3rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.92rem;
+  font-weight: 600;
   color: var(--fg);
-  padding: 4px 0;
+  line-height: 1.45;
 }
-.index-group > a:hover { color: var(--accent); text-decoration: none; }
+.index-group > a:hover { color: var(--accent); background: var(--bg-2); text-decoration: none; }
 
 .index-group .count {
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 0.7rem;
   font-weight: 400;
   color: var(--fg-3);
 }
 
+/* 二级：项目条目，带引导线与短横 */
 .index-tree {
   list-style: none;
-  margin: 0;
-  padding-left: 1rem;
-  border-left: 1px solid var(--line);
+  margin: 0.15rem 0 0 0.45rem;
+  padding: 0 0 0 0.95rem;
+  border-left: 1px solid var(--guide);
 }
-.index-tree li { margin: 0; }
+.index-tree li { position: relative; margin: 0; }
 
-.index-tree a {
-  position: relative;
-  display: block;
-  padding: 4px 0;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 1.714;
-  color: var(--fg-2);
-  transition: color 0.25s;
-}
-.index-tree a:hover { color: var(--accent); text-decoration: none; }
-.index-tree a.on { color: var(--accent); }
-
-/* 活动项的 2px 指示条，贴在分隔线上（VitePress .indicator 同款） */
-.index-tree a::before {
+.index-tree li::before {
   content: "";
   position: absolute;
-  left: calc(-1rem - 1px);
-  top: 4px;
-  bottom: 4px;
-  width: 2px;
-  border-radius: 2px;
-  background: transparent;
-  transition: background-color 0.25s;
+  left: -0.95rem;
+  top: 1.02rem;
+  width: 0.62rem;
+  height: 1px;
+  background: var(--guide);
 }
-.index-tree a.on::before { background: var(--accent); }
+
+.index-tree a {
+  display: block;
+  padding: 0.26rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.86rem;
+  line-height: 1.45;
+  color: var(--fg-2);
+}
+.index-tree a:hover { color: var(--fg); background: var(--bg-2); text-decoration: none; }
+.index-tree a.on { color: var(--accent); background: var(--bg-2); font-weight: 600; }
 
 @media (max-width: 900px) {
   .projects-layout { grid-template-columns: minmax(0, 1fr); gap: 12px; }
@@ -277,70 +276,6 @@ section.block > .wrap > h2,
     display: flex;
     gap: 18px;
     padding-bottom: 6px;
-    border-bottom: 1px solid var(--line);
-  }
-  .index-group { padding-bottom: 0; }
-  .index-group > a { padding: 6px 0; }
-  /* 窄屏只留两个分组入口，省掉 11 行目录 */
-  .index-tree { display: none; }
-}
-.section-note { margin-top: -12px; }
-.projects-main > h2.group-head {
-  margin: 34px 0 22px;
-  scroll-margin-top: 84px;
-}
-
-.project-index {
-  position: sticky;
-  top: 76px;
-  font-size: 13px;
-  padding-right: 4px;
-  max-height: calc(100vh - 100px);
-  overflow-y: auto;
-}
-.index-group + .index-group { margin-top: 18px; }
-.index-group > a {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 8px;
-  font-weight: 600;
-  color: var(--fg);
-  padding: 3px 6px;
-  border-radius: 6px;
-  font-size: 13px;
-}
-.index-group > a:hover { background: var(--bg-2); text-decoration: none; }
-.index-group .count {
-  color: var(--fg-3);
-  font-family: var(--mono);
-  font-size: 11px;
-}
-.index-tree {
-  list-style: none;
-  margin: 5px 0 0;
-  padding: 0 0 0 9px;
-  border-left: 1px solid var(--line);
-}
-.index-tree li { margin: 0; }
-.index-tree a {
-  display: block;
-  padding: 3px 6px;
-  border-radius: 6px;
-  color: var(--fg-2);
-  line-height: 1.45;
-}
-.index-tree a:hover { color: var(--fg); background: var(--bg-2); text-decoration: none; }
-.index-tree a.on { color: var(--accent); background: var(--bg-2); font-weight: 600; }
-
-@media (max-width: 900px) {
-  .projects-layout { grid-template-columns: minmax(0, 1fr); gap: 14px; }
-  .project-index {
-    position: static;
-    max-height: none;
-    display: flex;
-    gap: 16px;
-    padding-bottom: 4px;
     border-bottom: 1px solid var(--line);
   }
   .index-group + .index-group { margin-top: 0; }
