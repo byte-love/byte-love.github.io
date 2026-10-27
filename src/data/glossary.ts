@@ -472,25 +472,25 @@ export const glossary: Record<string, L> = {
     zh: 'JSCore：JavaScript 引擎（WebKit 的实现名；V8 是 Chrome 的同类引擎）。小程序把 JS 跑在 JSCore / V8 里 —— 引擎只提供语言本身，不提供 DOM/BOM，那些能力要靠宿主（浏览器或小程序框架）另行提供。',
     en: 'JSCore: a JavaScript engine (WebKit’s; V8 is Chrome’s equivalent). Mini-programs run JS in JSCore/V8, and an engine supplies only the language — no DOM, no BOM — so those capabilities come from the host.',
   },
-  源和目标: {
-    zh: '源 = 被读的一边，这里是老 SQL Server 里的日志表；目标 = 写入的一边，这里是新 MongoDB 里的日志集合。同步就是把源的行搬到目标。',
-    en: 'Source is the side being read — the legacy SQL Server log tables here. Target is the side being written — the MongoDB log collections. A sync moves rows from source to target.',
+  起点: {
+    zh: '这次同步真正开始读的那一行：取「书签」和「目标集合 max(_id)」里较大的那个。目标已经写得更远时，用目标的实际进度当起点，避免重拉。',
+    en: 'Where the sync actually starts reading: the larger of the bookmark and the target collection’s max(_id). When the target has already moved further ahead, its real progress becomes the start point.',
   },
   形状校验: {
-    zh: '只比结构、不比内容：在源和目标各抽若干条，把出现过的字段名收集起来比对，看有没有字段只在一边出现。结构对得上，才敢沿用同一套字段映射继续写。',
-    en: 'A structure-only check: sample rows on both sides, collect the field names that actually appear, and compare the two sets. Only when the shapes line up can the same field mapping be reused safely.',
+    zh: '抬起点之前只看「这一段的行长得对不对」，不看内容：统计目标集合里书签以上那些行的字段，看它们是不是当前版本写的 NewLog 行（带 O_system 这些专有字段）。混进了别的表的行，就不能直接抬。',
+    en: 'Before advancing the start point, look only at the shape of the rows in that span, not their content: check whether the fields above the bookmark match what the current writer produces for NewLog (O_system and friends). Rows from another table mixed in mean the start must not move.',
   },
   缺失字段计数: {
-    zh: '形状校验的产出：抽样里「一边有、另一边没有」的字段个数。等于 0 说明两边字段集合一致；大于 0 说明结构变了，书签不能动。',
-    en: 'The output of a shape check: how many fields appear on one side but not the other in the sample. Zero means the field sets match; anything above zero means the shape changed and the bookmark must stay where it is.',
+    zh: '形状校验的产出：书签以上、缺 NewLog 专有字段（O_system）的行数。等于 0 说明那一段全是当前版本写的 NewLog 行；大于 0 说明混了别的来源的行，抬起点会把没同步的行永久跳过。',
+    en: 'The shape check’s output: how many rows above the bookmark lack the fields only NewLog writes (O_system). Zero means the span is entirely current-version NewLog rows; above zero means rows from another source are mixed in, and moving the start point would permanently skip unsynced rows.',
   },
-  两段同形: {
-    zh: '源端那一段和目标端那一段的字段集合完全一致。同形只保证「写进去不缺字段、不错位」，不保证「一行不少」—— 内容是否完整是另一件事，要靠后置比对兜。',
-    en: 'The source span and the target span have identical field sets. Matching shapes only guarantee that writes will not miss or misplace a field — not that no rows are missing. Completeness is a separate check.',
+  导出结构版本: {
+    zh: '代码里的一个版本号，导出结构（字段映射）一改就 +1。同步状态里存着上次写库时的版本；版本对不上说明字段变了、必须整表重刷补字段，这时起点不许抬高。',
+    en: 'A version number in the code, bumped whenever the export shape (field mapping) changes. The sync state stores the version of the last write; a mismatch means fields changed and the whole table must be rewritten, so the start point must not advance.',
   },
-  后置比对: {
-    zh: '同步跑完后的完整性核对：把区间按固定长度切段（比如每 10 万行一段），逐段比源和目标的行数，哪段少行就重拉哪段；再随机抽样逐字段比内容。形状校验只管「字段对不对得上」，「行数够不够」只有它能证明。',
-    en: 'A completeness check run after the sync: cut the span into fixed-length chunks (say 100k rows each), compare source vs target row counts chunk by chunk, re-pull the chunks that fall short, then sample rows and compare field by field. A shape check only covers “do the fields line up”; only this proves no rows are missing.',
+  探针: {
+    zh: '只读探测接口，不写任何库：接上源库跑 COUNT(*) 和 MAX(ID)，量出「这次真会拉多少行」。写生产库的同步一旦开始无法取消，所以要先用它把数字量清楚。',
+    en: 'A read-only probe: it runs COUNT(*) and MAX(ID) against the source and reports how many rows the next run would actually pull. A sync that writes the production DB cannot be cancelled, so the numbers get measured first.',
   },
 }
 
