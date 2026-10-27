@@ -489,8 +489,8 @@ export const glossary: Record<string, L> = {
     en: 'The source span and the target span have identical field sets. Matching shapes only guarantee that writes will not miss or misplace a field — not that no rows are missing. Completeness is a separate check.',
   },
   后置比对: {
-    zh: '同步跑完后再做一次宽口径核对（逐段计数、抽样哈希），兜住「结构一致但内容缺行」这类形状校验看不出来的问题。',
-    en: 'A broader comparison run after the sync (per-span counts, sampled hashes) to catch what a shape check cannot see: structures that match while rows are missing.',
+    zh: '同步跑完后的完整性核对：把区间按固定长度切段（比如每 10 万行一段），逐段比源和目标的行数，哪段少行就重拉哪段；再随机抽样逐字段比内容。形状校验只管「字段对不对得上」，「行数够不够」只有它能证明。',
+    en: 'A completeness check run after the sync: cut the span into fixed-length chunks (say 100k rows each), compare source vs target row counts chunk by chunk, re-pull the chunks that fall short, then sample rows and compare field by field. A shape check only covers “do the fields line up”; only this proves no rows are missing.',
   },
 }
 
