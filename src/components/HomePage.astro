@@ -15,6 +15,9 @@ const { lang, langSwitchHref } = Astro.props
 const copy = t(lang)
 // 只渲染真正的 DIY 条目；占位（slug 以 todo- 开头）算没有内容，整块连同导航一起隐藏
 const diyItems = diy.filter((d) => !d.slug.startsWith('todo-'))
+// 实习项目与个人项目分两块渲染：前者有脱敏说明，后者没有
+const internshipProjects = projects.filter((p) => (p.category ?? 'internship') === 'internship')
+const personalProjects = projects.filter((p) => p.category === 'personal')
 ---
 
 <Base
@@ -38,10 +41,21 @@ const diyItems = diy.filter((d) => !d.slug.startsWith('todo-'))
       <h2>{copy.sectionProjects}</h2>
       <p class="section-note">{copy.projectsNote}</p>
       <div class="list">
-        {projects.map((p) => <ProjectCard project={p} lang={lang} />)}
+        {internshipProjects.map((p) => <ProjectCard project={p} lang={lang} />)}
       </div>
     </div>
   </section>
+
+  {personalProjects.length > 0 && (
+  <section class="block" id="personal">
+    <div class="wrap">
+      <h2>{copy.sectionPersonal}</h2>
+      <div class="list">
+        {personalProjects.map((p) => <ProjectCard project={p} lang={lang} />)}
+      </div>
+    </div>
+  </section>
+  )}
 
   {diyItems.length > 0 && (
   <section class="block" id="diy">

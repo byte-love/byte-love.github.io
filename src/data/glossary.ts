@@ -325,8 +325,8 @@ export const glossary: Record<string, L> = {
     en: 'Session: server-side state for one visit, with the browser holding only a session id (usually in a cookie). The SMS code lives in that session here, so requests must carry the same session id — which is why cookies must be maintained by hand.',
   },
   反向代理: {
-    zh: '反向代理：挡在后端前面的那层（Nginx 之类），对外暴露 /api 这样的路径并转发到真正的服务。所以正式环境请求走 /api 是对的；本地直连后端没有这层，路径里带 /api 就 404 —— 这就是本地调试要剥前缀的原因。',
-    en: 'Reverse proxy: the layer (e.g. Nginx) in front of the backend that exposes paths like /api and forwards them to the real service. In production /api is correct; locally there is no such layer, so keeping /api yields a 404 — hence stripping the prefix for local debugging.',
+    zh: '反向代理（reverse proxy）：挡在后端前面的那层（这里是 nginx），对外只暴露一个端口和路径，把请求转发到真正的服务，再把结果返回。客户端以为在跟一个服务说话，其实后端换端口、换进程，外面都不用改。',
+    en: 'A reverse proxy: the layer in front of the backend (nginx here) that exposes one port and path pattern, forwards requests to the real service and relays the answer back. The client thinks it is talking to one service; ports and processes behind it can change freely.',
   },
   'node:vm': {
     zh: 'node:vm：Node 内置模块，用来在「自己造的上下文」里执行一段 JS。这里用它模拟小程序运行环境（假 wx、假 storage），把真实业务代码加载进去跑 —— 于是不用微信开发者工具、不用网络也能测。',
@@ -487,6 +487,38 @@ export const glossary: Record<string, L> = {
   导出结构版本: {
     zh: '代码里的一个版本号，导出结构（字段映射）一改就 +1。同步状态里存着上次写库时的版本；版本对不上说明字段变了、必须整表重刷补字段，这时起点不许抬高。',
     en: 'A version number in the code, bumped whenever the export shape (field mapping) changes. The sync state stores the version of the last write; a mismatch means fields changed and the whole table must be rewritten, so the start point must not advance.',
+  },
+  nginx: {
+    zh: 'nginx：一个 HTTP 服务器兼反向代理。这里它只做一件事——按路径把请求分给不同的进程：`/` 直接发静态文件，`/app/` 转给本机 8081 端口的 Spring Boot。业务它一概不懂，只负责收请求、看路径、转发。',
+    en: 'nginx: an HTTP server and reverse proxy. Here it does exactly one job — route by path: `/` serves static files, `/app/` hands off to Spring Boot on local port 8081. It knows nothing about the business; it takes the request, looks at the path and forwards.',
+  },
+  systemd: {
+    zh: 'systemd：Linux 的进程与开机自启管理。用它跑 jar 的好处是「进程挂了会被拉起来、开机自动起、日志进 journald」，不用自己写 nohup + 守护脚本。',
+    en: 'systemd: the process and boot manager on Linux. Running the jar under it means the process is restarted when it dies, starts on boot, and logs go to journald — no hand-rolled nohup plus watchdog script.',
+  },
+  Docker: {
+    zh: 'Docker：把进程和它依赖的运行环境打成一个容器跑。这里只用来跑 PostgreSQL —— 装数据库的坑（版本、依赖、初始化）由镜像保证，宿主机只负责把数据目录和端口挂出来。',
+    en: 'Docker: runs a process together with its dependencies as a container. Used here only for PostgreSQL, so the image owns the install details (version, dependencies, init) while the host just mounts the data directory and the port.',
+  },
+  swap: {
+    zh: 'swap：磁盘上的一块「假内存」，物理内存不够时把冷页面换出去。小内存机器上它是防 OOM 的保险，但换出去的页面再次访问要读盘，所以能靠调小堆来避免就别依赖它。',
+    en: 'swap: a slice of disk used as slow memory when RAM runs out. On small boxes it is OOM insurance, but swapped-out pages cost disk reads to come back — better to size the heap down than to rely on it.',
+  },
+  JVM: {
+    zh: 'JVM：跑 Java 程序的虚拟机。会占的内存不止堆（-Xmx），还有 Metaspace（类元数据）、线程栈、直接内存——小内存机器上这些都要单独设上限。',
+    en: 'JVM: the virtual machine that runs Java. It consumes more than the heap (-Xmx): Metaspace for class metadata, thread stacks, direct buffers — on a small box each of those needs an explicit cap.',
+  },
+  'Let\'s Encrypt': {
+    zh: 'Let\'s Encrypt：免费签发 TLS 证书的机构，证书 90 天有效，靠 certbot 自动续期。备案通过后配 HTTPS 就是用它。',
+    en: 'Let\'s Encrypt: a free TLS certificate authority with 90-day certificates and automatic renewal via certbot. That is what the HTTPS setup will use once the domain clears filing.',
+  },
+  聚合哈希: {
+    zh: '把一整段的行压成两个数字来比：每行归一化后算一个 64 位哈希，整段累加成 (xor, sum)。只用 xor，同一行被重复写会成对抵消；只用 sum，两行内容互换总和不变 —— 所以两个一起比。与行序无关，两侧游标的顺序不同也能比。',
+    en: 'Compressing a whole span into two numbers: each row is normalized and hashed to 64 bits, then the span is folded into (xor, sum). XOR alone cancels out a row written twice; sum alone cannot see two rows swapping contents — so both are compared. Both are order-independent, so the two sides may stream in any order.',
+  },
+  待重拉清单: {
+    zh: '校验里条数或哈希对不上的那些段。只列出来、不自动回退书签 —— 回退在生产库上意味着几十万行重传，必须由人决定。',
+    en: 'The segments whose counts or hashes did not match. They are only listed; the bookmark is never rewound automatically, because rewinding means re-transferring hundreds of thousands of rows in production — a human decides that.',
   },
   探针: {
     zh: '只读探测接口，不写任何库：接上源库跑 COUNT(*) 和 MAX(ID)，量出「这次真会拉多少行」。写生产库的同步一旦开始无法取消，所以要先用它把数字量清楚。',

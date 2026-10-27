@@ -18,6 +18,8 @@ export type Project = {
   /** 公开仓库地址，缺省则不显示仓库链接 */
   repo?: string
   featured: boolean
+  /** 分区：实习项目（默认）/ 个人项目 */
+  category?: 'internship' | 'personal'
   /** 架构图，放 public/diagrams/ 下，例：/diagrams/logs-manage-system.svg */
   diagram?: string
   /** 界面截图，放 public/shots/ 下 */
@@ -46,6 +48,7 @@ export const projects: Project[] = [
         'Excel 导出改为全流式：SXSSF 200 行滑窗 + 服务端游标 + 预载邮箱映射，替掉全量驻留内存的写法',
         '机构匹配改用锚定正则 ^\\s*值\\s*$，三个查询入口共用同一个条件构造器',
         '接入中英文日志表（En_Log）增量同步，按源文档 ObjectId 做断点，补语言版本列',
+        '补一个只读的同步完整性校验：按 id 分段，先比条数、再比段级聚合哈希、最后抽样定位差异',
       ],
       en: [
         'Split the two log tables into independent collections, and wrote down two hard rules: never merge, never offset the ids',
@@ -53,17 +56,20 @@ export const projects: Project[] = [
         'Rewrote Excel export as fully streaming: SXSSF with a 200-row window plus a server-side cursor and preloaded lookup maps',
         'Switched institution matching to an anchored regex ^\\s*value\\s*$ shared by all three query entry points',
         'Added incremental sync for the bilingual log table (En_Log) keyed on source ObjectId, plus a language column',
+        'Added a read-only integrity check for the sync: per-id-segment row counts, then a segment-level aggregate hash, then sampling to locate the first differing row',
       ],
     },
     result: {
       zh: [
         '待拉行数 1687 万 → 74,912（约 225 倍）',
+        '补上只读完整性校验：分段 count → 段级聚合哈希 → 抽样定位；不一致的段进待重拉清单，不自动回退书签',
         '导出 12.98 万行 / 24 秒 / 11 MB，44,968 个材料链接全部补上',
         '机构筛选命中 4185 → 5525 条（找回整批被静默漏掉的学校账号）',
         '9 个测试类 73 个用例，全 Mock，不连库不连源',
       ],
       en: [
         'Pending rows: 16.87M → 74,912 (~225×)',
+        'Added a read-only integrity check: per-segment count → segment-level aggregate hash → sampling; mismatched segments go on a re-pull list, the bookmark is never rewound automatically',
         'Export: 129.8k rows / 24s / 11 MB, with all 44,968 attachment links resolved',
         'Institution filter hits: 4,185 → 5,525 (recovered a whole class of silently dropped rows)',
         '9 test classes / 73 cases, fully mocked, no DB connection required',
@@ -73,10 +79,11 @@ export const projects: Project[] = [
     notes: {
       zh: {
         0: '两张日志源表的 _id 都各自从 1 开始自增、各有百万级数据，值域完全重叠。合并成一个集合的话，第 1 号会覆盖第 1 号，188 万条真实记录被静默覆盖，而且覆盖之后看不出任何异常。\n另一种「省事」做法是给其中一张加偏移（_id + 1000000），但历史书签和外部引用都是按原 _id 记的，一加偏移就对不上。\n所以拆成两个独立集合分别同步，并在代码里写下两条铁律：禁止合并、禁止加偏移。代价是查询要查两次，但两次查询的成本远低于数据被覆盖。',
-        1: '同步用一个书签记「拉到哪一条了」，待拉行数 = 源表总行数 − 起点。源表总共约 2258 万行，书签停在 563 万，而目标集合已经写到 2250 万 —— 中间这 1687 万行早就落库了，照书签重拉只是同 _id 覆盖、数据不变，公网拉源库却是几天量级，纯白跑。\n所以起点不用书签本身，而取「书签」和「目标集合 max(_id)」的较大者。抬之前先做形状校验：算一下缺失字段计数 —— 书签以上、缺 NewLog 专有字段（O_system）的行数。r13342 之前两张源表都写进过同一个集合，如果那批 Log_Login 行还混在里面，它的 _id 会盖住真正没同步的 NewLog 行。只有这个数是 0（那一段全是当前版本写的 NewLog 行），并且导出结构版本没变，才抬高起点；否则保持不动。\n抬完之后待拉行数 = 2258 万 − 2250 万 = 74,912（1687 万 → 7.49 万，约 225 倍）。\n边界：形状校验只证明「抬上去不会永久跳过别的表的行」，没证明那 1687 万行一行不少。真漏的行不会自己回来，只能拿探针把源表 COUNT 和目标集合条数对一遍才发现 —— 这一步是手工核的，没做成自动校验。',
+        1: '同步用一个书签记「拉到哪一条了」，待拉行数 = 源表总行数 − 起点。源表总共约 2258 万行，书签停在 563 万，而目标集合已经写到 2250 万 —— 中间这 1687 万行早就落库了，照书签重拉只是同 _id 覆盖、数据不变，公网拉源库却是几天量级，纯白跑。\n所以起点不用书签本身，而取「书签」和「目标集合 max(_id)」的较大者。抬之前先做形状校验：算一下缺失字段计数 —— 书签以上、缺 NewLog 专有字段（O_system）的行数。r13342 之前两张源表都写进过同一个集合，如果那批 Log_Login 行还混在里面，它的 _id 会盖住真正没同步的 NewLog 行。只有这个数是 0（那一段全是当前版本写的 NewLog 行），并且导出结构版本没变，才抬高起点；否则保持不动。\n抬完之后待拉行数 = 2258 万 − 2250 万 = 74,912（1687 万 → 7.49 万，约 225 倍）。\n边界：形状校验只证明「抬上去不会永久跳过别的表的行」，没证明那 1687 万行一行不少。这一点后来单独补了一个只读的完整性校验来查（见第 6 步）。',
         2: '原来导出是先把全量数据读进 List 再写 xlsx，行数一多直接 OOM。改成两处流式：\n· Mongo 侧用游标边读边写，不把结果集攒在内存；\n· Excel 侧用 `SXSSFWorkbook(200)`，内存只保留 200 行滑动窗口，超出的行刷到磁盘临时文件，内存恒定。\n另外把逐行查邮箱改成一次批量取 + 内存 Map 预载，消掉 N+1。\n两个副作用：SXSSF 不支持事后 autoSizeColumn（历史行已刷盘），列宽改固定值；临时文件必须 dispose()，否则堆磁盘。结果：12.98 万行 / 24 秒 / 约 11 MB。',
         3: '机构名是从 SQL Server 的定长 CHAR 列迁过来的，带尾随空格，所以 = \'江西某学校\' 这种等值查询永远命中不到，整批账号被静默漏掉。\n改成 ^\\s*值\\s*$ 这类锚定正则，容忍前后空白。两个关键点：用户输入必须 Pattern.quote 转义，否则名字里带 . 或 ( 就变成正则元字符；三个查询入口共用同一个条件构造器，避免只改一个、另外两个继续漏。\n结果：机构筛选命中 4185 → 5525 条，找回整批被漏掉的学校账号。\n边界：前导空白会让优化器放弃索引，真正干净的做法是入库时清洗数据。',
         4: '新增一张英文日志表 En_Log，字段结构一致，要持续增量同步到同一个视图。\n断点用它自己的 ObjectId 而不是自增 _id —— ObjectId 前 4 字节是时间戳，本身单调有序，不会踩「两张表 _id 都从 1 开始」那个坑。再补一列语言版本，前端按列过滤即可中英切换。\n边界：ObjectId 做断点依赖时钟不倒退、并发写入时间戳单调；严格来说该用（时间戳, ObjectId）复合断点。',
+        5: '书签自愈之后，中间那 1687 万行到底齐不齐，其实没人证明过 —— 缺行不会自己回来。所以补了这个校验，按 id 区间切段（不按行切：两侧 id 空间是同一个，按行切一旦某段缺行，后面全部错位，比对就没意义了）。\n三层，越往下越贵：\n· 条数：每段 count(源) 必须等于 count(目标)，证明「数量不缺席」；\n· 段级聚合哈希：逐行归一化（trim、数字转 BigDecimal 去尾零、时间取毫秒）后算 64 位哈希，整段做 (xor, sum)。只用 xor，同一行被重复写会成对抵消；只用 sum，两行内容互换总和不变 —— 所以两个一起比。\n· 抽样摊开：前两层提示不对时才用，逐字段比出第一处差异，判断是缺行还是某个字段值变了。\n边界：抽样只能证伪，抽到的行一致不代表这一段一致，所以它不当放行依据，只用来定位。不一致的段进待重拉清单，回退书签仍由人决定 —— 自动回退会在生产上引发几十万行重传。',
       },
     },
     featured: true,
@@ -498,6 +505,60 @@ export const projects: Project[] = [
       },
     },
     featured: false,
+  },
+  {
+    slug: 'self-hosted-lab',
+    category: 'personal',
+    title: { zh: '自建服务器 · 作品集与笔记站', en: 'Self-hosted lab · portfolio & notes' },
+    subtitle: {
+      zh: '一台 2C2G 的阿里云 ECS，同时跑静态站、Spring Boot 服务和 PostgreSQL；从买机器、装环境到发布回滚全部自己做，现在还在线上跑。',
+      en: 'One 2C2G Alibaba Cloud ECS running a static site, a Spring Boot service and PostgreSQL at the same time — bought, provisioned, deployed and rolled back by myself, still live.',
+    },
+    role: { zh: '个人 · 从买机器到运维全包', en: 'Solo · from buying the box to running it' },
+    period: '2026.10 – 现在',
+    stack: ['Ubuntu 24.04', 'nginx', 'Spring Boot 3.3', 'PostgreSQL 16', 'Docker', 'systemd', 'Astro'],
+    problem: {
+      zh: '面试官要「点开就能看到」的东西，但实习项目都是公司内部系统，没法公开演示；预算只够一台最低配机器和一个域名，而静态站、后端服务、数据库三样都得放在这 2G 内存里；发布不能一上就挂——挂了我没有第二台机器可以切换。',
+      en: 'Recruiters want something they can open in a browser, but the internship work is all internal. The budget covered exactly one entry-level box and one domain, and a static site, a backend service and a database all had to fit into 2 GB of RAM. A bad deploy could not be fixed by switching to another machine — there was no other machine.',
+    },
+    action: {
+      zh: [
+        '一个 nginx 入口分流三个东西：`/` → 静态站目录、`/app/` → 反向代理到 127.0.0.1:8081 的 Spring Boot、`/media/` 同反代；应用和数据库都只绑回环，公网只放 22/80/8080',
+        '内存按 2G 反着推：JVM 定 `-Xmx448m` 并换成 SerialGC（小堆比 G1 省）、Metaspace 限 160m；PostgreSQL 给 shared_buffers 128M / effective_cache_size 512M / work_mem 4M / max_connections 40，剩下的留给系统和页缓存',
+        '发布做成可回滚：前端 `npm run build` → 打包 → 上传 → 解压到新目录 → 原子 `mv` 换上去，上一版留在旁边当回滚点；后端上传源码在服务器上 `mvn package` → 停服 → 换 jar（先 `cp` 成 `.bak`）→ 起服 → 轮询探活，全程一条脚本',
+        '数据库跑在容器里、数据目录挂到宿主机，只监听 127.0.0.1；另加一个每日 `pg_dump` 的备份脚本，备份和数据库不在同一块盘上',
+        '踩过的坑都记下来了：Docker Hub 拉不动改镜像加速、阿里云内网源比公网源快 4 倍、Ubuntu 24.04 的 logrotate 会因为 `/var/log` 权限报错',
+      ],
+      en: [
+        'One nginx entry splits three things: `/` → the static build, `/app/` → reverse proxy to Spring Boot on 127.0.0.1:8081, `/media/` → same proxy. App and database bind loopback only; public ports are just 22/80/8080',
+        'RAM sized backwards from 2 GB: JVM pinned at `-Xmx448m` with SerialGC (cheaper than G1 on small heaps) and Metaspace capped at 160m; PostgreSQL given shared_buffers 128M / effective_cache_size 512M / work_mem 4M / max_connections 40, leaving the rest for the OS and page cache',
+        'Deploys are reversible: build → archive → upload → unpack into a fresh directory → atomic `mv`, with the previous build kept next to it as a rollback point. The backend ships source and runs `mvn package` on the server, then stop → swap the jar (copying the old one to `.bak` first) → start → poll a health check, all in one script',
+        'PostgreSQL runs in a container with its data directory on the host and listens on 127.0.0.1 only; a nightly `pg_dump` script keeps backups on a different disk',
+        'The traps are written down too: Docker Hub unreachable → mirror, Alibaba Cloud internal mirrors about 4× faster than public ones, and logrotate failing on Ubuntu 24.04 because of `/var/log` permissions',
+      ],
+    },
+    result: {
+      zh: [
+        '一套入口跑起两个项目，应用和数据库都不在公网暴露，只有 80/8080 对外',
+        '2G 机器上数据库 + 应用常驻约 780MB，没有出现 OOM；一次发布 40 秒级完成，随时能回滚到上一版',
+        '面试官能直接点开：静态作品集 + 带登录和三级可见性的笔记应用，两边共用同一个域名和登录态',
+      ],
+      en: [
+        'Two projects behind one entry point, with the app and database never exposed publicly — only 80/8080 are open',
+        'Database plus app sit around 780 MB resident on the 2 GB box with no OOM; a deploy finishes in about 40 seconds and can always roll back one version',
+        'Recruiters can just click: a static portfolio plus a notes app with login and three visibility tiers, sharing one domain and one session',
+      ],
+    },
+    notes: {
+      zh: {
+        0: 'nginx 只做一件事：按路径把请求分给不同进程，它自己不懂业务。\n`/` 走 root 指向静态目录，`/app/` 用 proxy_pass 转到 8081，两处都带 `X-Forwarded-*` 头，Spring Boot 这边开 `forward-headers-strategy: framework`，否则登录跳转会生成 http 的内网地址。\n应用 `server.address: 127.0.0.1`、数据库 `listen_addresses = 127.0.0.1`，公网只经 nginx 进来；安全组只开 22/80/8080（备案下来再加 443）。\n边界：这台机器没有上 ufw —— Docker 会自己插 iptables 规则绕过 ufw 的 INPUT 链，看着像开了防火墙其实没生效，所以端口收敛全靠安全组。',
+        1: '2G 内存上最怕的是「JVM 和 PG 各自按默认值吃满」。\nJVM 默认堆按物理内存 1/4 算，能开到 500M 以上，小机器上 G1 的并发线程和 Region 结构又是额外开销，所以直接定死 `-Xmx448m -XX:+UseSerialGC -XX:MaxMetaspaceSize=160m` —— 小堆下 SerialGC 的停顿完全够用且更省。\nPG 这边 `shared_buffers` 只给 128M（2G 机器给太多反而抢页缓存），`effective_cache_size 512M` 是告诉优化器的估计值、不占真实内存，`work_mem 4M` 是单个排序/哈希操作的上限、并发一多会乘上去，`max_connections 40` 远小于默认 100，因为 Hikari 池只开 8。\n实测两边加起来常驻 780MB 左右，剩的给页缓存——比反过来让 PG 吃满、JVM 被 OOM Killer 杀掉要好。',
+        2: '不能「解压覆盖到正在服务的目录」：解压过程中页面会缺文件、缺 CSS。\n做法是先解到 `lab.new`，确认 `index.html` 在，再把旧目录 `mv` 成 `lab.old`、新目录 `mv` 成 `lab`，两次 mv 都在同一文件系统内、是原子的。回滚就是把两个名字换回来。\n后端同理：服务器上现编译再停服，停服窗口只有「换 jar + 重启」这段；换之前先 `cp` 一份 `.bak`，起服后轮询 `/app/notes` 直到 200，不通就不算发完。\n边界：换 jar 那一两秒请求会失败，没有做双实例滚动——这台机器放不下两份 JVM。',
+        3: '数据库如果和项目跑在同一台机器，最容易死在「数据目录被误删」和「磁盘写满」上，而不是数据库本身。\n所以容器只负责进程，数据目录挂到宿主机固定路径，`docker compose down` 不会碰数据；备份脚本每天 `pg_dump` 到另一块盘，且备份文件不放在数据目录下面（否则一次误删两样都没了）。\n边界：备份只做了「有备份」，没做「定期演练恢复」——真出事时能不能用，严格说要定期找一台机器实恢复一次才算数。',
+        4: '三个坑都属于「不报错但很慢」或者「报错但看不懂」那类：\n· Docker Hub 在国内直连基本拉不动，换镜像加速后才有速度；\n· 装 Docker 和系统包走公网源实测 101 KB/s，换阿里云内网镜像源后聚合到 400 KB/s；\n· Ubuntu 24.04 上 `/var/log` 权限变了，logrotate 会报 insecure permissions 并**静默跳过**轮转——日志不轮转就是某天磁盘被写满，加一行 `su root syslog` 才正常。\n边界：这些是「环境适配」而不是业务代码，但换机器重装一次还得重来一遍，所以我写成了脚本而不是记在脑子里。',
+      },
+    },
+    featured: true,
   },
 ]
 

@@ -19,6 +19,7 @@ export const ui = {
       '企业级开发：Spring Boot 后台、Vue 前端、跨库数据同步、桌面端 AI 能力接入，也写过跑上千万行的数据处理流水线。',
     heroMeta: ['Java / Spring Boot', 'Vue 3', 'Python 数据工程', '.NET / WPF', '微信小程序'],
     sectionProjects: '实习项目',
+    sectionPersonal: '个人项目',
     projectsNote:
       '两段实习期间的项目（2025–2026），均已脱敏：公司名、域名、内网地址、真实凭据已替换。涉及商业机密的项目不在其中，只保留本人负责的，或参与项目中本人所写的部分。',
     sectionDiy: '动手做的',
@@ -59,6 +60,7 @@ export const ui = {
       'Enterprise development: Spring Boot services, Vue front-ends, cross-database sync, AI features in desktop apps, and data pipelines processing tens of millions of rows.',
     heroMeta: ['Java / Spring Boot', 'Vue 3', 'Python data', '.NET / WPF', 'WeChat mini-program'],
     sectionProjects: 'Internship work',
+    sectionPersonal: 'Personal projects',
     projectsNote:
       'Projects from two internships, 2025–2026. Sanitized: company names, domains, internal hosts and credentials replaced. Commercially sensitive work is omitted — only what I owned, or the parts I wrote myself.',
     sectionDiy: 'Things I built',
