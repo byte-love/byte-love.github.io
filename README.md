@@ -81,24 +81,28 @@ public/
 
 ## 部署（现役）
 
-仓库是 `byte-love/byte-love.github.io`（GitHub 用户主页站点，发布在**根路径**，不是子路径），
-线上地址 https://byte-love.github.io/ ，`astro.config.mjs` 里的 `site` 已指向它。
+线上只有一份，在阿里云 ECS 上，和笔记站同一个 nginx 入口：
 
-**发布方式：GitHub Actions。** Pages 的 Source 设为「GitHub Actions」，
-由 `.github/workflows/deploy.yml` 负责 `npm ci` → `npm run build` → 上传产物 → 部署。
+- `/` → `/srv/sites/lab`（本站的构建产物）
+- `/app/` → 反代 `127.0.0.1:8081`（notes-app）
+- `/media/` → 同上
 
-所以日常流程只有两步：
+域名 `lab.byte-love.cn` 还在备案，现在用 http://47.104.210.93:8080/ 访问。
+
+**发布方式：本地构建 + 上传产物。**
 
 ```bash
-git add -A && git commit -m "…"
-git push            # 约 1~2 分钟后自动上线
+npm run build
+tar czf dist.tar.gz -C dist .
+scp dist.tar.gz root@<服务器>:/root/
+# 服务器上解压到 /srv/sites/lab
 ```
 
-构建失败会在仓库 Actions 页显示红叉，日志可直接看，不会出现「推了但线上没变」。
+两处都要改时（比如改了站内的 `/app/` 链接），笔记站也要按它自己的流程重新发布一次。
 
-**历史说明**：早期是用 `gh-pages` 分支发布（本地 build 后把 `dist/` 推上去），
-现已废弃——GitHub Pages 不再读那个分支。分支还留在远端，删掉不影响发布。
-本地 `npm run build` 现在只用于排查问题或本地预览 `dist/`。
+**GitHub Pages 已停用。** 仓库 `byte-love/byte-love.github.io` 只当代码托管用，
+里面的 `.github/workflows/deploy.yml` 已经被手动禁用（GitHub Actions 页面可一键恢复），
+所以 `git push` 只更新代码，不会再自动发到 Pages。`https://byte-love.github.io/` 上那份是停用前
+的旧产物，不要当线上地址用。
 
-**备选平台**：Cloudflare Pages（连仓库，构建命令 `npm run build`，输出目录 `dist`）也可以。
-**不建议 Vercel**：`*.vercel.app` 在国内经常打不开。
+`gh-pages` 分支是更早的发布方式，已废弃，远端还留着，删掉不影响任何事。
