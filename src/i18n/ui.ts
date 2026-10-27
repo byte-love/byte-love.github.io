@@ -3,6 +3,7 @@ export type Lang = 'zh' | 'en'
 export const ui = {
   zh: {
     name: '李杰',
+    brand: 'byte-love',
     email: '2941075434@qq.com',
     langSwitch: 'English',
     themeToggle: '切换深浅色',
@@ -11,6 +12,11 @@ export const ui = {
     navProjects: '项目',
     navDiy: '动手做的',
     navAbout: '关于',
+    tabProjects: '项目',
+    tabNotes: '笔记',
+    tabNavLabel: '站点分区',
+    sectionNavLabel: '页面内导航',
+    notesHref: '/app/notes',
     heroTitle: '后端 / 全栈开发，做过数据管线、运维后台和桌面客户端。',
     heroLead:
       '企业级开发：Spring Boot 后台、Vue 前端、跨库数据同步、桌面端 AI 能力接入，也写过跑上千万行的数据处理流水线。',
@@ -40,6 +46,7 @@ export const ui = {
   },
   en: {
     name: 'Jie Li',
+    brand: 'byte-love',
     email: '2941075434@qq.com',
     langSwitch: '中文',
     themeToggle: 'Toggle light / dark',
@@ -48,6 +55,11 @@ export const ui = {
     navProjects: 'Projects',
     navDiy: 'Things I built',
     navAbout: 'About',
+    tabProjects: 'Projects',
+    tabNotes: 'Notes',
+    tabNavLabel: 'Sections',
+    sectionNavLabel: 'On this page',
+    notesHref: '/app/notes',
     heroTitle: 'Backend / full-stack developer. Data pipelines, ops consoles, desktop clients.',
     heroLead:
       'Enterprise development: Spring Boot services, Vue front-ends, cross-database sync, AI features in desktop apps, and data pipelines processing tens of millions of rows.',

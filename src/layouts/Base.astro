@@ -35,14 +35,16 @@ const home = copy.homeHref
   <body>
     <header class="site">
       <div class="wrap">
-        <a class="brand" href={home}>{copy.name}</a>
-        <nav class="top">
-          <a href={`${home}#projects`}>{copy.navProjects}</a>
-          {showDiy && <a href={`${home}#diy`}>{copy.navDiy}</a>}
-          <a href={`${home}#about`}>{copy.navAbout}</a>
+        <a class="brand" href={home}>{copy.brand}</a>
+        <nav class="tabs" aria-label={copy.tabNavLabel}>
+          <a class="tab is-active" href={home} aria-current="page">{copy.tabProjects}</a>
+          <a class="tab" href={copy.notesHref}>{copy.tabNotes}</a>
+        </nav>
+        <div class="header-tools">
+          <span class="auth-slot" data-auth></span>
           <a class="lang-switch" href={langSwitchHref}>{copy.langSwitch}</a>
           <button class="theme-toggle" type="button" aria-label={copy.themeToggle}>☀</button>
-        </nav>
+        </div>
       </div>
     </header>
 
@@ -65,6 +67,46 @@ const home = copy.homeHref
           sync()
         })
         mq.addEventListener('change', sync)
+      })()
+    </script>
+
+    <script is:inline>
+      (() => {
+        const slot = document.querySelector('[data-auth]')
+        if (!slot) return
+        const render = (state) => {
+          slot.textContent = ''
+          if (!state.authenticated) {
+            const a = document.createElement('a')
+            a.href = state.loginUrl
+            a.textContent = '登录'
+            slot.appendChild(a)
+            return
+          }
+          if (state.owner) {
+            const admin = document.createElement('a')
+            admin.href = state.adminUrl
+            admin.textContent = '后台'
+            slot.appendChild(admin)
+          }
+          const out = document.createElement('button')
+          out.type = 'button'
+          out.className = 'link-button'
+          out.textContent = '退出'
+          out.addEventListener('click', async () => {
+            const headers = {}
+            if (state.csrfHeader && state.csrfToken) headers[state.csrfHeader] = state.csrfToken
+            try {
+              await fetch(state.logoutUrl, { method: 'POST', headers, credentials: 'same-origin' })
+            } catch (e) {}
+            location.reload()
+          })
+          slot.appendChild(out)
+        }
+        fetch('/app/api/me', { credentials: 'same-origin', headers: { Accept: 'application/json' } })
+          .then((r) => (r.ok ? r.json() : null))
+          .then((state) => state && render(state))
+          .catch(() => {})
       })()
     </script>
 

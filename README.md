@@ -1,6 +1,6 @@
 # Portfolio site
 
-个人作品集站。静态站，中英双语，用来展示代表项目和动手做的东西。
+个人作品集站。静态站，中英双语，用来展示实习项目与动手做的东西。
 
 ## 技术栈
 
@@ -23,16 +23,21 @@ npm run preview  # 预览构建结果
 
 ```text
 src/
-  data/projects.ts     所有项目（中英文两套文案，一条一个对象）
-  data/diy.ts          「动手做的」条目（现在还是占位）
+  data/projects.ts     所有项目（中英文两套文案，一条一个对象；可带 diagram / shots）
+  data/diy.ts          「动手做的」条目（现在还是占位，占位条目不会渲染）
   i18n/ui.ts           界面文案字典（zh / en）
   layouts/Base.astro   页头 + 页脚 + 语言切换
-  components/          首页、项目详情、项目卡片
+  components/          首页、项目详情（含灯箱）、项目卡片
   pages/index.astro            中文首页 /
   pages/projects/[slug].astro  中文详情 /projects/<slug>/
   pages/en/index.astro         英文首页 /en/
   pages/en/projects/[slug].astro  英文详情 /en/projects/<slug>/
   styles/global.css
+public/
+  diagrams/            架构图 SVG（项目详情页顶部）
+  shots/               脱敏后的界面截图
+  favicon.svg  .nojekyll
+.github/workflows/deploy.yml   push 到 main 即自动构建并发布
 ```
 
 ## 加一个项目
@@ -52,6 +57,11 @@ src/
   result:      { zh: ['一个数字'], en: ['…'] },
   repo: 'https://github.com/…',
   featured: true,
+  // 可选：架构图（放 public/diagrams/）与界面截图（放 public/shots/）
+  diagram: '/diagrams/my-project.svg',
+  shots: [
+    { src: '/shots/my-project/01.png', caption: { zh: '…', en: '…' } },
+  ],
 }
 ```
 
@@ -69,17 +79,26 @@ src/
 - 每页右上角互跳，详情页会跳到对应语种的同一篇
 - 新增文案时，`src/i18n/ui.ts` 和 `src/data/projects.ts` 里两个语种都要补齐
 
-## 部署
+## 部署（现役）
 
-构建产物是纯静态的，`dist/` 扔哪都能跑。
+仓库是 `byte-love/byte-love.github.io`（GitHub 用户主页站点，发布在**根路径**，不是子路径），
+线上地址 https://byte-love.github.io/ ，`astro.config.mjs` 里的 `site` 已指向它。
 
-**GitHub Pages**（推荐，国内访问相对稳）：
+**发布方式：GitHub Actions。** Pages 的 Source 设为「GitHub Actions」，
+由 `.github/workflows/deploy.yml` 负责 `npm ci` → `npm run build` → 上传产物 → 部署。
 
-1. 推到 GitHub 后，仓库 Settings → Pages → Source 选 GitHub Actions，选 Astro 模板
-2. 或者本地 `npm run build`，把 `dist/` 推到 `gh-pages` 分支
+所以日常流程只有两步：
 
-**Cloudflare Pages**：连仓库，构建命令 `npm run build`，输出目录 `dist`。
+```bash
+git add -A && git commit -m "…"
+git push            # 约 1~2 分钟后自动上线
+```
 
-**不建议 Vercel**：`*.vercel.app` 在国内经常打不开，投国内公司时体验很差。
+构建失败会在仓库 Actions 页显示红叉，日志可直接看，不会出现「推了但线上没变」。
 
-部署后记得把 `astro.config.mjs` 里的 `site` 改成真实域名——它影响 sitemap 和绝对链接。
+**历史说明**：早期是用 `gh-pages` 分支发布（本地 build 后把 `dist/` 推上去），
+现已废弃——GitHub Pages 不再读那个分支。分支还留在远端，删掉不影响发布。
+本地 `npm run build` 现在只用于排查问题或本地预览 `dist/`。
+
+**备选平台**：Cloudflare Pages（连仓库，构建命令 `npm run build`，输出目录 `dist`）也可以。
+**不建议 Vercel**：`*.vercel.app` 在国内经常打不开。
