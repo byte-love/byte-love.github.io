@@ -11,7 +11,7 @@ const { project, lang } = Astro.props
 const href = lang === 'zh' ? `/projects/${project.slug}/` : `/en/projects/${project.slug}/`
 ---
 
-<a class="card" href={href}>
+<a class="card" id={project.slug} href={href}>
   <div class="row1">
     <h3>{project.title[lang]}</h3>
     <span class="role">{project.role[lang]}</span>

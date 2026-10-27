@@ -5,6 +5,8 @@ type L = Record<Lang, string>
 export type Project = {
   slug: string
   title: L
+  /** 索引树里用的短名，缺省回落到 title */
+  short?: L
   subtitle: L
   role: L
   /** 起止时间，缺省则不显示该行 */
@@ -30,6 +32,7 @@ export const projects: Project[] = [
   {
     slug: 'logs-manage-system',
     title: { zh: '日志管理与账号运维后台', en: 'Log & Account Ops Console' },
+    short: { zh: '日志运维后台', en: 'Log ops console' },
     subtitle: {
       zh: '跨 4 个生产 MongoDB 库、3 台 SQL Server 的只读运维后台，单人主力全栈。',
       en: 'A read-mostly ops console across 4 production MongoDB clusters and 3 SQL Server instances. Solo full-stack.',
@@ -92,6 +95,7 @@ export const projects: Project[] = [
   {
     slug: 'paper-annotation-system',
     title: { zh: '期刊论文标注与导入系统', en: 'Journal Paper Annotation & Import' },
+    short: { zh: '论文标注导入', en: 'Paper annotation' },
     subtitle: {
       zh: '把爬虫给的 Excel 转成结构化论文：自动识别中英格式与学科、分集合入库、在线标注论文与数据库的关联，再推送外部 SQL Server。',
       en: 'Turns crawler-supplied spreadsheets into structured papers: format and discipline detection, multi-collection import, online annotation of paper-to-database links, then push to an external SQL Server.',
@@ -163,6 +167,7 @@ export const projects: Project[] = [
   },  {
     slug: 'wechat-register-miniprogram',
     title: { zh: '微信小程序用户注册流程', en: 'WeChat Mini-Program Registration' },
+    short: { zh: '小程序注册流程', en: 'Mini-program signup' },
     subtitle: {
       zh: '九步注册表单，原生小程序、零构建零依赖，独立开发。',
       en: 'A nine-step registration flow in a native mini-program. Zero build, zero dependencies.',
@@ -243,6 +248,7 @@ export const projects: Project[] = [
   {
     slug: 'data-split-cv',
     title: { zh: '模型评估编排：四种划分方法', en: 'Model Evaluation Orchestration' },
+    short: { zh: '模型评估编排', en: 'Eval splitting' },
     subtitle: {
       zh: '在 6 GB 训练内核不可改的前提下，用客户端编排实现留出法 / K 折 / 重复十折 / 留一。',
       en: 'Implementing hold-out, K-fold, repeated K-fold and leave-one-out around a 6 GB training kernel that could not be modified.',
@@ -309,6 +315,7 @@ export const projects: Project[] = [
   {
     slug: 'patent-quality-pipeline',
     title: { zh: '专利质量指标计算流水线', en: 'Patent Quality Data Pipeline' },
+    short: { zh: '专利质量流水线', en: 'Patent quality' },
     subtitle: {
       zh: '7,945 万行 Excel 的流式解析、并行预聚合与独立校验链。',
       en: 'Streaming parse, parallel pre-aggregation and an independent verification chain over 79.45M rows of xlsx.',
@@ -359,6 +366,7 @@ export const projects: Project[] = [
   {
     slug: 'tech-complementarity-index',
     title: { zh: '地区间技术互补指数（TACD）', en: 'Regional Tech Complementarity Index' },
+    short: { zh: '技术互补指数', en: 'Complementarity' },
     subtitle: {
       zh: '从 2,200 万行专利分类号算 RPCA 与技术联系指数，带全量自检。',
       en: 'RPCA and a technology-linkage index computed from 22M rows of patent classification codes, with full self-checks.',
@@ -411,6 +419,7 @@ export const projects: Project[] = [
   {
     slug: 'pdf-batch-extractor',
     title: { zh: 'PDF 批量抽取：双引擎 + 质量门禁', en: 'Batch PDF Extraction' },
+    short: { zh: 'PDF 批量抽取', en: 'PDF extraction' },
     subtitle: {
       zh: '正文与表格分引擎处理，带三项质量检查的 PDF → HTML → 文本流水线。',
       en: 'A PDF → HTML → text pipeline that splits body and table extraction across two engines and gates output on three quality checks.',
@@ -455,6 +464,7 @@ export const projects: Project[] = [
   {
     slug: 'home-service-coupon',
     title: { zh: '家政平台 · 优惠券模块', en: 'Home-services Platform · Coupon Module' },
+    short: { zh: '家政优惠券', en: 'Coupons' },
     subtitle: {
       zh: '面向江西 3 个城市的家政平台（注册约 12 万、日活约 400、日均单 150~200）。抢券在 Redis 里由 Lua 原子完成，再异步落 MySQL。',
       en: 'A home-services platform across three cities in Jiangxi (≈120k registered users, ≈400 DAU, 150–200 orders/day). Voucher grabbing runs atomically in Redis via Lua, then lands in MySQL asynchronously.',
@@ -512,6 +522,7 @@ export const projects: Project[] = [
     slug: 'self-hosted-lab',
     category: 'personal',
     title: { zh: '自建服务器 · 作品集与笔记站', en: 'Self-hosted lab · portfolio & notes' },
+    short: { zh: '自建服务器', en: 'Self-hosted lab' },
     subtitle: {
       zh: '一台 2C2G 的阿里云 ECS，同时跑静态站、Spring Boot 服务和 PostgreSQL；从买机器、装环境到发布回滚全部自己做，现在还在线上跑。',
       en: 'One 2C2G Alibaba Cloud ECS running a static site, a Spring Boot service and PostgreSQL at the same time — bought, provisioned, deployed and rolled back by myself, still live.',
@@ -566,6 +577,7 @@ export const projects: Project[] = [
     slug: 'nuanyang-eldercare',
     category: 'personal',
     title: { zh: '暖阳颐养 · 智慧养老管理平台', en: 'Nuanyang Eldercare · smart care platform' },
+    short: { zh: '暖阳颐养', en: 'Nuanyang Eldercare' },
     subtitle: {
       zh: '基于若依二次开发的机构养老后台，把 AI 接进「入住—护理—评估—咨询」主流程：体检报告自动评估、自然语言查业务数据、养老知识问答、设备状态与告警推送。',
       en: 'An institutional eldercare back office built on RuoYi, with AI wired into the move-in → care → assessment → consultation flow: automatic health-report assessment, natural-language business queries, care knowledge Q&A, and live device status plus alerts.',
@@ -627,6 +639,7 @@ export const projects: Project[] = [
     slug: 'eduverse',
     category: 'personal',
     title: { zh: 'Eduverse（知界）· 在线教育微服务平台', en: 'Eduverse · online education microservices' },
+    short: { zh: 'Eduverse', en: 'Eduverse' },
     subtitle: {
       zh: '15 个微服务 + 网关 + Nacos + Spring AI 多智能体的在线教育平台，覆盖课程、交易、学习、考试、搜索与 AI 答疑。业务骨架来自公开教学项目，15 个后端服务与多智能体的落地实现是本人完成。',
       en: 'An online-education platform with 15 microservices behind a gateway, Nacos, and a Spring AI multi-agent layer — courses, trading, learning, exams, search and an AI tutor. The business skeleton comes from a public teaching project; all 15 backend services and the multi-agent layer are my implementation.',

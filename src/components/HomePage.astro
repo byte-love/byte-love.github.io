@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro'
 import ProjectCard from './ProjectCard.astro'
+import ProjectIndex from './ProjectIndex.astro'
 import { projects } from '../data/projects'
 import { diy } from '../data/diy'
 import type { Lang } from '../i18n/ui'
@@ -38,24 +39,28 @@ const personalProjects = projects.filter((p) => p.category === 'personal')
 
   <section class="block" id="projects">
     <div class="wrap">
-      <h2>{copy.sectionProjects}</h2>
-      <p class="section-note">{copy.projectsNote}</p>
-      <div class="list">
-        {internshipProjects.map((p) => <ProjectCard project={p} lang={lang} />)}
-      </div>
-    </div>
-  </section>
+      <div class="projects-layout">
+        <ProjectIndex internship={internshipProjects} personal={personalProjects} lang={lang} />
 
-  {personalProjects.length > 0 && (
-  <section class="block" id="personal">
-    <div class="wrap">
-      <h2>{copy.sectionPersonal}</h2>
-      <div class="list">
-        {personalProjects.map((p) => <ProjectCard project={p} lang={lang} />)}
+        <div class="projects-main">
+          <h2>{copy.sectionProjects}</h2>
+          <p class="section-note">{copy.projectsNote}</p>
+          <div class="list">
+            {internshipProjects.map((p) => <ProjectCard project={p} lang={lang} />)}
+          </div>
+
+          {personalProjects.length > 0 && (
+            <>
+              <h2 id="personal" class="group-head">{copy.sectionPersonal}</h2>
+              <div class="list">
+                {personalProjects.map((p) => <ProjectCard project={p} lang={lang} />)}
+              </div>
+            </>
+          )}
+        </div>
       </div>
     </div>
   </section>
-  )}
 
   {diyItems.length > 0 && (
   <section class="block" id="diy">

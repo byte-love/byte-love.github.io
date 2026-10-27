@@ -1,0 +1,75 @@
+---
+import type { Project } from '../data/projects'
+import type { Lang } from '../i18n/ui'
+import { t } from '../i18n/ui'
+
+interface Props {
+  internship: Project[]
+  personal: Project[]
+  lang: Lang
+}
+
+const { internship, personal, lang } = Astro.props
+const copy = t(lang)
+---
+
+<aside class="project-index" aria-label={copy.sectionNavLabel}>
+  <div class="index-group">
+    <a href="#projects">{copy.sectionProjects}<span class="count">{internship.length}</span></a>
+    <ul class="index-tree">
+      {internship.map((p) => (
+        <li><a href={`#${p.slug}`}>{p.short?.[lang] ?? p.title[lang]}</a></li>
+      ))}
+    </ul>
+  </div>
+
+  {personal.length > 0 && (
+    <div class="index-group">
+      <a href="#personal">{copy.sectionPersonal}<span class="count">{personal.length}</span></a>
+      <ul class="index-tree">
+        {personal.map((p) => (
+          <li><a href={`#${p.slug}`}>{p.short?.[lang] ?? p.title[lang]}</a></li>
+        ))}
+      </ul>
+    </div>
+  )}
+</aside>
+
+<script is:inline>
+  (() => {
+    // 索引在 DOM 里排在卡片之前，必须等解析完再取目标，否则 getElementById 全是 null
+    const start = () => {
+      const links = [...document.querySelectorAll('.project-index .index-tree a')]
+      if (!links.length) return
+      const items = links
+        .map((a) => ({ a, el: document.getElementById(a.getAttribute('href').slice(1)) }))
+        .filter((x) => x.el)
+      if (!items.length) return
+
+      const OFFSET = 130
+      let active = null
+      const setActive = (a) => {
+        if (a === active) return
+        if (active) active.classList.remove('on')
+        active = a
+        if (active) active.classList.add('on')
+      }
+      const update = () => {
+        let current = items[0].a
+        for (const it of items) {
+          if (it.el.getBoundingClientRect().top <= OFFSET) current = it.a
+          else break
+        }
+        setActive(current)
+      }
+      window.addEventListener('scroll', update, { passive: true })
+      window.addEventListener('resize', update)
+      update()
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', start, { once: true })
+    } else {
+      start()
+    }
+  })()
+</script>

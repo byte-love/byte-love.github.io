@@ -175,7 +175,8 @@ nav.tabs {
 /* ---------- section ---------- */
 section.block { padding: 44px 0; border-top: 1px solid var(--line); }
 section.block[id] { scroll-margin-top: 72px; }
-section.block > .wrap > h2 {
+section.block > .wrap > h2,
+.projects-main > h2 {
   font-size: 13px;
   font-family: var(--mono);
   text-transform: uppercase;
@@ -183,6 +184,78 @@ section.block > .wrap > h2 {
   color: var(--fg-3);
   margin: 0 0 22px;
   font-weight: 500;
+}
+
+/* ---------- 项目：左索引树 + 右卡片 ---------- */
+.projects-layout {
+  display: grid;
+  grid-template-columns: 186px minmax(0, 1fr);
+  gap: 30px;
+  align-items: start;
+}
+.projects-main { min-width: 0; }
+.projects-main > h2 + .section-note { margin-top: -12px; }
+.projects-main > h2.group-head {
+  margin: 34px 0 22px;
+  scroll-margin-top: 84px;
+}
+
+.project-index {
+  position: sticky;
+  top: 76px;
+  font-size: 13px;
+  padding-right: 4px;
+  max-height: calc(100vh - 100px);
+  overflow-y: auto;
+}
+.index-group + .index-group { margin-top: 18px; }
+.index-group > a {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  font-weight: 600;
+  color: var(--fg);
+  padding: 3px 6px;
+  border-radius: 6px;
+  font-size: 13px;
+}
+.index-group > a:hover { background: var(--bg-2); text-decoration: none; }
+.index-group .count {
+  color: var(--fg-3);
+  font-family: var(--mono);
+  font-size: 11px;
+}
+.index-tree {
+  list-style: none;
+  margin: 5px 0 0;
+  padding: 0 0 0 9px;
+  border-left: 1px solid var(--line);
+}
+.index-tree li { margin: 0; }
+.index-tree a {
+  display: block;
+  padding: 3px 6px;
+  border-radius: 6px;
+  color: var(--fg-2);
+  line-height: 1.45;
+}
+.index-tree a:hover { color: var(--fg); background: var(--bg-2); text-decoration: none; }
+.index-tree a.on { color: var(--accent); background: var(--bg-2); font-weight: 600; }
+
+@media (max-width: 900px) {
+  .projects-layout { grid-template-columns: minmax(0, 1fr); gap: 14px; }
+  .project-index {
+    position: static;
+    max-height: none;
+    display: flex;
+    gap: 16px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--line);
+  }
+  .index-group + .index-group { margin-top: 0; }
+  /* 窄屏只留两个分组入口，省掉 11 行目录 */
+  .index-tree { display: none; }
 }
 
 .section-note {
@@ -204,6 +277,8 @@ section.block > .wrap > h2 {
   color: inherit;
   min-width: 0;
   overflow-wrap: anywhere;
+  /* 从左侧索引跳过来时，别让卡片顶部贴到吸顶导航底下 */
+  scroll-margin-top: 84px;
   transition: border-color 0.15s ease, background 0.15s ease;
 }
 .card:hover {
