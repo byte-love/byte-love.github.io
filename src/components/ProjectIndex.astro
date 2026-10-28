@@ -15,7 +15,7 @@ const copy = t(lang)
 
 <aside class="project-index" aria-label={copy.sectionNavLabel}>
   <div class="index-group">
-    <button type="button" class="group-btn" data-key="internship" data-count={internship.length}>
+    <button type="button" class="group-btn" data-key="internship">
       {copy.sectionProjects}<span class="count">{internship.length}</span>
     </button>
     <ul class="index-tree">
@@ -27,7 +27,7 @@ const copy = t(lang)
 
   {personal.length > 0 && (
     <div class="index-group">
-      <button type="button" class="group-btn" data-key="personal" data-count={personal.length}>
+      <button type="button" class="group-btn" data-key="personal">
         {copy.sectionPersonal}<span class="count">{personal.length}</span>
       </button>
       <ul class="index-tree">
