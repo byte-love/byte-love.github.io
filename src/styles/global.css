@@ -217,20 +217,44 @@ section.block > .wrap > h2,
 
 .index-group + .index-group { margin-top: 22px; }
 
-/* 一级：分组标题 */
-.index-group > a {
+/* 一级：分组标题（可折叠按钮） */
+.index-group > .group-btn {
+  position: relative;
   display: flex;
   align-items: baseline;
   justify-content: space-between;
   gap: 8px;
-  padding: 0.3rem 0.5rem;
+  width: 100%;
+  text-align: left;
+  border: 0;
+  background: none;
+  font-family: inherit;
+  color: var(--fg);
+  cursor: pointer;
+  padding: 0.34rem 0.5rem 0.34rem 0.95rem;
   border-radius: 6px;
-  font-size: 0.92rem;
+  font-size: 0.86rem;
+  letter-spacing: 0.01em;
   font-weight: 600;
   color: var(--fg);
   line-height: 1.45;
 }
-.index-group > a:hover { color: var(--accent); background: var(--bg-2); text-decoration: none; }
+.index-group > .group-btn::before {
+  content: "▾";
+  position: absolute;
+  left: 0.12rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.82rem;
+  line-height: 1;
+  color: var(--fg-2);
+}
+
+.index-group.folded > .group-btn::before { content: "▸"; }
+
+.index-group.folded > .index-tree { display: none; }
+
+.index-group > .group-btn:hover { color: var(--accent); background: var(--bg-2); }
 
 .index-group .count {
   font-family: var(--mono);

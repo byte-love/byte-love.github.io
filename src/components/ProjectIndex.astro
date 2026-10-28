@@ -15,7 +15,9 @@ const copy = t(lang)
 
 <aside class="project-index" aria-label={copy.sectionNavLabel}>
   <div class="index-group">
-    <a href="#projects">{copy.sectionProjects}<span class="count">{internship.length}</span></a>
+    <button type="button" class="group-btn" data-key="internship" data-count={internship.length}>
+      {copy.sectionProjects}<span class="count">{internship.length}</span>
+    </button>
     <ul class="index-tree">
       {internship.map((p) => (
         <li><a href={`#${p.slug}`}>{p.short?.[lang] ?? p.title[lang]}</a></li>
@@ -25,7 +27,9 @@ const copy = t(lang)
 
   {personal.length > 0 && (
     <div class="index-group">
-      <a href="#personal">{copy.sectionPersonal}<span class="count">{personal.length}</span></a>
+      <button type="button" class="group-btn" data-key="personal" data-count={personal.length}>
+        {copy.sectionPersonal}<span class="count">{personal.length}</span>
+      </button>
       <ul class="index-tree">
         {personal.map((p) => (
           <li><a href={`#${p.slug}`}>{p.short?.[lang] ?? p.title[lang]}</a></li>
@@ -37,8 +41,24 @@ const copy = t(lang)
 
 <script is:inline>
   (() => {
-    // 索引在 DOM 里排在卡片之前，必须等解析完再取目标，否则 getElementById 全是 null
     const start = () => {
+      // 分组折叠：状态存 localStorage，和笔记站的树一致
+      document.querySelectorAll('.project-index .group-btn[data-key]').forEach((btn) => {
+        const group = btn.closest('.index-group')
+        if (!group) return
+        const key = 'proj-fold:' + btn.dataset.key
+        try {
+          if (localStorage.getItem(key) === '1') group.classList.add('folded')
+        } catch (e) {}
+        btn.addEventListener('click', () => {
+          group.classList.toggle('folded')
+          try {
+            localStorage.setItem(key, group.classList.contains('folded') ? '1' : '0')
+          } catch (e) {}
+        })
+      })
+
+      // 索引在 DOM 里排在卡片之前，必须等解析完再取目标，否则 getElementById 全是 null
       const links = [...document.querySelectorAll('.project-index .index-tree a')]
       if (!links.length) return
       const items = links
