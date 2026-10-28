@@ -37,9 +37,10 @@ const home = copy.homeHref
       <div class="wrap">
         <a class="brand" href={home}>{copy.brand}</a>
         <nav class="tabs" aria-label={copy.tabNavLabel}>
-          <a class="tab is-active" href={home} aria-current="page" data-spy="projects">{copy.tabProjects}</a>
+          <a class="tab is-active" href={home} aria-current="page">{copy.tabProjects}</a>
           <a class="tab" href={copy.notesHref}>{copy.tabNotes}</a>
-          <a class="tab" href={`${home}#about`} data-spy="about">{copy.tabAbout}</a>
+          <a class="tab" href={copy.baguHref}>{copy.tabBagu}</a>
+          <a class="tab" href={copy.algoHref}>{copy.tabAlgo}</a>
         </nav>
         <div class="header-tools">
           <span class="auth-slot" data-auth></span>
@@ -108,23 +109,6 @@ const home = copy.homeHref
           .then((r) => (r.ok ? r.json() : null))
           .then((state) => state && render(state))
           .catch(() => {})
-      })()
-    </script>
-
-    <script is:inline>
-      (() => {
-        const about = document.querySelector('#about')
-        if (!about) return
-        const tabs = [...document.querySelectorAll('nav.tabs .tab[data-spy]')]
-        if (!tabs.length) return
-        const pick = (name) => tabs.find((t) => t.dataset.spy === name)
-        const sync = () => {
-          const active = window.scrollY + 120 >= about.offsetTop ? pick('about') : pick('projects')
-          for (const t of tabs) t.classList.toggle('is-active', t === active)
-        }
-        window.addEventListener('scroll', sync, { passive: true })
-        window.addEventListener('resize', sync)
-        sync()
       })()
     </script>
 
