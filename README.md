@@ -1,6 +1,6 @@
 # Portfolio site
 
-个人作品集站。静态站，中英双语，用来展示实习项目与动手做的东西。
+个人作品集站。静态站，中英双语，用来展示实习项目与个人项目。
 
 ## 技术栈
 
@@ -23,11 +23,11 @@ npm run preview  # 预览构建结果
 
 ```text
 src/
-  data/projects.ts     所有项目（中英文两套文案，一条一个对象；可带 diagram / shots）
+  data/projects.ts     所有项目（中英文两套文案，一条一个对象；可带 category / short / diagram / shots）
   data/diy.ts          「动手做的」条目（现在还是占位，占位条目不会渲染）
   i18n/ui.ts           界面文案字典（zh / en）
   layouts/Base.astro   页头 + 页脚 + 语言切换
-  components/          首页、项目详情（含灯箱）、项目卡片
+  components/          首页、项目详情（含灯箱）、项目卡片、左侧项目索引树（ProjectIndex）
   pages/index.astro            中文首页 /
   pages/projects/[slug].astro  中文详情 /projects/<slug>/
   pages/en/index.astro         英文首页 /en/
@@ -48,6 +48,8 @@ public/
 {
   slug: 'my-project',                 // 会成为 URL：/projects/my-project/
   title:       { zh: '…', en: '…' },
+  short:       { zh: '索引树里的短名', en: '…' },  // 可选，缺省用 title
+  category: 'personal',               // 可选：缺省 = 实习项目；personal 进「个人项目」区块
   subtitle:    { zh: '一句话说明', en: '…' },
   role:        { zh: '我负责什么', en: '…' },
   period: '2026.10',
