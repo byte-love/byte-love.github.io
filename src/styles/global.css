@@ -215,7 +215,7 @@ section.block > .wrap > h2,
   font-size: 0.88rem;
 }
 
-.index-group + .index-group { margin-top: 22px; }
+.index-group + .index-group { margin-top: 0.9rem; }
 
 /* 一级：分组标题（可折叠按钮） */
 .index-group > .group-btn {
@@ -276,7 +276,7 @@ section.block > .wrap > h2,
   content: "";
   position: absolute;
   left: -0.95rem;
-  top: 1.02rem;
+  top: 0.98rem;
   width: 0.62rem;
   height: 1px;
   background: var(--guide);
@@ -284,9 +284,9 @@ section.block > .wrap > h2,
 
 .index-tree a {
   display: block;
-  padding: 0.26rem 0.5rem;
+  padding: 0.24rem 0.5rem;
   border-radius: 6px;
-  font-size: 0.86rem;
+  font-size: 0.84rem;
   line-height: 1.45;
   color: var(--fg-2);
 }
