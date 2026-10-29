@@ -1,12 +1,14 @@
 :root {
-  --fg: #1a1a1a;
-  --fg-2: #5b6470;
-  --fg-3: #8b949e;
-  --bg: #ffffff;
-  --bg-2: #f7f8fa;
-  --line: #e3e6ea;
-  --guide: #dfe4ea;
-  --accent: #1f6feb;
+  --fg: #1c1b18;
+  --fg-2: #57534b;
+  --fg-3: #726d63;
+  --bg: #fbfaf7;
+  --bg-2: #f4f2ec;
+  --line: #e5e1d8;
+  --guide: #dfdacf;
+  --accent: #1f6f66;
+  --accent-soft: #edf3f1;
+  --accent-2: #8a5a20;
   --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
   --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
     "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
@@ -14,37 +16,43 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --fg: #e6edf3;
-    --fg-2: #9aa4b2;
-    --fg-3: #6e7681;
-    --bg: #0d1117;
-    --bg-2: #151b23;
-    --line: #232b36;
-    --guide: #2e3a4a;
-    --accent: #58a6ff;
+    --fg: #e7e5df;
+    --fg-2: #a5a29a;
+    --fg-3: #8c8980;
+    --bg: #131413;
+    --bg-2: #1b1d1c;
+    --line: #2a2e2c;
+    --guide: #2b302e;
+    --accent: #6fd3c3;
+    --accent-soft: #1c2725;
+    --accent-2: #d8a25e;
   }
 }
 
 /* 手动切换优先于系统偏好 */
 html[data-theme='light'] {
-  --fg: #1a1a1a;
-  --fg-2: #5b6470;
-  --fg-3: #8b949e;
-  --bg: #ffffff;
-  --bg-2: #f7f8fa;
-  --line: #e3e6ea;
-  --guide: #dfe4ea;
-  --accent: #1f6feb;
+  --fg: #1c1b18;
+  --fg-2: #57534b;
+  --fg-3: #726d63;
+  --bg: #fbfaf7;
+  --bg-2: #f4f2ec;
+  --line: #e5e1d8;
+  --guide: #dfdacf;
+  --accent: #1f6f66;
+  --accent-soft: #edf3f1;
+  --accent-2: #8a5a20;
 }
 html[data-theme='dark'] {
-  --fg: #e6edf3;
-  --fg-2: #9aa4b2;
-  --fg-3: #6e7681;
-  --bg: #0d1117;
-  --bg-2: #151b23;
-  --line: #232b36;
-  --guide: #2e3a4a;
-  --accent: #58a6ff;
+  --fg: #e7e5df;
+  --fg-2: #a5a29a;
+  --fg-3: #8c8980;
+  --bg: #131413;
+  --bg-2: #1b1d1c;
+  --line: #2a2e2c;
+  --guide: #2b302e;
+  --accent: #6fd3c3;
+  --accent-soft: #1c2725;
+  --accent-2: #d8a25e;
 }
 
 * { box-sizing: border-box; }
