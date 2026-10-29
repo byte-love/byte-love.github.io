@@ -8,7 +8,8 @@ interface Props {
 }
 
 const { project, lang } = Astro.props
-const href = lang === 'zh' ? `/projects/${project.slug}/` : `/en/projects/${project.slug}/`
+// 详情页由后端渲染，静态站不再生成 /projects/<slug>
+const href = `/app/projects/${project.slug}`
 ---
 
 <a class="card" id={project.slug} href={href}>
