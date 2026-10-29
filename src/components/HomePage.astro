@@ -39,7 +39,8 @@ const personalProjects = projects.filter((p) => p.category === 'personal')
 
   <section class="block" id="projects">
     <div class="wrap">
-      <div class="projects-layout">
+      <div class="projects-layout" data-projects-root data-lang={lang}
+           data-label-projects={copy.sectionProjects} data-label-personal={copy.sectionPersonal}>
         <ProjectIndex internship={internshipProjects} personal={personalProjects} lang={lang} />
 
         <div class="projects-main">
@@ -92,3 +93,71 @@ const personalProjects = projects.filter((p) => p.category === 'personal')
     </div>
   </section>
 </Base>
+
+<script is:inline>
+  // 项目现在存在后端数据库里，页面先用构建时的数据渲染一版，
+  // 拿到接口数据后再重绘，这样改库即刻生效、不用重新构建。
+  (() => {
+    const root = document.querySelector('[data-projects-root]')
+    if (!root) return
+
+    const lang = root.dataset.lang || 'zh'
+    const labelProjects = root.dataset.labelProjects || ''
+    const labelPersonal = root.dataset.labelPersonal || ''
+
+    const esc = (s) =>
+      String(s == null ? '' : s).replace(/[&<>"']/g, (c) =>
+        ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]
+      )
+    const pick = (v) =>
+      v == null ? '' : typeof v === 'string' ? v : v[lang] || v.zh || v.en || ''
+    const arr = (v) =>
+      Array.isArray(v) ? v : v && typeof v === 'object' ? v[lang] || v.zh || v.en || [] : []
+
+    const cardHtml = (p) => {
+      const stack = Array.isArray(p.stack) ? p.stack.join(' · ') : ''
+      const first = arr(p.result)[0] || ''
+      return (
+        '<a class="card" id="' + esc(p.slug) + '" href="/app/projects/' + esc(p.slug) + '">' +
+        '<div class="row1"><h3>' + esc(pick(p.title)) + '</h3>' +
+        '<span class="role">' + esc(pick(p.role)) + '</span></div>' +
+        '<p class="problem">' + esc(pick(p.subtitle)) + '</p>' +
+        '<p class="result">' + esc(first) + '</p>' +
+        '<p class="stack">' + esc(stack) + '</p></a>'
+      )
+    }
+
+    const groupHtml = (key, label, list) =>
+      '<div class="index-group"><button type="button" class="group-btn" data-key="' + key + '">' +
+      esc(label) + '<span class="count">' + list.length + '</span></button><ul class="index-tree">' +
+      list
+        .map((p) => '<li><a href="#' + esc(p.slug) + '">' + esc(pick(p.short) || pick(p.title)) + '</a></li>')
+        .join('') +
+      '</ul></div>'
+
+    const paint = (list) => {
+      const internship = list.filter((p) => (p.category || 'internship') === 'internship')
+      const personal = list.filter((p) => p.category === 'personal')
+
+      const index = root.querySelector('.project-index')
+      if (index) {
+        index.innerHTML =
+          (internship.length ? groupHtml('internship', labelProjects, internship) : '') +
+          (personal.length ? groupHtml('personal', labelPersonal, personal) : '')
+      }
+
+      const lists = root.querySelectorAll('.projects-main .list')
+      if (lists[0]) lists[0].innerHTML = internship.map(cardHtml).join('')
+      if (lists[1]) lists[1].innerHTML = personal.map(cardHtml).join('')
+
+      if (window.__initProjectIndex) window.__initProjectIndex()
+    }
+
+    fetch('/app/api/projects', { headers: { Accept: 'application/json' } })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (Array.isArray(data) && data.length) paint(data)
+      })
+      .catch(() => {})
+  })()
+</script>

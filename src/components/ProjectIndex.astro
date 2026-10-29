@@ -40,9 +40,16 @@ const copy = t(lang)
 </aside>
 
 <script is:inline>
+  // 卡片和索引会被接口数据重绘，所以把绑定做成可重复调用的函数：
+  // 每次先 abort 掉上一轮的事件，避免重复绑定。
   (() => {
+    let controller = null
+
     const start = () => {
-      // 分组折叠：状态存 localStorage，和笔记站的树一致
+      if (controller) controller.abort()
+      controller = new AbortController()
+      const { signal } = controller
+
       document.querySelectorAll('.project-index .group-btn[data-key]').forEach((btn) => {
         const group = btn.closest('.index-group')
         if (!group) return
@@ -50,15 +57,19 @@ const copy = t(lang)
         try {
           if (localStorage.getItem(key) === '1') group.classList.add('folded')
         } catch (e) {}
-        btn.addEventListener('click', () => {
-          group.classList.toggle('folded')
-          try {
-            localStorage.setItem(key, group.classList.contains('folded') ? '1' : '0')
-          } catch (e) {}
-        })
+        btn.addEventListener(
+          'click',
+          () => {
+            group.classList.toggle('folded')
+            try {
+              localStorage.setItem(key, group.classList.contains('folded') ? '1' : '0')
+            } catch (e) {}
+          },
+          { signal }
+        )
       })
 
-      // 索引在 DOM 里排在卡片之前，必须等解析完再取目标，否则 getElementById 全是 null
+      // 索引在 DOM 里排在卡片之前，必须等解析完再取目标
       const links = [...document.querySelectorAll('.project-index .index-tree a')]
       if (!links.length) return
       const items = links
@@ -82,10 +93,13 @@ const copy = t(lang)
         }
         setActive(current)
       }
-      window.addEventListener('scroll', update, { passive: true })
-      window.addEventListener('resize', update)
+      window.addEventListener('scroll', update, { passive: true, signal })
+      window.addEventListener('resize', update, { signal })
       update()
     }
+
+    window.__initProjectIndex = start
+
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', start, { once: true })
     } else {
