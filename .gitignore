@@ -5,3 +5,4 @@ dist/
 *.log
 dist-dev.tar.gz
  dist.tar.gz
+dist-prod.tar.gz
